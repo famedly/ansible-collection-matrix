@@ -1,0 +1,8 @@
+---
+- name: Download and install riot web app
+  import_tasks: download.yml
+
+- name: Write configuration
+  copy:
+    content: "{{ riot_config | to_nice_json }}"
+    dest: "{{ riot_webapp_dir }}/riot-v{{ riot_version }}/config.json"

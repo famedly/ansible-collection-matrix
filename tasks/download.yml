@@ -1,0 +1,28 @@
+---
+- name: Download riot v{{ riot_version }}
+  get_url: 
+    url: "https://github.com/vector-im/riot-web/releases/download/v{{ riot_version }}/riot-v{{ riot_version }}.tar.gz"
+    dest: "/tmp/riot-v{{ riot_version }}.tar.gz"
+
+- name: Download riot v{{ riot_version }}
+  get_url:
+    url: "https://github.com/vector-im/riot-web/releases/download/v{{ riot_version }}/riot-v{{ riot_version }}.tar.gz.asc"
+    dest: "/tmp/riot-v{{ riot_version }}.tar.gz.asc"
+
+- name: Retrieve the Riot release key
+  command: >-
+    gpg --no-default-keyring --keyring /tmp/riot-key 
+    --recv-keys 5EA7E0F70461A3BCBEBE4D5EF6151806032026F9
+
+- name: "Verify riot v{{ riot_version }}'s signature"
+  command: >-
+    gpg --no-default-keyring --keyring /tmp/riot-key 
+    --verify /tmp/riot-v{{ riot_version }}.tar.gz.asc
+    /tmp/riot-v{{ riot_version }}.tar.gz
+  register: riot_tarball_verification
+
+- name: Unpack riot
+  unarchive:
+    src: "/tmp/riot-v{{ riot_version }}.tar.gz"
+    dest: "{{ riot_webapp_dir }}"
+  when: riot_tarball_verification.rc == 0
