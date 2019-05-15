@@ -1,48 +1,51 @@
-Role Name
-=========
+# Riot Webapp
 
-A brief description of the role goes here.
+Dowloads, verifies and deploys the riot webapplication
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should
-be mentioned here. For instance, if the role uses the EC2 module, it may be a
-good idea to mention in this section that the boto package is required.
+A webserver to server the application is required.
+Additionally, gpg and dirmngr are required for the package verification
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including
-any variables that are in defaults/main.yml, vars/main.yml, and any variables
-that can/should be set via parameters to the role. Any variables that are read
-from other roles and/or the global scope (ie. hostvars, group vars, etc.) should
-be mentioned here as well.
+### Mandatory Variables
 
-Dependencies
-------------
+__None__
 
-A list of other roles hosted on Galaxy should go here, plus any details in
-regards to parameters that may need to be set for other roles, or variables that
-are used from other roles.
+### Optional Variables
 
-Example Playbook
-----------------
+| Name | Value | Description |
+| :--- | :---  | :---        |
+| riot_version | 1.1.2 | the riot version to be deployed |
+| riot_webapp_dir | /opt/riot/ | location to upack the application |
+| riot_config | __See (defaults)[defaults/main.yml] | Dictionary containing the webapp configuration see (riot documentation)[https://github.com/vector-im/riot-web#configjson] for details
 
-Including an example of how to use your role (for instance, with variables
-passed in as parameters) is always nice for users too:
+## Dependencies
 
-    - hosts: servers
-      roles:
-         - { role: ansible-riot-webapp, x: 42 }
+__None__
+
+## Example Playbook
+
+```yaml
+- hosts: servers
+  tasks:
+    - name: install gpg and dirmngr
+      apt:
+        state: present
+	name:
+	  - gpg
+	  - dirmngr
+  roles:
+    - role: ansible-riot-webapp
+```
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a
-website (HTML is not allowed).
+(madonius)[https://github.com/madonius]
