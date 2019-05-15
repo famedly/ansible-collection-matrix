@@ -1,4 +1,9 @@
 ---
+- name: Create riot directory
+  file:
+    dest: "{{ riot_webapp_dir }}"
+    state: directory
+
 - name: Download and install riot web app
   import_tasks: download.yml
 
