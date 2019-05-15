@@ -1,28 +1,56 @@
 ---
-- name: Download riot v{{ riot_version }}
-  get_url: 
-    url: "https://github.com/vector-im/riot-web/releases/download/v{{ riot_version }}/riot-v{{ riot_version }}.tar.gz"
-    dest: "/tmp/riot-v{{ riot_version }}.tar.gz"
+- name: Check if riot is already deployed
+  stat:
+    path: "{{ riot_webapp_dir }}/riot-v{{ riot_version }}"
+  register: riot_app_directory
 
-- name: Download riot v{{ riot_version }}
-  get_url:
-    url: "https://github.com/vector-im/riot-web/releases/download/v{{ riot_version }}/riot-v{{ riot_version }}.tar.gz.asc"
-    dest: "/tmp/riot-v{{ riot_version }}.tar.gz.asc"
+- name: Deploy riot
+  block:
+    - name: Create gpg temporary home directory
+      file:
+        dest: /tmp/gpg-tmp
+        state: directory
+        mode: 0700
 
-- name: Retrieve the Riot release key
-  command: >-
-    gpg --no-default-keyring --keyring /tmp/riot-key 
-    --recv-keys 5EA7E0F70461A3BCBEBE4D5EF6151806032026F9
+    - name: Download riot v{{ riot_version }}
+      get_url:
+        url: "https://github.com/vector-im/riot-web/releases/download/v{{ riot_version }}/riot-v{{ riot_version }}.tar.gz"
+        dest: "/tmp/riot-v{{ riot_version }}.tar.gz"
 
-- name: "Verify riot v{{ riot_version }}'s signature"
-  command: >-
-    gpg --no-default-keyring --keyring /tmp/riot-key 
-    --verify /tmp/riot-v{{ riot_version }}.tar.gz.asc
-    /tmp/riot-v{{ riot_version }}.tar.gz
-  register: riot_tarball_verification
+    - name: Download riot v{{ riot_version }}
+      get_url:
+        url: "https://github.com/vector-im/riot-web/releases/download/v{{ riot_version }}/riot-v{{ riot_version }}.tar.gz.asc"
+        dest: "/tmp/riot-v{{ riot_version }}.tar.gz.asc"
 
-- name: Unpack riot
-  unarchive:
-    src: "/tmp/riot-v{{ riot_version }}.tar.gz"
-    dest: "{{ riot_webapp_dir }}"
-  when: riot_tarball_verification.rc == 0
+    - name: Retrieve the Riot release key  # noqa 301
+      command: >-
+        gpg --no-default-keyring
+        --homedir /tmp/gpg-tmp
+        --keyring /tmp/gpg-tmp/riot-key
+        --recv-keys 5EA7E0F70461A3BCBEBE4D5EF6151806032026F9
+      register: get_riot_gpg_key
+      until: get_riot_gpg_key.rc == 0
+      retries: 10
+      delay: 2
+
+    - name: "Verify riot v{{ riot_version }}'s signature"  # noqa 301
+      command: >-
+        gpg --no-default-keyring
+        --homedir /tmp/gpg-tmp
+        --keyring /tmp/gpg-tmp/riot-key
+        --verify /tmp/riot-v{{ riot_version }}.tar.gz.asc
+        /tmp/riot-v{{ riot_version }}.tar.gz
+      register: riot_tarball_verification
+
+    - name: Unpack riot
+      unarchive:
+        src: "/tmp/riot-v{{ riot_version }}.tar.gz"
+        dest: "{{ riot_webapp_dir }}"
+        remote_src: yes
+      when: riot_tarball_verification.rc == 0
+
+    - name: Clean temporary gpg directory
+      file:
+        dest: /tmp/gpg-tmp
+        state: absent
+  when: not riot_app_directory.stat.exists
