@@ -32,3 +32,8 @@ riot_config:
     servers:
       - matrix.org
   welcomeUserId: '@riot-bot:matrix.org'
+riot_domain_configs: []
+riot_deployment_method: 'webroot' #alternative is 'docker'
+riot_docker_ports: []
+riot_docker_labels: {}
+riot_docker_volumes: {}

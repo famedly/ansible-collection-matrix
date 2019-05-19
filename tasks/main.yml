@@ -6,8 +6,26 @@
 
 - name: Download and install riot web app
   import_tasks: download.yml
+  when: riot_deployment_method == "webroot"
 
-- name: Write configuration
+- name: Write main configuration
   copy:
     content: "{{ riot_config | to_nice_json }}"
     dest: "{{ riot_webapp_dir }}/riot-v{{ riot_version }}/config.json"
+
+- name: Write domain specific configurations
+  copy:
+    content: "{{ item.config | to_nice_json }}"
+    dest: "{{ riot_webapp_dir }}/riot-v{{ riot_version }}/config.{{ item.domain }}.json"
+  loop: "riot_domain_configs"
+
+- name: Deploy docker container
+  docker_container:
+    docker_container:
+    name: "riot-web"
+    image: "docker.io/vectorim/riot-web:{{ riot_version }}"
+    ports: "{{ riot_docker_ports }}"
+    labels: "{{ riot_docker_labels }}"
+    restart_policy: unless-stopped
+    volumes: "{{ riot_docker_volumes }}"
+  when: riot_deployment_method == "docker"
