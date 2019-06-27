@@ -1,0 +1,16 @@
+[Unit]
+Description="Matrix Push Gateway Server (sygnal)"
+
+[Service]
+Type=simple
+WorkingDirectory={{ sygnal_base_path }}
+ExecStart={{ sygnal_base_path }}/env/bin/gunicorn -c {{ sygnal_base_path }}/gunicorn_config.py sygnal:app
+ExecReload=/bin/kill -HUP `cat {{ sygnal_base_path }}/sygnal.pid`
+ExecStop=/bin/kill -TERM `cat {{ sygnal_base_path }}/sygnal.pid`
+User=sygnal
+Group=sygnal
+Restart=always
+
+[Install]
+WantedBy=default.target
+

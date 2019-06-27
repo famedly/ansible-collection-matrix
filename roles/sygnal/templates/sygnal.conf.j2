@@ -1,0 +1,24 @@
+[log]
+loglevel = {{ sygnal_log_level }}
+logfile = {{ sygnal_log_file }}
+
+[metrics]
+{% if sygnal_prometheus is defined %}
+prometheus_port = {{ sygnal_prometheus.port }}
+prometheus_addr = {{ sygnal_prometheus.addr }}
+{% endif %}
+{% if sygnal_sentry_dsn is defined %}
+sentry_dsn = "{{ sygnal_sentry_dsn }}"
+{% endif %}
+
+[apps]
+{% for app in sygnal_apps %}
+{% if app.ios is defined %}
+{{ app.id }}.ios.type = apns
+{{ app.id }}.ios.certfile = "{{ app.ios.certfile }}"
+{% endif %}
+{% if app.gcm is defined %}
+{{ app.id }}.android.type = gcm
+{{ app.id }}.android.apiKey = "{{ app.gcm.api_key }}"
+{% endif %}
+{% endfor %}

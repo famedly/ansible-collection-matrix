@@ -1,0 +1,36 @@
+---
+# defaults file for sygnal
+
+# General Settings
+sygnal_base_path: "/opt/sygnal"
+sygnal_proc_name: "sygnal"
+
+# Apps
+sygnal_apps:
+  - id: com.example.myapp
+    ios:
+      certfile: com.example.myApp_prod_APNS.pem
+    gcm:
+      api_key: your_api_key_for_gcm
+
+# Process settings
+sygnal_pid_file: "{{ sygnal_base_path }}/sygnal.pid"
+sygnal_supervision_method: systemd
+sygnal_deployment_method: pip
+
+# HTTP Settings
+sygnal_listen_address: "0.0.0.0:80"
+sygnal_worker_connections: 1000
+sygnal_keepalive: 2
+
+# Logging
+sygnal_log_base_path: "{{ sygnal_base_path }}/log"
+sygnal_log_file: "{{ sygnal_log_base_path }}/sygnal.log"
+sygnal_gunicorn_access_log_file: "{{ sygnal_log_base_path }}/gunicorn/access.log"
+sygnal_gunicorn_error_log_file: "{{ sygnal_log_base_path }}/gunicorn/error.log"
+sygnal_log_level: "debug"
+
+# Metrics
+# sygnal_prometheus:
+#   port: 8800
+#   addr: "127.0.0.1"

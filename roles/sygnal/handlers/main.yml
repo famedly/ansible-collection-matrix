@@ -1,0 +1,20 @@
+---
+- name: "reload systemd"
+  systemd:
+    daemon_reload: yes
+
+- name: "restart sygnal using systemd"
+  service:
+    name: "sygnal"
+    state: restarted
+    enabled: yes
+  when: sygnal_supervision_method == "systemd"
+  listen: "restart sygnal"
+
+- name: "restart sygnal using docker"
+  docker_container:
+    name: sygnal
+    state: started
+    restart: yes
+  when: sygnal_supervision_method == "docker"
+  listen: "restart sygnal"

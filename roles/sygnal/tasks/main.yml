@@ -1,0 +1,16 @@
+---
+- name: check that sypervision and deployment are compatible
+  fail:
+    msg: "Either both or neither of deployment and supervision method should be docker."
+  when: (sygnal_supervision_method == "docker" and sygnal_deployment_method != "docker") or
+        (sygnal_deployment_method == "docker" and sygnal_supervision_method != "docker")
+
+- name: configure sygnal
+  import_tasks: configure.yml
+
+- name: deploy sygnal
+  import_tasks: deployment.yml
+
+- name: configure service
+  import_tasks: systemd.yml
+  when: sygnal_supervision_method == "systemd"
