@@ -17,7 +17,7 @@ __None__
 
 | Name | Value | Description |
 | :--- | :---  | :---        |
-| riot_version | 1.1.2 | the riot version to be deployed |
+| riot_version | 1.3.3 | the riot version to be deployed |
 | riot_webapp_dir | /opt/riot/ | location to upack the application |
 | riot_config | __See (defaults)[defaults/main.yml] | Dictionary containing the webapp configuration see (riot documentation)[https://github.com/vector-im/riot-web#configjson] for details
 
@@ -49,3 +49,4 @@ Author Information
 ------------------
 
 (madonius)[https://github.com/madonius]
+(jcgruenhage)[https://jcg.re]
