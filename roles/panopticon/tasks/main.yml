@@ -1,0 +1,31 @@
+---
+# tasks file for panopticon
+- name: launch mariadb
+  become: yes
+  docker_container:
+    name: panopticon-db
+    image: docker.io/mariadb:10
+    volumes:
+      - /opt/panopticon/database:/var/lib/mysql
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ panopticon_db_password }}"
+      MYSQL_DATABASE: "{{ panopticon_db_name }}"
+      MYSQL_USER: "{{ panopticon_db_user }}"
+      MYSQL_PASSWORD: "{{ panopticon_db_password }}"
+    restart_policy: unless-stopped
+
+- name: launch panopticon
+  become: yes
+  docker_container:
+    name: panopticon
+    image: registry.gitlab.com/famedly/container/panopticon
+    pull: true
+    links:
+      - panopticon-db:mariadb
+    labels: "{{ panopticon_docker_labels }}"
+    ports: "{{ panopticon_docker_ports }}"
+    env:
+      PANOPTICON_DB_DRIVER: mysql
+      PANOPTICON_DB: "{{ panopticon_db_dsn }}"
+      PANOPTICON_PORT: "8000"
+    restart_policy: unless-stopped

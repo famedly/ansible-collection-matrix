@@ -1,0 +1,4 @@
+---
+# vars file for panopticon
+
+panopticon_db_dsn: "{{ panopticon_db_user }}:{{ panopticon_db_password }}@tcp({{ panopticon_db_host }}:{{ panopticon_db_port }})/{{ panopticon_db_name }}"

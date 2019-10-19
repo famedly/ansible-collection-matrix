@@ -1,0 +1,9 @@
+---
+# defaults file for panopticon
+panopticon_db_user: panopticon
+panopticon_db_name: panopticon
+panopticon_db_host: mariadb
+panopticon_db_port: 3306
+
+panopticon_docker_ports: []
+panopticon_docker_labels: {}
