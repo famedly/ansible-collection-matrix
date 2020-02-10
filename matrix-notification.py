@@ -2,7 +2,8 @@
 # coding: utf-8
 
 # (c) 2018, Jan Christian Grünhage <jan.christian@gruenhage.xyz>
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# (c) 2020, Famedly GmbH
+# GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
@@ -16,7 +17,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = '''
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
-module: matrix
+module: matrix-notification
 short_description: Send notifications to matrix
 description:
     - This module sends html formatted notifications to matrix rooms.
@@ -48,12 +49,12 @@ options:
         description:
             - The password to log in with
 requirements:
-    -  matrix-client (Python library)
+    -  matrix-nio (Python library)
 '''
 
 EXAMPLES = '''
 - name: Send matrix notification with token
-  matrix:
+  matrix-notification:
     msg_plain: "**hello world**"
     msg_html: "<b>hello world</b>"
     room_id: "!12345678:server.tld"
@@ -61,7 +62,7 @@ EXAMPLES = '''
     token: "{{ matrix_auth_token }}"
 
 - name: Send matrix notification with user_id and password
-  matrix:
+  matrix-notification:
     msg_plain: "**hello world**"
     msg_html: "<b>hello world</b>"
     room_id: "!12345678:server.tld"
@@ -73,20 +74,30 @@ EXAMPLES = '''
 RETURN = '''
 '''
 import traceback
+import asyncio
 
 from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 
 MATRIX_IMP_ERR = None
 try:
-    from matrix_client.client import MatrixClient
+    from nio import AsyncClient
 except ImportError:
     MATRIX_IMP_ERR = traceback.format_exc()
     matrix_found = False
 else:
     matrix_found = True
 
+async def get_client_with_token(hs_url, token):
+    client = AsyncClient(hs_url)
+    client.access_token = token
+    return client
 
-def run_module():
+async def get_client_with_password(hs_url, user, password):
+    client = AsyncClient(hs_url, user)
+    await client.login(password)
+    return client
+
+async def run_module():
     module_args = dict(
         msg_plain=dict(type='str', required=True),
         msg_html=dict(type='str', required=True),
@@ -98,7 +109,7 @@ def run_module():
     )
 
     result = dict(
-        changed=False,
+        changed=True,
         message=''
     )
 
@@ -111,28 +122,46 @@ def run_module():
     )
 
     if not matrix_found:
-        module.fail_json(msg=missing_required_lib('matrix-client'), exception=MATRIX_IMP_ERR)
+        module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
 
     if module.check_mode:
         return result
 
     # create a client object
-    client = MatrixClient(module.params['hs_url'])
     if module.params['token'] is not None:
-        client.api.token = module.params['token']
+        client = await get_client_with_token(
+            module.params['hs_url'],
+            module.params['token']
+        )
     else:
-        client.login(module.params['user_id'], module.params['password'], sync=False)
+        client = await get_client_with_password(
+            module.params['hs_url'],
+            module.params['user_id'],
+            module.params['password']
+        )
 
-    # make sure we are in a given room and return a room object for it
-    room = client.join_room(module.params['room_id'])
-    # send an html formatted messages
-    room.send_html(module.params['msg_html'], module.params['msg_plain'])
+    # send message
+    await client.room_send(
+        room_id=module.params['room_id'],
+        message_type="m.room.message",
+        content={
+            "msgtype": "m.text",
+            "body": module.params['msg_plain'],
+            "format": "org.matrix.custom.html",
+            "formatted_body": module.params['msg_html'],
+        }
+    )
+
+    # when we did the login ourselves, invalidate the access token
+    if module.params['token'] is None:
+        await client.logout()
+
+    await client.close()
 
     module.exit_json(**result)
 
-
 def main():
-    run_module()
+    asyncio.run(run_module())
 
 
 if __name__ == '__main__':

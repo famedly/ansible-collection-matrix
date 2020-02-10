@@ -3,7 +3,7 @@
 
 # (c) 2018, Jan Christian Grünhage <jan.christian@gruenhage.xyz>
 # (c) 2020, Famedly GmbH
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
@@ -35,7 +35,7 @@ options:
             - The password to log in with
         required: true
 requirements:
-    -  matrix-client (Python library)
+    -  matrix-nio (Python library)
 '''
 
 EXAMPLES = '''
@@ -51,22 +51,26 @@ token:
   description: The access token aquired by logging in
   returned: When login was successful
   type: str
+device_id:
+  description: The device ID assigned by the server
+  returned: When login was successful
+  type: str
 '''
 import traceback
+import asyncio
 
 from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 
 MATRIX_IMP_ERR = None
 try:
-    from matrix_client.client import MatrixClient
+    from nio import AsyncClient
 except ImportError:
     MATRIX_IMP_ERR = traceback.format_exc()
     matrix_found = False
 else:
     matrix_found = True
 
-
-def run_module():
+async def run_module():
     module_args = dict(
         hs_url=dict(type='str', required=True),
         user_id=dict(type='str', required=True),
@@ -83,22 +87,28 @@ def run_module():
     )
 
     if not matrix_found:
-        module.fail_json(msg=missing_required_lib('matrix-client'), exception=MATRIX_IMP_ERR)
+        module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
 
     if module.check_mode:
         return result
 
-    # create a client object
-    client = MatrixClient(module.params['hs_url'])
-    token = client.login(module.params['user_id'], module.params['password'], sync=False)
+    # Create client object
+    client = AsyncClient(module.params['hs_url'], module.params['user_id'])
+    # Log in
+    login_response = await client.login(module.params['password'])
 
-    result['token'] = token
+    # Store results
+    result['token'] = login_response.access_token
+    result['device_id'] = login_response.device_id
+
+    # Close client sessions
+    await client.close()
 
     module.exit_json(**result)
 
 
 def main():
-    run_module()
+    asyncio.run(run_module())
 
 
 if __name__ == '__main__':
