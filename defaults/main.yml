@@ -1,6 +1,6 @@
 ---
-riot_version: 1.3.3
-riot_webapp_dir: /opt/riot/
+riot_version: 1.5.8
+riot_webapp_dir: /opt/riot
 riot_config:
   brand: Riot
   bug_report_endpoint_url: https://riot.im/bugreports/submit
