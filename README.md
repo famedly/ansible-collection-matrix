@@ -24,17 +24,17 @@ For a usage example including all modules, look at the example playbook below.
       alias: '#some-alias:example.org'
       message: "Set room name in"
   tasks:
-    - matrix-login:
+    - matrix_login:
         hs_url: "{{ matrix.homeserver }}"
         user_id: "{{ matrix.user }}"
         password: "{{ matrix.password }}"
       register: login_result
-    - matrix-room:
+    - matrix_room:
         hs_url: "{{ matrix.homeserver }}"
         token: "{{ login_result.token }}"
         alias: "{{ matrix.alias }}"
       register: room_result
-    - matrix-state:
+    - matrix_state:
         hs_url: "{{ matrix.homeserver }}"
         token: "{{ login_result.token }}"
         room_id: "{{ room_result.room_id }}"
@@ -43,14 +43,14 @@ For a usage example including all modules, look at the example playbook below.
         content:
           name: "test room name"
       register: state_result
-    - matrix-notification:
+    - matrix_notification:
         hs_url: "{{ matrix.homeserver }}"
         token: "{{ login_result.token }}"
         room_id: "{{ room_result.room_id }}"
         msg_plain: "{{ matrix.message }} {{ state_result.event_id}}"
         msg_html: "{{ matrix.message }} {{ state_result.event_id}}"
       when: state_result.changed
-    - matrix-logout:
+    - matrix_logout:
         hs_url: "{{ matrix.homeserver }}"
         token: "{{ login_result.token }}"
 ```

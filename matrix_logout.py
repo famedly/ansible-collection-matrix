@@ -17,7 +17,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = '''
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
-module: matrix
+module: matrix_logout
 short_description: Log out of matrix
 description:
     - Invalidate an access token by logging out
@@ -36,7 +36,7 @@ requirements:
 
 EXAMPLES = '''
 - name: Invalidate access token
-  matrix:
+  matrix_logout:
     hs_url: "https://matrix.org"
     token: "{{ matrix_auth_token }}"
 '''

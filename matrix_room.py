@@ -17,7 +17,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = '''
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
-module: matrix-room
+module: matrix_room
 short_description: Join/Create matrix room
 description:
     - This module takes a room alias and makes sure that the user identified by the access token is in such a room. If that room does not exist, it is created, if it does exist but the user is not in it, it tries to join. If the alias is taken and the user can't join the room, the module will fail. Remote aliases are not supported for creating, but work for joining.
@@ -39,7 +39,7 @@ requirements:
 
 EXAMPLES = '''
 - name: Create notification room
-  matrix-room:
+  matrix_room:
     alias: "#ansible-notifications:matrix.org"
     hs_url: "https://matrix.org"
     token: "{{ matrix_auth_token }}"

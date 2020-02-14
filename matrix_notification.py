@@ -17,7 +17,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = '''
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
-module: matrix-notification
+module: matrix_notification
 short_description: Send notifications to matrix
 description:
     - This module sends html formatted notifications to matrix rooms.
@@ -54,7 +54,7 @@ requirements:
 
 EXAMPLES = '''
 - name: Send matrix notification with token
-  matrix-notification:
+  matrix_notification:
     msg_plain: "**hello world**"
     msg_html: "<b>hello world</b>"
     room_id: "!12345678:server.tld"
@@ -62,7 +62,7 @@ EXAMPLES = '''
     token: "{{ matrix_auth_token }}"
 
 - name: Send matrix notification with user_id and password
-  matrix-notification:
+  matrix_notification:
     msg_plain: "**hello world**"
     msg_html: "<b>hello world</b>"
     room_id: "!12345678:server.tld"
@@ -109,7 +109,7 @@ async def run_module():
     )
 
     result = dict(
-        changed=True,
+        changed=False,
         message=''
     )
 

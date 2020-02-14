@@ -17,7 +17,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = '''
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
-module: matrix-login
+module: matrix_login
 short_description: Get a matrix access token
 description:
     - Log in to a matrix homeserver and get an access token back
@@ -40,7 +40,7 @@ requirements:
 
 EXAMPLES = '''
 - name: Log in to matrix
-  matrix:
+  matrix_login:
     hs_url: "https://matrix.org"
     user_id: "{{ matrix_auth_user }}"
     password: "{{ matrix_auth_password }}"

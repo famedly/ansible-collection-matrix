@@ -17,7 +17,7 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = '''
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
-module: matrix
+module: matrix_state
 short_description: Set matrix room state
 description:
     - This module sets matrix room state idempotently
@@ -52,7 +52,7 @@ requirements:
 
 EXAMPLES = '''
 - name: Set the server ACL for the admin room
-  matrix:
+  matrix_state:
     event_type: m.room.server_acl
     state_key: ""
     content:
