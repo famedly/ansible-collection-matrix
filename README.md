@@ -8,7 +8,47 @@ To install these modules so that you can use them, put them into `~/.ansible/plu
 
 ## Usage
 
-For usage examples, look at the doc comments included in the source files for the modules.
+For a usage example including all modules, look at the example playbook below.
+```yaml
+- hosts: localhost
+  vars:
+    matrix:
+      homeserver: https://example.org
+      user: username
+      password: s3cr3t
+      alias: '#some-alias:example.org'
+      message: "Set room name in"
+  tasks:
+    - matrix-login:
+        hs_url: "{{ matrix.homeserver }}"
+        user_id: "{{ matrix.user }}"
+        password: "{{ matrix.password }}"
+      register: login_result
+    - matrix-room:
+        hs_url: "{{ matrix.homeserver }}"
+        token: "{{ login_result.token }}"
+        alias: "{{ matrix.alias }}"
+      register: room_result
+    - matrix-state:
+        hs_url: "{{ matrix.homeserver }}"
+        token: "{{ login_result.token }}"
+        room_id: "{{ room_result.room_id }}"
+        event_type: "m.room.name"
+        state_key: ""
+        content:
+          name: "test room name"
+      register: state_result
+    - matrix-notification:
+        hs_url: "{{ matrix.homeserver }}"
+        token: "{{ login_result.token }}"
+        room_id: "{{ room_result.room_id }}"
+        msg_plain: "{{ matrix.message }} {{ state_result.event_id}}"
+        msg_html: "{{ matrix.message }} {{ state_result.event_id}}"
+      when: state_result.changed
+    - matrix-logout:
+        hs_url: "{{ matrix.homeserver }}"
+        token: "{{ login_result.token }}"
+```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
