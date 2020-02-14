@@ -80,7 +80,7 @@ async def run_module():
 
     # create a client object
     client = AsyncClient(module.params['hs_url'])
-    client.access_token = module.params['access_token']
+    client.access_token = module.params['token']
     # log out
     await client.logout()
     # close client sessions
