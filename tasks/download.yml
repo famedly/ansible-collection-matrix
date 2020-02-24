@@ -27,6 +27,7 @@
         gpg --no-default-keyring
         --homedir /tmp/gpg-tmp
         --keyring /tmp/gpg-tmp/riot-key
+        --keyserver hkps://keyserver.ubuntu.com
         --recv-keys 5EA7E0F70461A3BCBEBE4D5EF6151806032026F9
       register: get_riot_gpg_key
       until: get_riot_gpg_key.rc == 0
