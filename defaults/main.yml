@@ -1,5 +1,5 @@
 ---
-riot_version: 1.5.12
+riot_version: 1.5.13
 riot_webapp_dir: /opt/riot
 riot_config:
   brand: Riot
