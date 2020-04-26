@@ -12,20 +12,6 @@
     owner: sygnal
     group: sygnal
 
-- name: create log directory
-  file:
-    path: "{{ sygnal_log_base_path }}/gunicorn"
-    state: directory
-    owner: sygnal
-    group: sygnal
-
-- name: deploy gunicorn config
-  template:
-    src: gunicorn_config.py.j2
-    dest: "{{ sygnal_base_path }}/gunicorn_config.py"
-    owner: sygnal
-    group: sygnal
-
 - name: deploy sygnal config
   template:
     src: sygnal.conf.j2

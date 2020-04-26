@@ -19,7 +19,6 @@
         name:
           - pip
           - setuptools
-          - gunicorn
         virtualenv: "{{ sygnal_base_path }}/env"
         virtualenv_python: python2
         extra_args: --upgrade
@@ -52,7 +51,6 @@
     pull: true
     user: "{{ sygnal_user.uid }}:{{ sygnal_user.group }}"
     volumes:
-      - "{{ sygnal_base_path }}/gunicorn_config.py:{{ sygnal_base_path }}/gunicorn_config.py"
       - "{{ sygnal_base_path }}/sygnal.conf:{{ sygnal_base_path }}/sygnal.conf"
       - "{{ sygnal_base_path }}/log:{{ sygnal_base_path }}/log"
   when: sygnal_deployment_method == "docker"
