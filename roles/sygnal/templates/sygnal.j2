@@ -1,0 +1,76 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+database:
+  name: psycopg2
+  args:
+    host: {{ sygnal_postgresql_host }}
+    database: {{ sygnal_postgresql_database }}
+    user: {{ sygnal_postgresql_user }}
+    password: {{ sygnal_postgresql_password }}
+    cp_min: 1
+    cp_max: 5
+
+
+log:
+  setup:
+    version: 1
+    formatters:
+      normal:
+        format: "%(asctime)s [%(process)d] %(levelname)-5s %(name)s %(message)s"
+    handlers:
+      {% if sygnal_deployment_method == 'docker' %}
+      # This handler prints to Standard Output.
+      stdout:
+        class: "logging.StreamHandler"
+        formatter: "normal"
+        stream: "ext://sys.stdout"
+      {% else %}
+      file:
+        class: "logging.handlers.WatchedFileHandler"
+        formatter: "normal"
+        filename: "./sygnal.log"
+      {% endif %}
+
+    loggers:
+      sygnal.access:
+        propagate: false
+        handlers: ["stdout"]
+        level: "INFO"
+
+      sygnal:
+        propagate: false
+        handlers: ["stdout"]
+
+    root:
+      handlers: ["stdout"]
+      level: {{ sygnal_log_level }}
+
+  access:
+    x_forwarded_for: false
+
+http:
+  bind_addresses: ['0.0.0.0', '::'] 
+  port: {{ sygnal_listen_port }}
+
+metrics:
+  prometheus:
+    {% if sygnal_prometheus is defined %}
+    enabled: true
+    address: {{ sygnal_prometheus.addr }}
+    port: {{ sygnal_prometheus.port }}
+    {% else %}
+    enabled: false
+    address: '127.0.0.1'
+    port: 8000
+    {% endif%}
+
+apps:
+  {% for app in sygnal_apps %}
+  {{ app.id }}:
+    type: {{ app.type }}
+    {% if app.type == 'apns' %}
+    certfile: "{{ app.apns_certfile }}"
+    {% elif app.type == 'gcm' %}
+    api_key: "{{ app.gcm_api_key }}"
+    #max_connections: 20 
+    {% endif %}
+  {% endfor %}

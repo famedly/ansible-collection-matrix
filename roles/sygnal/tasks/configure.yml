@@ -14,7 +14,7 @@
 
 - name: deploy sygnal config
   template:
-    src: sygnal.conf.j2
-    dest: "{{ sygnal_base_path }}/sygnal.conf"
+    src: sygnal.j2
+    dest: "{{ sygnal_base_path }}/sygnal.yml"
     owner: sygnal
     group: sygnal

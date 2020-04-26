@@ -6,33 +6,32 @@ sygnal_base_path: "/opt/sygnal"
 sygnal_proc_name: "sygnal"
 
 # Apps
-sygnal_apps:
-  - id: com.example.myapp
-    type: apns
-    apns_certfile: com.example.myApp_prod_APNS.pem
-    
-  - id: com.example.myotherapp
-    type: gcm
-    gcm_api_key: your_api_key_for_gcm
+sygnal_apps: []
 
 # Process settings
 sygnal_pid_file: "{{ sygnal_base_path }}/sygnal.pid"
-sygnal_supervision_method: systemd
-sygnal_deployment_method: pip
+sygnal_supervision_method: docker
+sygnal_deployment_method: docker
 
 # HTTP Settings
-sygnal_listen_address: "0.0.0.0:80"
-sygnal_worker_connections: 1000
-sygnal_keepalive: 2
+sygnal_listen_addresses: ['0.0.0.0', '::']
+sygnal_listen_port: 5000
 
 # Logging
 sygnal_log_base_path: "{{ sygnal_base_path }}/log"
 sygnal_log_file: "{{ sygnal_log_base_path }}/sygnal.log"
-sygnal_gunicorn_access_log_file: "{{ sygnal_log_base_path }}/gunicorn/access.log"
-sygnal_gunicorn_error_log_file: "{{ sygnal_log_base_path }}/gunicorn/error.log"
-sygnal_log_level: "debug"
+sygnal_log_level: "INFO" #INFO,DEBUG
+
+sygnal_postgresql_database: "sygnal"
+sygnal_postgresql_host: "172.17.0.1"
+sygnal_postgresql_user: "sygnal"
+
+sygnal_docker_name: sygnal
+sygnal_docker_image: "registry.gitlab.com/famedly/containers/sygnal"
+sygnal_docker_ports: []
+sygnal_docker_labels: {}
 
 # Metrics
-# sygnal_prometheus:
-#   port: 8800
-#   addr: "127.0.0.1"
+sygnal_prometheus:
+  port: 8000
+  addr: '0.0.0.0'

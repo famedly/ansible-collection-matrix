@@ -6,7 +6,25 @@ This role installs sygnal, the reference matrix push gateway server.
 Role Variables
 --------------
 
-For variables, take a look at the main defaults file
+specify Apps with:
+sygnal_apps:
+  - id: com.example.myapp
+    type: apns
+    apns_certfile: com.example.myApp_prod_APNS.pem
+
+  - id: com.example.myotherapp
+    type: gcm
+    gcm_api_key: your_api_key_for_gcm
+
+it is possible to use systemd and pip instead of docker, specify as follows:
+sygnal_supervision_method: systemd
+sygnal_deployment_method: pip
+CAUTION: this role is not tested with this variables set, probably it needs maintenace to work properly
+
+You have to overide the db password in order to run sygnal
+sygnal_postgresql_password:
+
+A complete list of all variables is in defaults/main.yml
 
 License
 -------
@@ -17,3 +35,4 @@ Author Information
 ------------------
 
 Jan Christian Grünhage <jan.christian@gruenhage.xyz>
+Vincent Wilke <v.wilke@famedly.de>
