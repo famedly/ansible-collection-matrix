@@ -13,7 +13,7 @@
 
 - name: "restart synapse using docker"
   docker_container:
-    name: synapse
+    name: "{{ matrix_synapse_container_name }}"
     state: started
     restart: yes
   when: matrix_synapse_supervision_method == "docker"

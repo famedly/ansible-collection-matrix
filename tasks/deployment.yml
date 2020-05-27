@@ -55,7 +55,7 @@
 
 - name: install synapse with docker
   docker_container:
-    name: synapse
+    name: "{{ matrix_synapse_container_name }}"
     image: "{{ matrix_synapse_container_ref }}:{{ matrix_synapse_version }}"
     ports: "{{ matrix_synapse_docker_ports }}"
     labels: "{{ matrix_synapse_docker_labels }}"
