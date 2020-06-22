@@ -39,7 +39,7 @@
     name: "riot-web"
     image: "docker.io/vectorim/riot-web:v{{ riot_version }}"
     ports: "{{ riot_docker_ports }}"
-    labels: "{{ riot_docker_labels }}"
+    labels: "{{ riot_docker_labels_complete }}"
     restart_policy: unless-stopped
     volumes: "{{ riot_docker_volumes }}"
   when: riot_deployment_method == "docker"

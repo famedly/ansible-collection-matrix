@@ -1,2 +1,4 @@
 ---
-# vars file for ansible-riot-webapp
+riot_docker_labels_complete: "{{ riot_docker_labels_base | combine(riot_docker_labels) }}"
+riot_docker_labels_base:
+  version: "{{ riot_version }}"
