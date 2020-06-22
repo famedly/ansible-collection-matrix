@@ -58,7 +58,7 @@
     name: "{{ matrix_synapse_container_name }}"
     image: "{{ matrix_synapse_container_ref }}:{{ matrix_synapse_version }}"
     ports: "{{ matrix_synapse_docker_ports }}"
-    labels: "{{ matrix_synapse_docker_labels }}"
+    labels: "{{ matrix_synapse_docker_labels_complete }}"
     restart_policy: unless-stopped
     recreate: true
     pull: true
