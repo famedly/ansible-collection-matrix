@@ -45,7 +45,7 @@
     name: "{{ sygnal_docker_name }}"
     image: "{{ sygnal_docker_image }}"
     ports: "{{ sygnal_docker_ports }}"
-    labels: "{{ sygnal_docker_labels }}"
+    labels: "{{ sygnal_docker_labels_complete }}"
     restart_policy: unless-stopped
     recreate: true
     pull: true
