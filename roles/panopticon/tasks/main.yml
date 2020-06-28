@@ -4,7 +4,7 @@
   become: yes
   docker_container:
     name: panopticon-db
-    image: docker.io/mariadb:10
+    image: "docker.io/mariadb:{{ panopticon_db_version }}"
     volumes:
       - /opt/panopticon/database:/var/lib/mysql
     env:
@@ -13,16 +13,17 @@
       MYSQL_USER: "{{ panopticon_db_user }}"
       MYSQL_PASSWORD: "{{ panopticon_db_password }}"
     restart_policy: unless-stopped
+    labels: "{{ panopticon_db_docker_labels_complete }}"
 
 - name: launch panopticon
   become: yes
   docker_container:
     name: panopticon
-    image: registry.gitlab.com/famedly/container/panopticon
+    image: registry.gitlab.com/famedly/containers/panopticon
     pull: true
     links:
       - panopticon-db:mariadb
-    labels: "{{ panopticon_docker_labels }}"
+    labels: "{{ panopticon_docker_labels_complete }}"
     ports: "{{ panopticon_docker_ports }}"
     env:
       PANOPTICON_DB_DRIVER: mysql

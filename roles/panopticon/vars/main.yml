@@ -1,4 +1,9 @@
 ---
 # vars file for panopticon
-
 panopticon_db_dsn: "{{ panopticon_db_user }}:{{ panopticon_db_password }}@tcp({{ panopticon_db_host }}:{{ panopticon_db_port }})/{{ panopticon_db_name }}"
+panopticon_db_docker_labels_complete: "{{ panopticon_db_docker_labels_base | combine(panopticon_db_docker_labels, recursive=True) }}"
+panopticon_db_docker_labels_base:
+  version: "{{ panopticon_db_version }}"
+panopticon_docker_labels_complete: "{{ panopticon_docker_labels_base | combine(panopticon_docker_labels) }}"
+panopticon_docker_labels_base:
+  version: "{{ panopticon_version }}"

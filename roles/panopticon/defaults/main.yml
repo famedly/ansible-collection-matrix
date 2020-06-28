@@ -1,9 +1,12 @@
 ---
 # defaults file for panopticon
+panopticon_db_version: "10.5.4"
 panopticon_db_user: panopticon
 panopticon_db_name: panopticon
 panopticon_db_host: mariadb
 panopticon_db_port: 3306
+panopticon_db_docker_labels: {} #override this
 
+panopticon_version: "no version yet"
 panopticon_docker_ports: []
-panopticon_docker_labels: {}
+panopticon_docker_labels: {} #override this
