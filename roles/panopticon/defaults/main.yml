@@ -5,6 +5,8 @@ panopticon_db_user: panopticon
 panopticon_db_name: panopticon
 panopticon_db_host: mariadb
 panopticon_db_port: 3306
+panopticon_db_docker_ports:
+  - "172.17.0.1:3306:{{ panopticon_db_port }}"
 panopticon_db_docker_labels: {} #override this
 
 panopticon_version: "no version yet"

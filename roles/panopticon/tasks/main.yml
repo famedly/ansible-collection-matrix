@@ -14,6 +14,7 @@
       MYSQL_PASSWORD: "{{ panopticon_db_password }}"
     restart_policy: unless-stopped
     labels: "{{ panopticon_db_docker_labels_complete }}"
+    ports: "{{ panopticon_db_docker_ports }}"
 
 - name: launch panopticon
   become: yes
