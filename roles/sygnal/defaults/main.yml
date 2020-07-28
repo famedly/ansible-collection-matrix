@@ -26,7 +26,7 @@ sygnal_postgresql_database: "sygnal"
 sygnal_postgresql_host: "172.17.0.1"
 sygnal_postgresql_user: "sygnal"
 
-sygnal_version: "0.5.0"
+sygnal_version: "0.8.0"
 sygnal_docker_name: sygnal
 sygnal_docker_image: "registry.gitlab.com/famedly/containers/sygnal:v{{ sygnal_version }}"
 #sygnal_docker_image: "matrixdotorg/sygnal:v{{ sygnal_version }}" #with 0.7.0 not working (yet)
