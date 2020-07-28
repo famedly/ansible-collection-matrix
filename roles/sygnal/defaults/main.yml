@@ -4,7 +4,7 @@
 # General
 sygnal_base_path: "/opt/sygnal"
 sygnal_proc_name: "sygnal"
-sygnal_version: "0.8.0"
+sygnal_version: "0.8.1"
 
 # Apps
 sygnal_apps: []
