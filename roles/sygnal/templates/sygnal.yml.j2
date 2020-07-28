@@ -9,7 +9,6 @@ database:
     cp_min: 1
     cp_max: 5
 
-
 log:
   setup:
     version: 1
@@ -17,18 +16,10 @@ log:
       normal:
         format: "%(asctime)s [%(process)d] %(levelname)-5s %(name)s %(message)s"
     handlers:
-      {% if sygnal_deployment_method == 'docker' %}
-      # This handler prints to Standard Output.
       stdout:
         class: "logging.StreamHandler"
         formatter: "normal"
         stream: "ext://sys.stdout"
-      {% else %}
-      file:
-        class: "logging.handlers.WatchedFileHandler"
-        formatter: "normal"
-        filename: "./sygnal.log"
-      {% endif %}
 
     loggers:
       sygnal.access:
@@ -48,14 +39,14 @@ log:
     x_forwarded_for: false
 
 http:
-  bind_addresses: ['::'] 
+  bind_addresses: {{ sygnal_listen_addresses }} 
   port: {{ sygnal_listen_port }}
 
 metrics:
   prometheus:
     {% if sygnal_prometheus is defined %}
     enabled: true
-    address: {{ sygnal_prometheus.addr }}
+    address: '{{ sygnal_prometheus.addr }}'
     port: {{ sygnal_prometheus.port }}
     {% else %}
     enabled: false
@@ -71,6 +62,5 @@ apps:
     certfile: "{{ app.apns_certfile }}"
     {% elif app.type == 'gcm' %}
     api_key: "{{ app.gcm_api_key }}"
-    #max_connections: 20 
     {% endif %}
   {% endfor %}

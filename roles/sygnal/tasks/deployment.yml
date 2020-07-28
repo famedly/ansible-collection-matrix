@@ -54,6 +54,5 @@
       SYGNAL_CONF: "{{ sygnal_base_path }}/sygnal.yml"
     volumes:
       - "{{ sygnal_base_path }}/sygnal.yml:{{ sygnal_base_path }}/sygnal.yml"
-      - "{{ sygnal_base_path }}/log:{{ sygnal_base_path }}/log"
   when: sygnal_deployment_method == "docker"
 
