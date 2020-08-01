@@ -1,0 +1,43 @@
+---
+riot_version: 1.7.0
+riot_webapp_dir: /opt/riot
+riot_config:
+  brand: Riot
+  bug_report_endpoint_url: https://riot.im/bugreports/submit
+  default_federate: true
+  default_hs_url: https://matrix.org
+  default_is_url: https://vector.im
+  default_theme: light
+  disable_3pid_login: false
+  disable_custom_urls: false
+  disable_guests: false
+  disable_login_language_selector: false
+  enable_presence_by_hs_url:
+    'https://matrix.org': false
+  features:
+    feature_groups: labs
+    feature_pinning: labs
+  integrations_jitsi_widget_url: https://scalar.vector.im/api/widgets/jitsi.html
+  integrations_rest_url: https://scalar.vector.im/api
+  integrations_ui_url: https://scalar.vector.im/
+  piwik:
+    siteId: 1
+    url: https://piwik.riot.im/
+    whitelistedHSUrls:
+      - 'https://matrix.org'
+    whitelistedISUrls:
+      - 'https://vector.im'
+      - 'https://matrix.org'
+  roomDirectory:
+    servers:
+      - matrix.org
+  welcomeUserId: '@riot-bot:matrix.org'
+riot_domain_configs: []
+riot_deployment_method: 'webroot' #alternative is 'docker'
+riot_docker_ports: []
+riot_docker_labels: {}
+riot_docker_volumes: "{{ riot_docker_main_volumes + riot_docker_domain_volumes }}"
+riot_docker_main_volumes:
+  - "{{ riot_webapp_dir }}/config.json:/app/config.json"
+# This looks a bit crude, but what happens here is quite simple: First, we pull out the domain, then we match the whole string, and use it to construct the mount, then we make a list again.
+riot_docker_domain_volumes: "{{ riot_domain_configs | map(attribute='domain') | map('regex_replace', '^(.*)$', riot_webapp_dir + '/config.\\1.json:/app/config.\\1.json') | list }}"

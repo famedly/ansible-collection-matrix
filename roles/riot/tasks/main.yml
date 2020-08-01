@@ -1,0 +1,45 @@
+---
+- name: Create riot directory
+  file:
+    dest: "{{ riot_webapp_dir }}"
+    state: directory
+
+- name: Download and install riot web app
+  import_tasks: download.yml
+  when: riot_deployment_method == "webroot"
+
+- name: Write main configuration
+  copy:
+    content: "{{ riot_config | to_nice_json }}"
+    dest: "{{ riot_webapp_dir }}/config.json"
+
+- name: Write domain specific configurations
+  copy:
+    content: "{{ item.config | to_nice_json }}"
+    dest: "{{ riot_webapp_dir }}/config.{{ item.domain }}.json"
+  loop: "{{ riot_domain_configs }}"
+
+- name: Link main configuration
+  file:
+    src: "{{ riot_webapp_dir }}/config.json"
+    dest: "{{ riot_webapp_dir }}/riot-v{{ riot_version }}/config.json"
+    state: link
+  when: riot_deployment_method == "webroot"
+
+- name: Link domain specific configurations
+  file:
+    src: "{{ riot_webapp_dir }}/config.{{ item.domain }}.json"
+    dest: "{{ riot_webapp_dir }}/riot-v{{ riot_version }}/config.{{ item.domain }}.json"
+    state: link
+  loop: "{{ riot_domain_configs }}"
+  when: riot_deployment_method == "webroot"
+
+- name: Deploy docker container
+  docker_container:
+    name: "riot-web"
+    image: "docker.io/vectorim/riot-web:v{{ riot_version }}"
+    ports: "{{ riot_docker_ports }}"
+    labels: "{{ riot_docker_labels_complete }}"
+    restart_policy: unless-stopped
+    volumes: "{{ riot_docker_volumes }}"
+  when: riot_deployment_method == "docker"

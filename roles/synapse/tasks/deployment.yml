@@ -1,0 +1,73 @@
+---
+- name: install synapse with pip into virtualenv
+  block:
+    - name: Install dependencies
+      apt:
+        name:
+          - git
+          - build-essential
+          - python3-dev
+          - python-virtualenv
+          - python-pip
+          - python-setuptools
+          - sqlite3
+          - libffi-dev
+          - libssl-dev
+          - libjpeg-dev
+          - libxslt1-dev
+          - libpq-dev
+        state: present
+        cache_valid_time: 1800
+      tags:
+        - pre_install
+
+    - name: Create virtualenv
+      pip:
+        name:
+          - pip
+          - setuptools
+        virtualenv: "{{ matrix_synapse_base_path }}/env"
+        virtualenv_python: python3
+        extra_args: --upgrade
+      tags:
+        - pre_install
+
+    - name: Clone synapse
+      git:
+        repo: https://github.com/matrix-org/synapse
+        dest: "{{ matrix_synapse_base_path }}/synapse"
+        accept_hostkey: yes
+        version: "{{ matrix_synapse_version }}"
+      register: clone_synapse
+      tags:
+        - pre_install
+
+    - name: Install Synapse
+      pip:
+        name: "{{ matrix_synapse_base_path }}/synapse[matrix-synapse-ldap3,postgres,resources.consent,acme,url_preview]"
+        virtualenv: "{{ matrix_synapse_base_path }}/env"
+      when: clone_synapse.changed
+      tags:
+        - skip_ansible_lint # skip when clause
+        - pre_install
+      notify: restart matrix-synapse
+  when: matrix_synapse_deployment_method == "pip"
+
+- name: install synapse with docker
+  docker_container:
+    name: "{{ matrix_synapse_container_name }}"
+    image: "{{ matrix_synapse_container_ref }}:{{ matrix_synapse_version }}"
+    ports: "{{ matrix_synapse_docker_ports }}"
+    labels: "{{ matrix_synapse_docker_labels_complete }}"
+    restart_policy: unless-stopped
+    recreate: true
+    pull: true
+    entrypoint: "python"
+    command:
+      - "-m"
+      - "synapse.app.homeserver"
+      - "-c"
+      - "{{ matrix_synapse_base_path }}/homeserver.yaml"
+    user: "{{ synapse_user.uid }}:{{ synapse_user.group }}"
+    volumes: "{{ matrix_synapse_docker_volumes }}"
+  when: matrix_synapse_deployment_method == "docker"

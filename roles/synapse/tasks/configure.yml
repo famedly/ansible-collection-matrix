@@ -1,0 +1,64 @@
+---
+- name: create user
+  user:
+    name: synapse
+    state: present
+  register: synapse_user
+  tags:
+    - pre_install
+
+- name: create directory
+  file:
+    path: "{{ matrix_synapse_base_path }}"
+    state: directory
+    owner: synapse
+    group: synapse
+  tags:
+    - pre_install
+
+- name: Create secrets directory
+  file:
+    path: "{{ matrix_synapse_secrets_path }}"
+    state: directory
+    owner: synapse
+    group: synapse
+  tags:
+    - pre_install
+
+- name: Generate secrets
+  include_tasks: generate_secret.yml
+  loop:
+    - file: "macaroon.key"
+      var: "macaroon_file"
+    - file: "registration.key"
+      var: "registration_shared_secret_file"
+    - file: "form.key"
+      var: "form_secret_file"
+  loop_control:
+    loop_var: secret
+
+- name: Create directory for media storage
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: synapse
+    group: synapse
+  loop:
+    - "{{ matrix_synapse_config.media_store_path }}"
+    - "{{ matrix_synapse_config.uploads_path }}"
+    - "{{ matrix_synapse_base_path }}/tls"
+
+- name: Deploy config
+  copy:
+    content: "{{ matrix_synapse_config | to_nice_yaml }}"
+    dest: "{{ matrix_synapse_base_path }}/homeserver.yaml"
+    owner: synapse
+    group: synapse
+  notify:
+    - "restart matrix-synapse"
+
+- name: Configure logging
+  import_tasks: logging.yml
+
+- name: Create certificates
+  include_tasks: crypto.yml

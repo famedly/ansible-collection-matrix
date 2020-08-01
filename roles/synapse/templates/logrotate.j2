@@ -1,0 +1,10 @@
+{{ ansible_managed | comment }}
+{{ matrix_synapse_log_dir }}/matrix_synapse.log {
+    daily
+    rotate {{ matrix_synapse_log_days_keep }}
+    compress
+    shred
+    postrotate
+      /usr/bin/pkill -HUP rsyslogd
+    endscript
+}

@@ -1,0 +1,17 @@
+---
+language: python
+services: docker
+
+env:
+  global:
+    - ROLE_NAME: ansible-riot-webapp
+  matrix:
+    - MOLECULE_DISTRO: debian9
+
+install:
+  - pip install molecule docker
+
+jobs:
+  include:
+    - stage: default
+      script: molecule test
