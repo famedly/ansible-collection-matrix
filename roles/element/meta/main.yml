@@ -1,14 +1,11 @@
 ---
 galaxy_info:
   author: Emmanouil Kampitakis (@madonius)
-  description: Installs and configures a riot webapplication
+  description: Installs and configures element
 
   license: MIT
 
   min_ansible_version: 2.7
-
-  # If this a Container Enabled role, provide the minimum Ansible Container version.
-  # min_ansible_container_version:
 
   platforms:
     - name: Debian
@@ -17,6 +14,6 @@ galaxy_info:
 
   galaxy_tags:
     - matrix
-    - riot
+    - element
 
 dependencies: []

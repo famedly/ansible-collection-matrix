@@ -1,0 +1,45 @@
+---
+- name: Create element directory
+  file:
+    dest: "{{ element_webapp_dir }}"
+    state: directory
+
+- name: Download and install element web app
+  import_tasks: download.yml
+  when: element_deployment_method == "webroot"
+
+- name: Write main configuration
+  copy:
+    content: "{{ element_config | to_nice_json }}"
+    dest: "{{ element_webapp_dir }}/config.json"
+
+- name: Write domain specific configurations
+  copy:
+    content: "{{ item.config | to_nice_json }}"
+    dest: "{{ element_webapp_dir }}/config.{{ item.domain }}.json"
+  loop: "{{ element_domain_configs }}"
+
+- name: Link main configuration
+  file:
+    src: "{{ element_webapp_dir }}/config.json"
+    dest: "{{ element_webapp_dir }}/element-v{{ element_version }}/config.json"
+    state: link
+  when: element_deployment_method == "webroot"
+
+- name: Link domain specific configurations
+  file:
+    src: "{{ element_webapp_dir }}/config.{{ item.domain }}.json"
+    dest: "{{ element_webapp_dir }}/element-v{{ element_version }}/config.{{ item.domain }}.json"
+    state: link
+  loop: "{{ element_domain_configs }}"
+  when: element_deployment_method == "webroot"
+
+- name: Deploy docker container
+  docker_container:
+    name: "element-web"
+    image: "docker.io/vectorim/riot-web:v{{ element_version }}"
+    ports: "{{ element_docker_ports }}"
+    labels: "{{ element_docker_labels_complete }}"
+    restart_policy: unless-stopped
+    volumes: "{{ element_docker_volumes }}"
+  when: element_deployment_method == "docker"

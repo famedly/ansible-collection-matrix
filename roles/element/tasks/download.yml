@@ -1,0 +1,57 @@
+---
+- name: Check if element is already deployed
+  stat:
+    path: "{{ element_webapp_dir }}/element-v{{ element_version }}"
+  register: element_app_directory
+
+- name: Deploy element
+  block:
+    - name: Create gpg temporary home directory
+      file:
+        dest: /tmp/gpg-tmp
+        state: directory
+        mode: 0700
+
+    - name: Download element v{{ element_version }}
+      get_url:
+        url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/riot-v{{ element_version }}.tar.gz"
+        dest: "/tmp/element-v{{ element_version }}.tar.gz"
+
+    - name: Download element v{{ element_version }} signature
+      get_url:
+        url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/riot-v{{ element_version }}.tar.gz.asc"
+        dest: "/tmp/element-v{{ element_version }}.tar.gz.asc"
+
+    - name: Retrieve the Riot release key  # noqa 301
+      command: >-
+        gpg --no-default-keyring
+        --homedir /tmp/gpg-tmp
+        --keyring /tmp/gpg-tmp/element-key
+        --keyserver hkps://keyserver.ubuntu.com
+        --recv-keys 5EA7E0F70461A3BCBEBE4D5EF6151806032026F9
+      register: get_element_gpg_key
+      until: get_element_gpg_key.rc == 0
+      retries: 10
+      delay: 2
+
+    - name: "Verify element v{{ element_version }}'s signature"  # noqa 301
+      command: >-
+        gpg --no-default-keyring
+        --homedir /tmp/gpg-tmp
+        --keyring /tmp/gpg-tmp/element-key
+        --verify /tmp/element-v{{ element_version }}.tar.gz.asc
+        /tmp/element-v{{ element_version }}.tar.gz
+      register: element_tarball_verification
+
+    - name: Unpack element
+      unarchive:
+        src: "/tmp/element-v{{ element_version }}.tar.gz"
+        dest: "{{ element_webapp_dir }}"
+        remote_src: yes
+      when: element_tarball_verification.rc == 0
+
+    - name: Clean temporary gpg directory
+      file:
+        dest: /tmp/gpg-tmp
+        state: absent
+  when: not element_app_directory.stat.exists

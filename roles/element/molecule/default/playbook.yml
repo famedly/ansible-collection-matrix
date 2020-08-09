@@ -10,4 +10,4 @@
           - dirmngr
       become: true
   roles:
-    - role: ansible-riot-webapp
+    - role: element
