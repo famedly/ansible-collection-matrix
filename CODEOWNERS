@@ -1,1 +1,3 @@
 * @jcgruenhage
+roles @jcgruenhage @madonius
+plugins/modules/matrix_signing_key.py @madonius

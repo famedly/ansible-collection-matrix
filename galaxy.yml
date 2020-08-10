@@ -4,6 +4,7 @@ version: 0.1.0
 readme: README.md
 authors:
 - Jan Christian Grünhage <jan.christian@gruenhage.xyz>
+- Emmanouil Kampitakis
 description: roles and modules for managing a matrix.org deployment
 license:
 - AGPL-3.0-only
