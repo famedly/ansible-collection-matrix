@@ -22,14 +22,14 @@
 - name: Link main configuration
   file:
     src: "{{ element_webapp_dir }}/config.json"
-    dest: "{{ element_webapp_dir }}/element-v{{ element_version }}/config.json"
+    dest: "{{ element_webapp_dir }}/riot-v{{ element_version }}/config.json"
     state: link
   when: element_deployment_method == "webroot"
 
 - name: Link domain specific configurations
   file:
     src: "{{ element_webapp_dir }}/config.{{ item.domain }}.json"
-    dest: "{{ element_webapp_dir }}/element-v{{ element_version }}/config.{{ item.domain }}.json"
+    dest: "{{ element_webapp_dir }}/riot-v{{ element_version }}/config.{{ item.domain }}.json"
     state: link
   loop: "{{ element_domain_configs }}"
   when: element_deployment_method == "webroot"
