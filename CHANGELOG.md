@@ -10,9 +10,42 @@ The format is based on [Keep a Changelog], and this project adheres to
 [conventional commits]: https://www.conventionalcommits.org/en/v1.0.0/
 
 ## Overview
+- [`0.1.3`](#013) – _2020.09.15_
 - [`0.1.2`](#012) – _2020.08.17_
 - [`0.1.1`](#011) – _2020.08.14_
 - [`0.1.0`](#010) – _2020.08.10_
+
+## [0.1.3]
+
+_2020.09.15_
+
+### Contributions
+
+This release is made possible by the following people (in alphabetical order).
+Thank you all for your contributions. Your work – no matter how significant – is
+greatly appreciated by the community. 💖
+
+- Jan Christian Grünhage (<jan.christian@gruenhage.xyz>)
+
+### Changes
+
+#### Synapse Role
+
+##### Documentation
+
+- **fix markdown tables in README** ([`4290448`])
+
+##### Updates
+
+- **bump version to 1.19.1** ([`cc0e081`])
+
+
+#### Element Role
+
+##### Updates
+
+- **bump version to 1.7.7** ([`5d20369`])
+
 
 ## [0.1.2]
 
@@ -124,12 +157,13 @@ greatly appreciated by the community. 💖
 
 <!--
 Config(
-  accept_types: ["feat", "fix", "update", "refactor"],
+  accept_types: ["feat", "fix", "update", "refactor", "docs"],
   type_headers: {
     "feat": "Features",
     "fix": "Bug Fixes",
     "update": "Updates",
-    "refactor": "Refactoring"
+    "refactor": "Refactoring",
+    "docs": "Documentation"
   },
   scope_headers: {
     "synapse": "Synapse Role",
