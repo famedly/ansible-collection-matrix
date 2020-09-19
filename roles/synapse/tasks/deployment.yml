@@ -37,7 +37,7 @@
         repo: https://github.com/matrix-org/synapse
         dest: "{{ matrix_synapse_base_path }}/synapse"
         accept_hostkey: yes
-        version: "{{ matrix_synapse_version }}"
+        version: "v{{ matrix_synapse_version }}"
       register: clone_synapse
       tags:
         - pre_install
@@ -56,7 +56,7 @@
 - name: install synapse with docker
   docker_container:
     name: "{{ matrix_synapse_container_name }}"
-    image: "{{ matrix_synapse_container_ref }}:{{ matrix_synapse_version }}"
+    image: "{{ matrix_synapse_container_ref }}:{{ matrix_synapse_container_tag }}"
     ports: "{{ matrix_synapse_docker_ports }}"
     labels: "{{ matrix_synapse_docker_labels_complete }}"
     restart_policy: unless-stopped
