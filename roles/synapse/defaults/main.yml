@@ -7,7 +7,7 @@ matrix_synapse_secrets_path: "{{ matrix_synapse_base_path }}/secrets"
 matrix_synapse_dh_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.dh"
 matrix_synapse_baseurl: "https://{{ matrix_server_name }}"
 matrix_synapse_signing_key_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.signing.key"
-matrix_synapse_version: "v1.19.3"
+matrix_synapse_version: "1.19.3"
 matrix_synapse_log_dir: "/var/log/matrix_synapse"
 matrix_synapse_log_days_keep: 14
 matrix_synapse_pid_file: "{{ matrix_synapse_base_path }}/synapse.pid"
@@ -15,4 +15,5 @@ matrix_synapse_docker_ports: ["8008:8008", "8448:8448"]
 matrix_synapse_docker_labels: {}
 matrix_synapse_extra_docker_volumes: []
 matrix_synapse_container_ref: "docker.io/matrixdotorg/synapse"
+matrix_synapse_container_tag: "v{{ matrix_synapse_version }}"
 matrix_synapse_container_name: "synapse"
