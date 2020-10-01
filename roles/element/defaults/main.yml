@@ -1,5 +1,5 @@
 ---
-element_version: 1.7.7
+element_version: 1.7.8
 element_webapp_dir: /opt/element
 element_config:
   default_server_config:
