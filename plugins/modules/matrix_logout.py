@@ -53,9 +53,9 @@ try:
     from nio import AsyncClient
 except ImportError:
     MATRIX_IMP_ERR = traceback.format_exc()
-    matrix_found = False
+    MATRIX_FOUND = False
 else:
-    matrix_found = True
+    MATRIX_FOUND = True
 
 async def run_module():
     module_args = dict(
@@ -72,7 +72,7 @@ async def run_module():
         supports_check_mode=True
     )
 
-    if not matrix_found:
+    if not MATRIX_FOUND:
         module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
 
     if module.check_mode:

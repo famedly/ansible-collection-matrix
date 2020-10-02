@@ -54,7 +54,6 @@ room_id:
 import traceback
 import asyncio
 import re
-import sys
 
 from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 
@@ -63,9 +62,9 @@ try:
     from nio import (AsyncClient, RoomResolveAliasResponse, JoinedRoomsError, RoomCreateResponse, JoinResponse)
 except ImportError:
     MATRIX_IMP_ERR = traceback.format_exc()
-    matrix_found = False
+    MATRIX_FOUND = False
 else:
-    matrix_found = True
+    MATRIX_FOUND = True
 
 async def run_module():
     module_args = dict(
@@ -84,7 +83,7 @@ async def run_module():
         supports_check_mode=True
     )
 
-    if not matrix_found:
+    if not MATRIX_FOUND:
         module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
 
     if module.check_mode:
@@ -111,7 +110,7 @@ async def run_module():
         else:
             # Try to join room
             join_resp = await client.join(module.params['alias'])
-            
+
             # If successful, return, changed=true
             if isinstance(join_resp, JoinResponse):
                 result = {"room_id": join_resp.room_id, "changed": True}
@@ -130,7 +129,6 @@ async def run_module():
         if isinstance(create_room_resp, RoomCreateResponse):
             result = {"room_id": create_room_resp.room_id, "changed": True}
         else:
-            json_resp = await create_room_resp.transport_response.json()
             failed = True
             result = {"msg": "Room does not exist but couldn't be created either: {0}".format(create_room_resp)}
 

@@ -78,9 +78,9 @@ try:
     from nio import AsyncClient, RoomBanError, RoomUnbanError, RoomKickError, RoomInviteError, RoomGetStateError
 except ImportError:
     MATRIX_IMP_ERR = traceback.format_exc()
-    matrix_found = False
+    MATRIX_FOUND = False
 else:
-    matrix_found = True
+    MATRIX_FOUND = True
 
 async def get_room_members(client, room_id, res):
     member_resp = await client.room_get_state(room_id)
@@ -97,40 +97,32 @@ async def ban_from_room(client, room_id, user_id, res):
     if isinstance(ban_resp, RoomBanError):
         res['msg'] = "Could not ban user={0} from roomId={1}".format(user_id, room_id)
         raise Exception()
-    else:
-        res['changed'] = True
-        res['banned'].append(user_id)
-    return
+    res['changed'] = True
+    res['banned'].append(user_id)
 
 async def unban_from_room(client, room_id, user_id, res):
     ban_resp = await client.room_unban(room_id, user_id)
     if isinstance(ban_resp, RoomUnbanError):
         res['msg'] = "Could not unban user={0} from roomId={1}".format(user_id, room_id)
         raise Exception()
-    else:
-        res['changed'] = True
-        res['unbanned'].append(user_id)
-    return
+    res['changed'] = True
+    res['unbanned'].append(user_id)
 
 async def kick_from_room(client, room_id, user_id, res):
     kick_resp = await client.room_kick(room_id, user_id)
     if isinstance(kick_resp, RoomKickError):
         res['msg'] = "Could not kick user={0} from roomId={1}".format(user_id, room_id)
         raise Exception()
-    else:
-        res['changed'] = True
-        res['kicked'].append(user_id)
-    return
+    res['changed'] = True
+    res['kicked'].append(user_id)
 
 async def invite_to_room(client, room_id, user_id, res):
     invite_resp = await client.room_invite(room_id, user_id)
     if isinstance(invite_resp, RoomInviteError):
         res['msg'] = "Could not invite user={0} to roomId={1}".format(user_id, room_id)
         raise Exception()
-    else:
-        res['changed'] = True
-        res['invited'].append(user_id)
-    return
+    res['changed'] = True
+    res['invited'].append(user_id)
 
 
 async def run_module():
@@ -157,7 +149,7 @@ async def run_module():
         argument_spec=module_args,
         supports_check_mode=True
     )
-    if not matrix_found:
+    if not MATRIX_FOUND:
         module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
 
     if module.check_mode:

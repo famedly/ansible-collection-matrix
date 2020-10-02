@@ -56,7 +56,7 @@ EXAMPLES = '''
     event_type: m.room.server_acl
     state_key: ""
     content:
-      allow: 
+      allow:
         - "*"
       deny:
         - "bad-server.one"
@@ -84,9 +84,9 @@ try:
     from nio import AsyncClient, RoomGetStateEventResponse, RoomPutStateResponse, JoinedRoomsError
 except ImportError:
     MATRIX_IMP_ERR = traceback.format_exc()
-    matrix_found = False
+    MATRIX_FOUND = False
 else:
-    matrix_found = True
+    MATRIX_FOUND = True
 
 
 async def run_module():
@@ -109,7 +109,7 @@ async def run_module():
         supports_check_mode=True
     )
 
-    if not matrix_found:
+    if not MATRIX_FOUND:
         module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
 
     if module.check_mode:
@@ -162,7 +162,7 @@ async def run_module():
     if failed:
         module.fail_json(**result)
     else:
-        module.exit_json(**result)    
+        module.exit_json(**result)
 
 def main():
     asyncio.run(run_module())

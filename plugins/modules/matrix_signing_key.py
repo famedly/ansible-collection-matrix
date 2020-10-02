@@ -2,14 +2,14 @@
 # Copyright: (c) 2018, Emmanouil Kampitakis <info@kampitakis.de>
 # Apache 2.0
 
+import os
 from ansible.module_utils.basic import AnsibleModule
 from signedjson import key
-import os
 
 def write_signing_key(path):
-    with open(path,'w') as f:
+    with open(path,'w') as file:
         key.write_signing_keys(
-              f, 
+              file,
               [key.generate_signing_key('first')]
         )
 
@@ -35,9 +35,8 @@ def run_module():
 
     if not signing_key_exists:
         result['changed'] = True
-        if module.check_mode: 
-            return result
-        
+        if module.check_mode:
+            module.exit_json(**result)
         write_signing_key(signing_key_path)
 
     module.exit_json(**result)
@@ -47,5 +46,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
