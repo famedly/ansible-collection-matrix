@@ -1,0 +1,29 @@
+---
+
+- name: Build homeserver media worker override
+  set_fact:
+    matrix_synapse_media_worker_override:
+      enable_media_repo: False
+      media_instance_running_background_jobs: "worker_media_1"
+  when: matrix_synapse_workers_media|int > 0
+
+- name: Register all federation senders to synapse
+  set_fact:
+    matrix_synapse_worker_fed_senders: >
+      {{ matrix_synapse_worker_fed_senders }}
+      +
+      ["worker_fed_out_{{ item }}"]
+  loop: "{{ range(1, matrix_synapse_workers_federation_out + 1) | list }}"
+
+- name: Build homeserver federation override
+  set_fact:
+    matrix_synapse_fed_sender_override:
+      send_federation: False
+      federation_sender_instances: "{{ matrix_synapse_worker_fed_senders }}"
+  when: matrix_synapse_workers_federation_out|int > 0
+
+- name: Merge federation sender costum config into homeserver config
+  set_fact:
+    matrix_synapse_worker_config: "{{ [ matrix_synapse_worker_config, matrix_synapse_fed_sender_override, matrix_synapse_media_worker_override ] | combine(recursive=True) }}"
+
+

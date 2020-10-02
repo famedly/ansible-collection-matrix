@@ -1,0 +1,96 @@
+---
+- name: Deploy workers using docker
+  when: matrix_synapse_deployment_method == "docker"
+  block:
+
+    - name: Query all running docker containers
+      docker_host_info:
+        containers: yes
+      register: matrix_docker_host_res
+
+    - name: Filter all running synapse workers
+      set_fact:
+        matrix_synapse_running_workers: >-2
+          {{
+            matrix_docker_host_res.containers
+            | map(attribute='Names')
+            | map('first') | map('replace', '/', '')
+            | select('match', '^'+matrix_synapse_container_name + '_')
+            | list
+          }}
+
+    - name: Stop leftover running containers
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ matrix_synapse_running_workers | difference(matrix_synapse_workers | map(attribute='container_name')) }}"
+
+    - name: Deploy workers (docker)
+      docker_container:
+        name: "{{ item.container_name }}"
+        image: "{{ matrix_synapse_worker_image }}"
+        labels: "{{ item.labels|default({})|combine(matrix_synapse_worker_labels[item.name]|default({})) }}"
+        restart_policy: unless-stopped
+        recreate: true
+        pull: true
+        entrypoint: "python"
+        command: "{{ item.container_command }}"
+        user: "{{ synapse_user.uid }}:{{ synapse_user.group }}"
+        volumes: "{{ matrix_synapse_docker_volumes + item.extra_volumes }}"
+        ports: "{{ item.ports | default(omit) }}"
+        healthcheck:
+          test: "{{ ('curl -fSs http://localhost:' + item.port + '/health || exit 1') if item.port is defined else '[\"NONE\"]' }}"
+      loop: "{{ matrix_synapse_workers }}"
+
+
+- name: Deploy workers using systemd
+  when: matrix_synapse_supervision_method == "systemd"
+  block:
+
+    - name: Query all running services
+      service_facts:
+
+    - name: Find all currently running synapse workers
+      set_fact:
+        matrix_synapse_running_workers: >-2
+          {{
+            ansible_facts.services
+            | dict2items
+            | selectattr('key', 'match', '^matrix-worker')
+            | map(attribute='value.name')
+            | list
+          }}
+
+    - name: Find running workers to stop
+      set_fact:
+        matrix_synapse_services_to_stop: >-2
+          {{
+            matrix_synapse_running_workers
+            | difference(
+              matrix_synapse_workers
+              | map(attribute='service_name'))
+              | list
+            | list
+          }}
+
+    - name: Stop leftover running worker services
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+      loop: "{{ matrix_synapse_services_to_stop }}"
+
+    - name: Remove leftover unit files
+      file:
+        path: "/etc/systemd/system/{{ item }}"
+        state: absent
+      loop: "{{ matrix_synapse_services_to_stop }}"
+
+    - name: Template systemd service files
+      template:
+        src: worker.service.j2
+        dest: "/etc/systemd/system/matrix-{{ item.name }}.service"
+      loop: "{{ matrix_synapse_workers }}"
+      notify:
+        - "reload systemd"
+        - "restart matrix-synapse"
+

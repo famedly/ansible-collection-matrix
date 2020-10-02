@@ -1,0 +1,28 @@
+[Unit]
+Description=Synapse Worker {{ item.name }}
+AssertPathExists={{ matrix_synapse_base_path }}/{{ item.name }}.yaml
+
+# This service should be restarted when the synapse service is restarted.
+PartOf=matrix-synapse.service
+ReloadPropagatedFrom=matrix-synapse.service
+Before=matrix-synapse.service
+
+After=network.target
+
+[Service]
+Type=notify
+NotifyAccess=main
+User=synapse
+Group=synapse
+WorkingDirectory={{ matrix_synapse_base_path }}
+ExecStart={{ matrix_synapse_base_path }}/env/bin/python \
+	-m {{ item.app }} \
+	--config-path={{ matrix_synapse_base_path }}/homeserver.yaml \
+	--config-path={{ matrix_synapse_base_path }}/{{ item.name }}.yaml
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=3
+SyslogIdentifier=matrix-synapse-{{ item.name }}
+
+[Install]
+WantedBy=matrix-synapse.service

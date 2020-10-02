@@ -23,9 +23,12 @@
 
     - name: Create virtualenv
       pip:
-        name:
-          - pip
-          - setuptools
+        name: >-2
+          {{
+            ['pip', 'setuptools']
+            +
+            (['txredisapi>=1.4.7', 'hiredis'] if matrix_synapse_workers_enabled|bool else [])
+          }}
         virtualenv: "{{ matrix_synapse_base_path }}/env"
         virtualenv_python: python3
         extra_args: --upgrade

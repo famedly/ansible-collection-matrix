@@ -41,6 +41,27 @@ The following should be present on the target system
 | matrix_synapse_deployment_method  | pip                                                                       | Either pip or docker [¹](#footnote_1)                                                                                         |
 | matrix_synapse_supervision_method | systemd                                                                   | Either systemd, runit or docker [¹](#footnote_1)                                                                              |
 | matrix_synapse_python_version     | 3                                                                         | Default python version (2, 3) to be used                                                                                      |
+| matrix_synapse_redis_enabled      | false                                                                     | If synapse should connect to redis (needed for workers)                                                                       |
+| matrix_synapse_redis_host         | _None_                                                                    | host on which redis is running                                                                                                |
+| matrix_synapse_redis_port         | 6379                                                                      | port on which redis is running                                                                                                |
+| matrix_synapse_redis_pass         | _None_                                                                    | password to use to authentificate to redis                                                                                    |
+
+
+### Worker control variables
+
+| Name                                   | Value   | Description                                              |
+| :---                                   | :---    | :---                                                     |
+| matrix_synapse_workers_enabled         | `false` | Enables workers and starts the replication listener      |
+| matrix_synapse_workers_client          | `0`     | Amount of workers to deploy which serve the client API   |
+| matrix_synapse_workers_federation_in   | `0`     | Amount of federation workers to deploy (inbound)         |
+| matrix_synapse_workers_federation_out  | `0`     | Amount of federation sender workers to deploy (outbound) |
+| matrix_synapse_workers_media           | `0`     | Amount of media-repo workers to deploy                   |
+| matrix_synapse_worker_push             | `false` | Enables a worker for pushes to sygnal/emal               |
+| matrix_synapse_worker_appservice       | `false` | Enables a worker to handle synapse->appservice traffic   |
+| matrix_synapse_worker_user_search      | `false` | Enable a worker to handle user_directory search          |
+| matrix_synapse_worker_replication_port | `9003`  | Synapse replication port to use                          |
+| matrix_synapse_worker_metrics_enabled  | `false` | Enable metrics endpoint on each worker                   |
+| matrix_synapse_worker_metrics_port     | `9101`  | Port on which metrics on each container can be reached   |
 
 <a name="footnote_1">¹</a>: Docker must be used for both or neither deployment and supervision
 

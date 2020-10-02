@@ -5,8 +5,28 @@
   when: (matrix_synapse_supervision_method == "docker" and matrix_synapse_deployment_method != "docker") or
         (matrix_synapse_deployment_method == "docker" and matrix_synapse_supervision_method != "docker")
 
+- name: Fail if workers are enabled but no redis is configured for synapse
+  fail:
+    msg: "Redis needs to be enabled on synapse in order for workers to be able to be run"
+  when: matrix_synapse_workers_enabled|bool and not matrix_synapse_redis_enabled|bool
+
+- name: prepare user, group and base directory
+  import_tasks: prepare.yml
+
+- name: configure workers
+  import_tasks: configure_workers.yml
+  when: matrix_synapse_workers_enabled
+
+- name: configure config overrides from workers
+  import_tasks: configure_worker_overrides.yml
+  when: matrix_synapse_workers_enabled
+
 - name: configure synapse
   import_tasks: configure.yml
+
+- name: deploy workers
+  import_tasks: deploy_workers.yml
+  when: matrix_synapse_workers_enabled
 
 - name: deploy synapse
   import_tasks: deployment.yml

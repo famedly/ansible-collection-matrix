@@ -7,6 +7,27 @@ matrix_synapse_base_docker_volumes:
   - "{{ matrix_synapse_base_path }}/log.config:{{ matrix_synapse_base_path }}/log.config"
   - "{{ matrix_synapse_base_path }}/tls:{{ matrix_synapse_base_path }}/tls"
 matrix_synapse_config: "{{ matrix_synapse_base_config | combine(matrix_synapse_extra_config, recursive=True) }}"
+
+# Worker-specific config
+matrix_synapse_media_worker_override: {}
+matrix_synapse_fed_sender_override: {}
+matrix_synapse_worker_fed_senders: []
+matrix_synapse_worker_metrics_listener:
+  - type: metrics
+    port: "{{ matrix_synapse_worker_metrics_port }}"
+matrix_synapse_worker_config:
+  start_pushers: "{{ not matrix_synapse_worker_push }}"
+  notify_appservices: "{{ not matrix_synapse_worker_appservice }}"
+  update_user_directory: "{{ not matrix_synapse_worker_user_search }}"
+  listeners:
+    - port: "{{ matrix_synapse_worker_replication_port }}"
+      bind_addresses:
+      - "{{ matrix_synapse_worker_replication_bind_ip }}"
+      type: http
+      resources:
+        - names: [ replication ]
+
+# homeserver.yml
 matrix_synapse_base_config:
   server_name: "{{ matrix_server_name }}"
   tls_certificate_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.crt"
@@ -56,6 +77,11 @@ matrix_synapse_base_config:
       host: "{{ matrix_synapse_pg_host }}"
       cp_min: 5
       cp_max: 10
+  redis:
+    enabled: "{{ matrix_synapse_redis_enabled }}"
+    host: "{{ matrix_synapse_redis_host }}"
+    port: "{{ matrix_synapse_redis_port }}"
+    password: "{{ matrix_synapse_redis_pass }}"
   log_config: "{{ matrix_synapse_base_path }}/log.config"
   event_cache_size: "10K"
   rc_messages_per_second: 0.2
@@ -149,3 +175,68 @@ matrix_synapse_base_config:
 matrix_synapse_docker_labels_complete: "{{ matrix_synapse_docker_labels_base | combine(matrix_synapse_docker_labels) }}"
 matrix_synapse_docker_labels_base:
   version: "{{ matrix_synapse_version }}"
+
+
+# Control where which paths get routed
+matrix_synapse_worker_client_sync_endpoints:
+  - "/_matrix/client/(v2_alpha|r0)/sync$"
+  - "/_matrix/client/(api/v1|v2_alpha|r0)/events$"
+  - "/_matrix/client/(api/v1|r0)/initialSync$"
+  - "/_matrix/client/(api/v1|r0)/rooms/[^/]+/initialSync$"
+matrix_synapse_worker_client_api_endpoints:
+  - "/_matrix/client/(api/v1|r0|unstable)/publicRooms$"
+  - "/_matrix/client/(api/v1|r0|unstable)/rooms/.*/joined_members$"
+  - "/_matrix/client/(api/v1|r0|unstable)/rooms/.*/context/.*$"
+  - "/_matrix/client/(api/v1|r0|unstable)/rooms/.*/members$"
+  - "/_matrix/client/(api/v1|r0|unstable)/rooms/.*/state$"
+  - "/_matrix/client/(api/v1|r0|unstable)/account/3pid$"
+  - "/_matrix/client/(api/v1|r0|unstable)/keys/query$"
+  - "/_matrix/client/(api/v1|r0|unstable)/keys/changes$"
+  - "/_matrix/client/versions$"
+  - "/_matrix/client/(api/v1|r0|unstable)/voip/turnServer$"
+  - "/_matrix/client/(api/v1|r0|unstable)/joined_groups$"
+  - "/_matrix/client/(api/v1|r0|unstable)/publicised_groups$"
+  - "/_matrix/client/(api/v1|r0|unstable)/publicised_groups/"
+  - "/_synapse/client/password_reset/email/submit_token$"
+matrix_synapse_worker_client_send_endpoints:
+  - "/_matrix/client/(api/v1|r0|unstable)/rooms/.*/send"
+  - "/_matrix/client/(api/v1|r0|unstable)/rooms/.*/state/"
+  - "/_matrix/client/(api/v1|r0|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$"
+  - "/_matrix/client/(api/v1|r0|unstable)/join/"
+  - "/_matrix/client/(api/v1|r0|unstable)/profile/"
+matrix_synapse_worker_client_login_endpoints:
+  - "/_matrix/client/(api/v1|r0|unstable)/login$"
+  - "/_matrix/client/(r0|unstable)/register$"
+  - "/_matrix/client/(r0|unstable)/auth/.*/fallback/web$"
+matrix_synapse_worker_federation_endpoints:
+  - "/_matrix/federation/v1/event/"
+  - "/_matrix/federation/v1/state/"
+  - "/_matrix/federation/v1/state_ids/"
+  - "/_matrix/federation/v1/backfill/"
+  - "/_matrix/federation/v1/get_missing_events/"
+  - "/_matrix/federation/v1/publicRooms"
+  - "/_matrix/federation/v1/query/"
+  - "/_matrix/federation/v1/make_join/"
+  - "/_matrix/federation/v1/make_leave/"
+  - "/_matrix/federation/v1/send_join/"
+  - "/_matrix/federation/v2/send_join/"
+  - "/_matrix/federation/v1/send_leave/"
+  - "/_matrix/federation/v2/send_leave/"
+  - "/_matrix/federation/v1/invite/"
+  - "/_matrix/federation/v2/invite/"
+  - "/_matrix/federation/v1/query_auth/"
+  - "/_matrix/federation/v1/event_auth/"
+  - "/_matrix/federation/v1/exchange_third_party_invite/"
+  - "/_matrix/federation/v1/user/devices/"
+  - "/_matrix/federation/v1/get_groups_publicised$"
+  - "/_matrix/key/v2/query"
+  - "/_matrix/federation/v1/send/"
+matrix_synapse_worker_media_endpoints:
+  - "/_matrix/media/"
+  - "/_synapse/admin/v1/purge_media_cache$"
+  - "/_synapse/admin/v1/room/.*/media.*$"
+  - "/_synapse/admin/v1/user/.*/media.*$"
+  - "/_synapse/admin/v1/media/.*$"
+  - "/_synapse/admin/v1/quarantine_media/.*$"
+matrix_synapse_worker_user_search_endpoints:
+  - "/_matrix/client/(api/v1|r0|unstable)/user_directory/search$"

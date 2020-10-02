@@ -1,5 +1,9 @@
 [Unit]
 Description="Matrix Synapse Server (synapse)"
+{% for worker in matrix_synapse_workers %}
+Wants=matrix-{{ worker.name }}.service
+{% endfor %}
+After=network.target
 
 [Service]
 Type=simple
@@ -14,3 +18,4 @@ SyslogIdentifier=matrix_synapse
 
 [Install]
 WantedBy=default.target
+

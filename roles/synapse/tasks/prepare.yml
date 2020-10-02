@@ -1,0 +1,28 @@
+---
+- name: create appservice user
+  group:
+    name: "matrix-appservices"
+    state: present
+    system: yes
+
+- name: create user
+  user:
+    name: synapse
+    state: present
+    groups: [ "matrix-appservices" ]
+    append: yes
+  register: synapse_user
+  tags:
+    - pre_install
+
+- name: create directory
+  file:
+    path: "{{ matrix_synapse_base_path }}"
+    state: directory
+    owner: synapse
+    group: synapse
+    mode: 0750
+  tags:
+    - pre_install
+
+

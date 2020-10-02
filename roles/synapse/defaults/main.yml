@@ -20,3 +20,41 @@ matrix_synapse_extra_docker_volumes: []
 matrix_synapse_container_ref: "docker.io/matrixdotorg/synapse"
 matrix_synapse_container_tag: "v{{ matrix_synapse_version }}"
 matrix_synapse_container_name: "synapse"
+
+# Redis config
+matrix_synapse_redis_enabled: false
+matrix_synapse_redis_host: ~
+matrix_synapse_redis_port: 6379
+matrix_synapse_redis_pass: ~
+
+
+# Worker control config
+matrix_synapse_workers_enabled: false
+matrix_synapse_worker_metrics_enabled: false
+matrix_synapse_worker_metrics_port: 9101
+matrix_synapse_worker_replication_host: "{{ matrix_synapse_container_name }}"
+matrix_synapse_worker_replication_port: 9003
+matrix_synapse_worker_replication_bind_ip: "127.0.0.1"
+matrix_synapse_worker_listener_base_port: 16000
+matrix_synapse_worker_listener_bind_base_ip: "0.0.0.0"
+matrix_synapse_worker_labels: {}
+matrix_synapse_worker_image: "{{  matrix_synapse_container_ref }}:{{ matrix_synapse_container_tag }}"
+
+# Control which workers (or how many) to run
+matrix_synapse_workers_client: 0
+matrix_synapse_workers_federation_in: 0
+matrix_synapse_workers_federation_out: 0
+matrix_synapse_workers_media: 0
+matrix_synapse_worker_push: false
+matrix_synapse_worker_appservice: false
+matrix_synapse_worker_user_search: false
+
+# Control where which paths get routed
+matrix_synapse_worker_client_endpoints: >-
+  {{
+    matrix_synapse_worker_client_sync_endpoints
+    + matrix_synapse_worker_client_api_endpoints
+    + matrix_synapse_worker_client_send_endpoints
+    + matrix_synapse_worker_client_login_endpoints
+  }}
+
