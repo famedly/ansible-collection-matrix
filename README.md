@@ -10,7 +10,11 @@ servers, as well as sending notifications from ansible to matrix.
  - **matrix\_room**: Idempotently joins/creates a room with a given
    alias.
  - **matrix\_state**: Ensures room state has a given content.
+ - **matrix\_member**: Ensures room memberships are correct.
  - **matrix\_signing\_key**: Creates a server signing key.
+
+You can find more information and a sample playbook for these modules in the
+README in `./plugins/modules/`
 
 ## Roles
 In addition to the modules, this role *also* contains a few roles for
