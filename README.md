@@ -12,6 +12,7 @@ servers, as well as sending notifications from ansible to matrix.
  - **matrix\_state**: Ensures room state has a given content.
  - **matrix\_member**: Ensures room memberships are correct.
  - **matrix\_signing\_key**: Creates a server signing key.
+ - **synapse\_register**: Registers a user using synapse's admin API.
 
 You can find more information and a sample playbook for these modules in the
 README in `./plugins/modules/`

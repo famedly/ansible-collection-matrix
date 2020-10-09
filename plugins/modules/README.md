@@ -24,6 +24,12 @@ These are a few ansible modules for working with matrix rooms.
         - '@another_user:example.org'
         - '@a_third_user:example.org'
   tasks:
+    - synapse_register:
+        hs_url: "{{ matrix.homeserver }}"
+        user_id: "{{ matrix.user }}"
+        password: "{{ matrix.password }}"
+        admin: false
+        shared_secret: "iqueok1zeengieW3ohcha0riePaigh9p"
     - matrix_login:
         hs_url: "{{ matrix.homeserver }}"
         user_id: "{{ matrix.user }}"
