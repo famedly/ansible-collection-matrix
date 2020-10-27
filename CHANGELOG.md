@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 [conventional commits]: https://www.conventionalcommits.org/en/v1.0.0/
 
 ## Overview
+- [`0.2.1`](#021) – _2020.10.27_
 - [`0.2.0`](#020) – _2020.10.09_
 - [`0.1.6`](#016) – _2020.10.02_
 - [`0.1.5`](#015) – _2020.09.18_
@@ -18,6 +19,46 @@ The format is based on [Keep a Changelog], and this project adheres to
 - [`0.1.2`](#012) – _2020.08.17_
 - [`0.1.1`](#011) – _2020.08.14_
 - [`0.1.0`](#010) – _2020.08.10_
+
+## [0.2.1]
+
+_2020.10.27_
+
+### Contributions
+
+This release is made possible by the following people (in alphabetical order).
+Thank you all for your contributions. Your work – no matter how significant – is
+greatly appreciated by the community. 💖
+
+- Jan Christian Grünhage (<jan.christian@gruenhage.xyz>)
+
+### Changes
+
+#### Synapse Role
+
+##### Updates
+
+- **bump version to 1.22.0** ([`41aa1c0`])
+
+- **bump unstable version to 1.22.0rc2** ([`83e6257`])
+
+- **bump unstable version to 1.22.0rc1** ([`c710ac4`])
+
+- **bump version to 1.21.2** ([`516e2fc`])
+
+
+#### Element Role
+
+##### Updates
+
+- **bump version to 1.7.11** ([`ee6ac50`])
+
+- **bump unstable version to 1.7.11-rc.1** ([`5dfe0da`])
+
+- **bump version to 1.7.10** ([`fcb0b40`])
+
+- **bump version to 1.7.9** ([`90ab448`])
+
 
 ## [0.2.0]
 
@@ -288,6 +329,7 @@ greatly appreciated by the community. 💖
 ##### Updates
 
 - **bump version to 1.7.2** ([`6be0252`])
+
 
 
 
