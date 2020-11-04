@@ -1,8 +1,16 @@
 ---
+- name: create appservice user
+  group:
+    name: "matrix-appservices"
+    state: present
+    system: yes
+
 - name: create user
   user:
     name: synapse
     state: present
+    groups: [ "matrix-appservices" ]
+    append: yes
   register: synapse_user
   tags:
     - pre_install
@@ -13,6 +21,7 @@
     state: directory
     owner: synapse
     group: synapse
+    mode: 0750
   tags:
     - pre_install
 
@@ -22,6 +31,7 @@
     state: directory
     owner: synapse
     group: synapse
+    mode: 0750
   tags:
     - pre_install
 
@@ -37,12 +47,13 @@
   loop_control:
     loop_var: secret
 
-- name: Create directory for media storage
+- name: Create directories for media storage and tls
   file:
     path: "{{ item }}"
     state: directory
     owner: synapse
     group: synapse
+    mode: 0770
   loop:
     - "{{ matrix_synapse_config.media_store_path }}"
     - "{{ matrix_synapse_config.uploads_path }}"
@@ -54,6 +65,7 @@
     dest: "{{ matrix_synapse_base_path }}/homeserver.yaml"
     owner: synapse
     group: synapse
+    mode: 0660
   notify:
     - "restart matrix-synapse"
 
