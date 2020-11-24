@@ -71,6 +71,6 @@
       - "synapse.app.homeserver"
       - "-c"
       - "{{ matrix_synapse_base_path }}/homeserver.yaml"
-    user: "{{ synapse_user.uid }}:{{ synapse_user.group }}"
+    user: "{{ synapse_user.uid }}:{{ appservice_group.gid }}"
     volumes: "{{ matrix_synapse_docker_volumes }}"
   when: matrix_synapse_deployment_method == "docker"

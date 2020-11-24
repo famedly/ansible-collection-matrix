@@ -1,9 +1,10 @@
 ---
-- name: create appservice user
+- name: create appservice group
   group:
     name: "matrix-appservices"
     state: present
     system: yes
+  register: appservice_group
 
 - name: create user
   user:
