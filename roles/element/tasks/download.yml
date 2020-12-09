@@ -14,15 +14,15 @@
 
     - name: Download element v{{ element_version }}
       get_url:
-        url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/riot-v{{ element_version }}.tar.gz"
+        url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/element-v{{ element_version }}.tar.gz"
         dest: "/tmp/element-v{{ element_version }}.tar.gz"
 
     - name: Download element v{{ element_version }} signature
       get_url:
-        url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/riot-v{{ element_version }}.tar.gz.asc"
+        url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/element-v{{ element_version }}.tar.gz.asc"
         dest: "/tmp/element-v{{ element_version }}.tar.gz.asc"
 
-    - name: Retrieve the Riot release key  # noqa 301
+    - name: Retrieve the Element release key  # noqa 301
       command: >-
         gpg --no-default-keyring
         --homedir /tmp/gpg-tmp
