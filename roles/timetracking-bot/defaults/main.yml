@@ -10,7 +10,7 @@ timetracking_bot_pg_pass: ~
 timetracking_bot_pg_host: ~
 timetracking_bot_pg_db: "matrix-timetracking"
 
-timetracking_bot_version: "0.1.5"
+timetracking_bot_version: "0.2.0"
 timetracking_bot_container_image_tag: ~
 timetracking_bot_container_image: "registry.gitlab.com/famedly/bots/timetracking"
 timetracking_bot_container_image_ref: '{{ timetracking_bot_container_image }}:{{ timetracking_bot_container_image_tag | default("v" + timetracking_bot_version, true) }}'
