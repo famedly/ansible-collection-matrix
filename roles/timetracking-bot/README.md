@@ -14,7 +14,7 @@ Look at `defaults/main.yml`.
 
 ## License
 
-Proprietary, all rights reserved.
+GNU Affero General Public License, AGPL-3.0
 
 ## Author Information
 
