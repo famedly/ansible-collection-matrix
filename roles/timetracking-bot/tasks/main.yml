@@ -1,0 +1,48 @@
+---
+# tasks file for timetracking-bot
+- name: create timetracking bot user
+  user:
+    name: matrix-timetracking
+    state: present
+    system: yes
+  register: timetracking_bot_user_res
+
+- name: create application directories
+  file:
+    path: "{{ item }}"
+    mode: 0750
+    owner: "{{ timetracking_bot_user_res.uid }}"
+    group: "{{ timetracking_bot_user_res.group }}"
+    state: directory
+  loop:
+    - "{{ timetracking_bot_base_path }}"
+    - "{{ timetracking_bot_store_path }}"
+
+- name: template config
+  copy:
+    content: |
+      {{ 'Managed by ansible' | comment('plain', prefix='#####', postfix='#####') }}
+      {{ timetracking_bot_config | to_nice_yaml }}
+    dest: "{{ timetracking_bot_config_path }}"
+    mode: 0640
+    owner: "{{ timetracking_bot_user_res.uid }}"
+    group: "{{ timetracking_bot_user_res.group }}"
+  notify:
+    - restart timetracking-bot
+
+- name: start container
+  docker_container:
+    name: "timetracking-bot"
+    image: "{{ timetracking_bot_container_image_ref }}"
+    restart_policy: "unless-stopped"
+    user: "{{ timetracking_bot_user_res.uid }}:{{ timetracking_bot_user_res.group }}"
+    volumes:
+      - "{{ timetracking_bot_config_path }}:{{ timetracking_bot_config_path }}"
+      - "{{ timetracking_bot_store_path }}:{{ timetracking_bot_store_path }}"
+    env: "{{ timetracking_bot_docker_env }}"
+    ports: "{{ timetracking_bot_docker_ports }}"
+    labels: "{{ timetracking_bot_docker_labels_complete }}"
+    command:
+      - "/usr/local/bin/timetracker"
+      - "-c"
+      - "{{ timetracking_bot_config_path }}"

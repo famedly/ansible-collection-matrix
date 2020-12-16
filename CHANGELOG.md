@@ -380,6 +380,7 @@ Config(
   },
   scope_headers: {
     "modules": "Modules",
+	"ttbot": "Timetracking Bot Role",
     "synapse": "Synapse Role",
     "element": "Element Role",
     "riot": "Riot Role"
