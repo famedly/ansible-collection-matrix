@@ -60,6 +60,8 @@
   docker_container:
     name: "{{ matrix_synapse_container_name }}"
     image: "{{ matrix_synapse_container_ref }}:{{ matrix_synapse_container_tag }}"
+    networks: "{{ matrix_synapse_docker_networks }}"
+    etc_hosts: "{{ matrix_synapse_docker_etc_hosts }}"
     ports: "{{ matrix_synapse_docker_ports }}"
     labels: "{{ matrix_synapse_docker_labels_complete }}"
     restart_policy: unless-stopped

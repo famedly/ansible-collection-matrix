@@ -14,6 +14,8 @@ matrix_synapse_unstable_version: "1.26.0rc1"
 matrix_synapse_log_dir: "/var/log/matrix_synapse"
 matrix_synapse_log_days_keep: 14
 matrix_synapse_pid_file: "{{ matrix_synapse_base_path }}/synapse.pid"
+matrix_synapse_docker_networks: []
+matrix_synapse_docker_etc_hosts: {}
 matrix_synapse_docker_ports: ["8008:8008", "8448:8448"]
 matrix_synapse_docker_labels: {}
 matrix_synapse_extra_docker_volumes: []
