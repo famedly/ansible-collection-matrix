@@ -5,6 +5,7 @@ timetracking_bot_config:
   mxid: "{{ timetracking_bot_mxid }}"
   password: "{{ timetracking_bot_password }}"
   store_path: "{{ timetracking_bot_store_path }}"
+  session_path: "{{ timetracking_bot_session_path }}"
   database_url: "{{ timetracking_bot_pg_url }}"
   admins: "{{ timetracking_bot_admins }}"
   allowed_users: "{{ timetracking_bot_allowed_users }}"

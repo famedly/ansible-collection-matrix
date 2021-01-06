@@ -3,6 +3,7 @@
 timetracking_bot_base_path: "/opt/matrix-timetracking"
 timetracking_bot_config_path: "{{ timetracking_bot_base_path }}/config.yaml"
 timetracking_bot_store_path: "{{ timetracking_bot_base_path }}/store"
+timetracking_bot_session_path: "{{ timetracking_bot_base_path }}/session"
 
 timetracking_bot_pg_url: "postgres://{{ timetracking_bot_pg_user }}:{{ timetracking_bot_pg_pass }}@{{ timetracking_bot_pg_host }}/{{ timetracking_bot_pg_db }}"
 timetracking_bot_pg_user: "matrix-timetracking"
@@ -10,7 +11,7 @@ timetracking_bot_pg_pass: ~
 timetracking_bot_pg_host: ~
 timetracking_bot_pg_db: "matrix-timetracking"
 
-timetracking_bot_version: "0.2.0"
+timetracking_bot_version: "0.3.3"
 timetracking_bot_container_image_tag: ~
 timetracking_bot_container_image: "registry.gitlab.com/famedly/bots/timetracking"
 timetracking_bot_container_image_ref: '{{ timetracking_bot_container_image }}:{{ timetracking_bot_container_image_tag | default("v" + timetracking_bot_version, true) }}'

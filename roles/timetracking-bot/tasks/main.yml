@@ -17,6 +17,7 @@
   loop:
     - "{{ timetracking_bot_base_path }}"
     - "{{ timetracking_bot_store_path }}"
+    - "{{ timetracking_bot_session_path }}"
 
 - name: template config
   copy:
@@ -39,6 +40,7 @@
     volumes:
       - "{{ timetracking_bot_config_path }}:{{ timetracking_bot_config_path }}"
       - "{{ timetracking_bot_store_path }}:{{ timetracking_bot_store_path }}"
+      - "{{ timetracking_bot_session_path }}:{{ timetracking_bot_session_path }}"
     env: "{{ timetracking_bot_docker_env }}"
     ports: "{{ timetracking_bot_docker_ports }}"
     labels: "{{ timetracking_bot_docker_labels_complete }}"
