@@ -133,8 +133,8 @@ matrix_synapse_base_config:
   - netloc: '*.t.co'
   max_spider_size: "10M"
   enable_registration: False
-  registration_shared_secret: >
-    "{{ registration_shared_secret_file.content | b64decode }}"
+  registration_shared_secret: >-
+    {{ registration_shared_secret_file.content | b64decode }}
   form_secret: "{{ form_secret_file.content | b64decode }}"
   bcrypt_rounds: 12
   allow_guest_access: False
