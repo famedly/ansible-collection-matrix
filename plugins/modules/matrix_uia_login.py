@@ -159,7 +159,7 @@ async def run_module():
 
     # Create client object
     client = AsyncClient(module.params['hs_url'], module.params['user_id'])
-    
+
     # Collect and check login information
     password = module.params['password']
     if password is None and token is None:

@@ -33,7 +33,7 @@ matrix_synapse_base_config:
   tls_certificate_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.crt"
   tls_private_key_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.key"
   acme:
-    enabled: false 
+    enabled: false
     url: https://acme-v01.api.letsencrypt.org/directory
     port: 80
     bind_addresses: ['::', '0.0.0.0']
@@ -112,7 +112,7 @@ matrix_synapse_base_config:
   - width: 800
     height: 600
     method: scale
-  url_preview_enabled: true 
+  url_preview_enabled: true
   url_preview_ip_range_blacklist:
   - '127.0.0.0/8'
   - '10.0.0.0/8'
@@ -143,7 +143,7 @@ matrix_synapse_base_config:
       - vector.im
   autocreate_auto_join_rooms: true
   enable_metrics: False
-  report_stats: "{{ matrix_synapse_report_stats }}" 
+  report_stats: "{{ matrix_synapse_report_stats }}"
   room_invite_state_types:
       - "m.room.join_rules"
       - "m.room.canonical_alias"
@@ -166,7 +166,7 @@ matrix_synapse_base_config:
   password_config:
     enabled: true
   push:
-    include_content: false 
+    include_content: false
   enable_group_creation: true
   alias_creation_rules:
       - user_id: "*"
