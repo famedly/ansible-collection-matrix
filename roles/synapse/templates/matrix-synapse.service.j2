@@ -1,8 +1,10 @@
 [Unit]
 Description="Matrix Synapse Server (synapse)"
+{% if matrix_synapse_workers_enabled | bool %}
 {% for worker in matrix_synapse_workers %}
 Wants=matrix-{{ worker.name }}.service
 {% endfor %}
+{% endif %}
 After=network.target
 
 [Service]
