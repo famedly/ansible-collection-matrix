@@ -5,7 +5,7 @@ matrix_synapse_supervision_method: systemd
 matrix_synapse_base_path: "/opt/synapse"
 matrix_synapse_secrets_path: "{{ matrix_synapse_base_path }}/secrets"
 matrix_synapse_dh_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.dh"
-matrix_synapse_baseurl: "https://{{ matrix_server_name }}"
+matrix_synapse_public_baseurl: "https://{{ matrix_server_name }}"
 matrix_synapse_signing_key_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.signing.key"
 matrix_synapse_version: "{{ matrix_synapse_unstable | ternary(matrix_synapse_unstable_version, matrix_synapse_stable_version) }}"
 matrix_synapse_unstable: false

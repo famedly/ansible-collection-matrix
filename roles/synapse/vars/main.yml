@@ -30,6 +30,7 @@ matrix_synapse_worker_config:
 # homeserver.yml
 matrix_synapse_base_config:
   server_name: "{{ matrix_server_name }}"
+  public_baseurl: "{{ matrix_synapse_public_baseurl }}"
   tls_certificate_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.crt"
   tls_private_key_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.key"
   acme:
