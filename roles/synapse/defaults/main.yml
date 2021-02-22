@@ -19,7 +19,14 @@ matrix_synapse_docker_etc_hosts: {}
 matrix_synapse_docker_ports: ["8008:8008", "8448:8448"]
 matrix_synapse_docker_labels: {}
 matrix_synapse_docker_recreate: false
+matrix_synapse_docker_pull: true
 matrix_synapse_extra_docker_volumes: []
+matrix_synapse_docker_entrypoint: "python"
+matrix_synapse_docker_command:
+  - "-m"
+  - "synapse.app.homeserver"
+  - "-c"
+  - "{{ matrix_synapse_base_path }}/homeserver.yaml"
 matrix_synapse_container_ref: "docker.io/matrixdotorg/synapse"
 matrix_synapse_container_tag: "v{{ matrix_synapse_version }}"
 matrix_synapse_container_name: "synapse"
