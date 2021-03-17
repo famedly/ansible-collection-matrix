@@ -1,0 +1,39 @@
+---
+
+- name: Create hedwig system user
+  user:
+    name: "{{ hedwig_user }}"
+    state: present
+    system: yes
+  register: hedwig_user_res
+
+- name: Ensure host directories are present
+  file:
+    path: "{{ hedwig_base_path }}"
+    state: directory
+    owner: "{{ hedwig_user_res.uid }}"
+    group: "{{ hedwig_user_res.group }}"
+
+- name: Template configuration file for hedwig
+  template:
+    src: config.toml.j2
+    dest: "{{ hedwig_config_file }}"
+    owner: "{{ hedwig_user_res.uid }}"
+    group: "{{ hedwig_user_res.group }}"
+    mode: 0770
+
+- name: Start hedwig container
+  docker_container:
+    name: "{{ hedwig_container_name }}"
+    image: "{{ hedwig_container_image }}"
+    env: "{{ hedwig_container_env }}"
+    user: "{{ hedwig_user_res.uid }}:{{ hedwig_user_res.group }}"
+    ports: "{{ hedwig_container_ports }}"
+    labels: "{{ hedwig_container_labels }}"
+    volumes: "{{ hedwig_container_volumes }}"
+    restart_policy: "{{ hedwig_container_restart_policy }}"
+    pull: true
+    healthcheck:
+      test: >-
+        curl http://127.0.0.1:{{ hedwig_listen_port }}/health || exit 1
+

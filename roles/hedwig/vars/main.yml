@@ -1,0 +1,6 @@
+---
+
+hedwig_container_base_volumes:
+  - "{{ hedwig_config_file }}:/opt/hedwig/config.toml:ro"
+
+hedwig_container_volumes: "{{ hedwig_container_base_volumes + hedwig_container_extra_volumes }}"
