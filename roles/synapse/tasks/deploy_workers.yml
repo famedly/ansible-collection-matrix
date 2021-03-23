@@ -31,7 +31,7 @@
         image: "{{ matrix_synapse_worker_image }}"
         labels: "{{ item.labels|default({})|combine(matrix_synapse_worker_labels[item.name]|default({})) }}"
         restart_policy: unless-stopped
-        recreate: true
+        state: started
         pull: true
         entrypoint: "python"
         command: "{{ item.container_command }}"
