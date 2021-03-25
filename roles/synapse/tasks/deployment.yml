@@ -64,6 +64,7 @@
     etc_hosts: "{{ matrix_synapse_docker_etc_hosts }}"
     ports: "{{ matrix_synapse_docker_ports }}"
     labels: "{{ matrix_synapse_docker_labels_complete }}"
+    env: "{{ matrix_synapse_docker_env }}"
     restart_policy: unless-stopped
     recreate: "{{ matrix_synapse_docker_recreate }}"
     pull: "{{ matrix_synapse_docker_pull }}"

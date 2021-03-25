@@ -18,6 +18,7 @@ matrix_synapse_docker_networks: []
 matrix_synapse_docker_etc_hosts: {}
 matrix_synapse_docker_ports: ["8008:8008", "8448:8448"]
 matrix_synapse_docker_labels: {}
+matrix_synapse_docker_env: {}
 matrix_synapse_docker_recreate: false
 matrix_synapse_docker_pull: true
 matrix_synapse_extra_docker_volumes: []
