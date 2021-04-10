@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # (c) 2018, Jan Christian Grünhage <jan.christian@gruenhage.xyz>
-# (c) 2020, Famedly GmbH
+# (c) 2020-2021, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
@@ -32,8 +32,14 @@ options:
         required: true
     token:
         description:
-            - Authentication token for the API call.
-requirements:
+            - Authentication token for the API call. If provided, user_id and password are not required
+    user_id:
+        description:
+            - The user id of the user
+    password:
+        description:
+            - The password to log in with
+equirements:
     -  matrix-nio (Python library)
 '''
 
@@ -54,23 +60,11 @@ room_id:
 import traceback
 import asyncio
 import re
-
-from ansible.module_utils.basic import AnsibleModule, missing_required_lib
-
-MATRIX_IMP_ERR = None
-try:
-    from nio import (AsyncClient, RoomResolveAliasResponse, JoinedRoomsError, RoomCreateResponse, JoinResponse)
-except ImportError:
-    MATRIX_IMP_ERR = traceback.format_exc()
-    MATRIX_FOUND = False
-else:
-    MATRIX_FOUND = True
+from ansible_collections.famedly.matrix.plugins.module_utils.matrix import *
 
 async def run_module():
     module_args = dict(
-        alias=dict(type='str', required=True),
-        hs_url=dict(type='str', required=True),
-        token=dict(type='str', required=True, no_log=True),
+        alias=dict(type='str', required=True)
     )
 
     result = dict(
@@ -78,20 +72,9 @@ async def run_module():
         message=''
     )
 
-    module = AnsibleModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
-
-    if not MATRIX_FOUND:
-        module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
-
-    if module.check_mode:
-        return result
-
-    # create a client object
-    client = AsyncClient(module.params['hs_url'])
-    client.access_token = module.params['token']
+    module = AnsibleNioModule(module_args)
+    await module.matrix_login()
+    client = module.client
 
     # Try to look up room_id
     room_id_resp = await client.room_resolve_alias(module.params['alias'])
@@ -132,11 +115,10 @@ async def run_module():
             failed = True
             result = {"msg": "Room does not exist but couldn't be created either: {0}".format(create_room_resp)}
 
-    await client.close()
     if failed:
-        module.fail_json(**result)
+        await module.fail_json(**result)
     else:
-        module.exit_json(**result)
+        await module.exit_json(**result)
 
 def main():
     asyncio.run(run_module())

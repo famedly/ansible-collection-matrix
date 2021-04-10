@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # (c) 2018, Jan Christian Grünhage <jan.christian@gruenhage.xyz>
-# (c) 2020, Famedly GmbH
+# (c) 2020-2021, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
@@ -58,20 +58,11 @@ device_id:
 '''
 import traceback
 import asyncio
-
-from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 from functools import reduce
 import json
 
-MATRIX_IMP_ERR = None
+from ansible_collections.famedly.matrix.plugins.module_utils.matrix import *
 log = []
-try:
-    from nio import AsyncClient, Api
-except ImportError:
-    MATRIX_IMP_ERR = traceback.format_exc()
-    MATRIX_FOUND = False
-else:
-    MATRIX_FOUND = True
 
 def get_payload(data):
     payload = json.dumps(data)
@@ -134,23 +125,11 @@ def pick_flow(flows):
     return best
 
 async def run_module():
-    module_args = dict(
-        hs_url=dict(type='str', required=True),
-        user_id=dict(type='str', required=True),
-        password=dict(type='str', required=True, no_log=True),
-    )
-
     result = dict(
         changed=False,
     )
 
-    module = AnsibleModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
-
-    if not MATRIX_FOUND:
-        module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
+    module = AnsibleNioModule(user_logout=False)
 
     if module.check_mode:
         return result
@@ -159,13 +138,12 @@ async def run_module():
 
     # Create client object
     client = AsyncClient(module.params['hs_url'], module.params['user_id'])
+    module.client = client
 
     # Collect and check login information
     password = module.params['password']
     if password is None and token is None:
-        raise ValueError(
-            "Either a password or a token needs to be provided"
-        )
+        await module.fail_json(msg="A PASSWORD has to be provided")
 
     method, path, data = Api.login(
         client.user,
@@ -201,13 +179,12 @@ async def run_module():
             result['http_status_code'] = stage_status
 
     # Close client sessions
-    await client.close()
     result['msg'] = "\n".join(log)
 
     if failed:
-        module.fail_json(**result)
+        await module.fail_json(**result)
     else:
-        module.exit_json(**result)
+        await module.exit_json(**result)
 
 
 def main():

@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # (c) 2018, Jan Christian Grünhage <jan.christian@gruenhage.xyz>
-# (c) 2020, Famedly GmbH
+# (c) 2020-2021, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
@@ -75,70 +75,27 @@ RETURN = '''
 '''
 import traceback
 import asyncio
-
-from ansible.module_utils.basic import AnsibleModule, missing_required_lib
-
-MATRIX_IMP_ERR = None
-try:
-    from nio import AsyncClient
-except ImportError:
-    MATRIX_IMP_ERR = traceback.format_exc()
-    MATRIX_FOUND = False
-else:
-    MATRIX_FOUND = True
-
-async def get_client_with_token(hs_url, token):
-    client = AsyncClient(hs_url)
-    client.access_token = token
-    return client
-
-async def get_client_with_password(hs_url, user, password):
-    client = AsyncClient(hs_url, user)
-    await client.login(password)
-    return client
+from ansible_collections.famedly.matrix.plugins.module_utils.matrix import *
 
 async def run_module():
     module_args = dict(
         msg_plain=dict(type='str', required=True),
         msg_html=dict(type='str', required=True),
         room_id=dict(type='str', required=True),
-        hs_url=dict(type='str', required=True),
-        token=dict(type='str', required=False, no_log=True),
-        user_id=dict(type='str', required=False),
-        password=dict(type='str', required=False, no_log=True),
-    )
+   )
 
     result = dict(
         changed=False,
         message=''
     )
 
-    module = AnsibleModule(
-        argument_spec=module_args,
-        mutually_exclusive=[['password', 'token']],
-        required_one_of=[['password', 'token']],
-        required_together=[['user_id', 'password']],
-        supports_check_mode=True
-    )
-
-    if not MATRIX_FOUND:
-        module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
+    module = AnsibleNioModule(module_args)
 
     if module.check_mode:
         return result
-
-    # create a client object
-    if module.params['token'] is not None:
-        client = await get_client_with_token(
-            module.params['hs_url'],
-            module.params['token']
-        )
-    else:
-        client = await get_client_with_password(
-            module.params['hs_url'],
-            module.params['user_id'],
-            module.params['password']
-        )
+    
+    await module.matrix_login()
+    client = module.client
 
     # send message
     await client.room_send(
@@ -152,13 +109,7 @@ async def run_module():
         }
     )
 
-    # when we did the login ourselves, invalidate the access token
-    if module.params['token'] is None:
-        await client.logout()
-
-    await client.close()
-
-    module.exit_json(**result)
+    await module.exit_json(**result)
 
 def main():
     asyncio.run(run_module())

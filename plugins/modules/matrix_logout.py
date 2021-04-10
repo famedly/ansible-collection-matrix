@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # (c) 2018, Jan Christian Grünhage <jan.christian@gruenhage.xyz>
-# (c) 2020, Famedly GmbH
+# (c) 2020-2021, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
@@ -46,47 +46,16 @@ RETURN = '''
 import traceback
 import asyncio
 
-from ansible.module_utils.basic import AnsibleModule, missing_required_lib
-
-MATRIX_IMP_ERR = None
-try:
-    from nio import AsyncClient
-except ImportError:
-    MATRIX_IMP_ERR = traceback.format_exc()
-    MATRIX_FOUND = False
-else:
-    MATRIX_FOUND = True
-
+from ansible_collections.famedly.matrix.plugins.module_utils.matrix import *
 async def run_module():
-    module_args = dict(
-        hs_url=dict(type='str', required=True),
-        token=dict(type='str', required=True, no_log=True),
-    )
-
     result = dict(
         changed=False,
     )
 
-    module = AnsibleModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
-
-    if not MATRIX_FOUND:
-        module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
-
-    if module.check_mode:
-        return result
-
-    # create a client object
-    client = AsyncClient(module.params['hs_url'])
-    client.access_token = module.params['token']
-    # log out
-    await client.logout()
-    # close client sessions
-    await client.close()
-
-    module.exit_json(**result)
+    module = AnsibleNioModule()
+    await module.matrix_login()
+    await module.matrix_logout()
+    await module.exit_json(**result)
 
 
 def main():

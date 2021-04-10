@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # (c) 2018, Jan Christian Grünhage <jan.christian@gruenhage.xyz>
-# (c) 2020, Famedly GmbH
+# (c) 2020-2021, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
@@ -22,14 +22,6 @@ short_description: Manage matrix room membership
 description:
     - Manage the membership status of a given set of matrix users. Invitations (`state=member`), kicks and bans can be issued. With the `exclusive=True` flag, all other members in the room can be auto-kicked.
 options:
-    hs_url:
-        description:
-            - URL of the homeserver, where the CS-API is reachable
-        required: true
-    token:
-        description:
-            - auth token
-        required: true
     room_id:
         description:
             - ID of the room to manage
@@ -45,6 +37,15 @@ options:
         description:
             - If state=member, the module ensure only the specified user_ids are in the room by kicking every other user present in the room.
         required: false
+    token:
+        description:
+            - Authentication token for the API call. If provided, user_id and password are not required
+    user_id:
+        description:
+            - The user id of the user
+    password:
+        description:
+            - The password to log in with
 requirements:
     -  matrix-nio (Python library)
 '''
@@ -70,23 +71,13 @@ members:
 import traceback
 import asyncio
 
-from ansible.module_utils.basic import AnsibleModule, missing_required_lib
-
-MATRIX_IMP_ERR = None
-
-try:
-    from nio import AsyncClient, RoomBanError, RoomUnbanError, RoomKickError, RoomInviteError, RoomGetStateError
-except ImportError:
-    MATRIX_IMP_ERR = traceback.format_exc()
-    MATRIX_FOUND = False
-else:
-    MATRIX_FOUND = True
+from ansible_collections.famedly.matrix.plugins.module_utils.matrix import *
 
 async def get_room_members(client, room_id, res):
     member_resp = await client.room_get_state(room_id)
 
     if isinstance(member_resp, RoomGetStateError):
-        res.msg = "Could not get room state for roomId={0}".format(room_id)
+        res['msg'] = "Could not get room state for roomId={0}".format(room_id)
         raise Exception()
     else:
         return dict(list(map(lambda m: (m['state_key'],m['content']['membership']), filter(lambda e: e['type'] == 'm.room.member' and
@@ -127,8 +118,6 @@ async def invite_to_room(client, room_id, user_id, res):
 
 async def run_module():
     module_args = dict(
-        hs_url=dict(type='str', required=True),
-        token=dict(type='str', required=True, no_log=True),
         state=dict(choices=['member', 'kicked', 'banned'], required=True),
         room_id=dict(type='str', required=True),
         user_ids=dict(type='list', required=True, elements='str'),
@@ -145,12 +134,8 @@ async def run_module():
         msg="",
     )
 
-    module = AnsibleModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
-    if not MATRIX_FOUND:
-        module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
+    module = AnsibleNioModule(module_args)
+    await module.matrix_login()
 
     if module.check_mode:
         return result
@@ -161,11 +146,10 @@ async def run_module():
 
     # Check for valid parameter combination
     if module.params['exclusive'] and action != 'member':
-        module.fail_json(msg='exclusive=True can only be used with state=member')
+        await module.fail_json(msg='exclusive=True can only be used with state=member')
 
     # Create client object
-    client = AsyncClient(module.params['hs_url'])
-    client.access_token = module.params['token']
+    client = module.client
 
     # Query all room members (invited users count as member, as they _can_ be in the room)
     room_members = await get_room_members(client, room_id, result)
@@ -187,7 +171,7 @@ async def run_module():
                 elif action == 'banned' and user_id not in banned_members:
                     await ban_from_room(client, room_id, user_id, result)
         except:
-            module.fail_json(**result)
+            await module.fail_json(**result)
     else:
         # Handle exclusive mode: get state and make lists of users to be kicked or invited
         to_invite = list(filter(lambda m: m not in present_members, user_ids))
@@ -199,7 +183,7 @@ async def run_module():
             for user_id in to_kick:
                 await kick_from_room(client, room_id, user_id, result)
         except:
-            module.fail_json(**result)
+            await module.fail_json(**result)
 
     # Get all current members from the room
     try:
@@ -208,10 +192,7 @@ async def run_module():
     except:
         pass
 
-    await client.close()
-
-    module.exit_json(**result)
-
+    await module.exit_json(**result)
 
 def main():
     asyncio.run(run_module())

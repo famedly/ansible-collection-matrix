@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # (c) 2018, Jan Christian Grünhage <jan.christian@gruenhage.xyz>
-# (c) 2020, Famedly GmbH
+# (c) 2020-2021, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
@@ -59,62 +59,18 @@ device_id:
 import traceback
 import asyncio
 
-from ansible.module_utils.basic import AnsibleModule, missing_required_lib
-
-MATRIX_IMP_ERR = None
-try:
-    from nio import AsyncClient, LoginResponse
-except ImportError:
-    MATRIX_IMP_ERR = traceback.format_exc()
-    MATRIX_FOUND = False
-else:
-    MATRIX_FOUND = True
+from ansible_collections.famedly.matrix.plugins.module_utils.matrix import *
 
 async def run_module():
-    module_args = dict(
-        hs_url=dict(type='str', required=True),
-        user_id=dict(type='str', required=True),
-        password=dict(type='str', required=True, no_log=True),
-    )
-
     result = dict(
         changed=False,
     )
 
-    module = AnsibleModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
-
-    if not MATRIX_FOUND:
-        module.fail_json(msg=missing_required_lib('matrix-nio'), exception=MATRIX_IMP_ERR)
-
-    if module.check_mode:
-        return result
-
-    failed = False
-
-    # Create client object
-    client = AsyncClient(module.params['hs_url'], module.params['user_id'])
-    # Log in
-    login_response = await client.login(module.params['password'])
-
-    # Store results
-    if isinstance(login_response, LoginResponse):
-        result['token'] = login_response.access_token
-        result['device_id'] = login_response.device_id
-    else:
-        failed = True
-        result['msg'] = login_response.message
-        result['http_status_code'] = login_response.status_code
-
-    # Close client sessions
-    await client.close()
-
-    if failed:
-        module.fail_json(**result)
-    else:
-        module.exit_json(**result)
+    module = AnsibleNioModule(user_logout=False)
+    await module.matrix_login()
+    result['token'] = module.access_token
+    result['device_id'] = module.device_id
+    await module.exit_json(**result)
 
 
 def main():
