@@ -1,0 +1,14 @@
+---
+howler_user: howler
+howler_base_path: /opt/howler
+howler_config_file: "{{ howler_base_path }}/config.toml"
+howler_version: "0.1.0"
+
+howler_container_name: "howler"
+howler_container_image_name: "registry.gitlab.com/famedly/services/howler"
+howler_container_image: "{{ howler_container_image_name }}:{{ howler_container_image_tag|default(['v', howler_version]|join()) }}"
+howler_container_env: {}
+howler_container_ports: []
+howler_container_labels: {}
+howler_container_restart_policy: "unless-stopped"
+howler_container_extra_volumes: []
