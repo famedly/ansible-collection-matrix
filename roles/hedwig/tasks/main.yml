@@ -29,7 +29,7 @@
     env: "{{ hedwig_container_env }}"
     user: "{{ hedwig_user_res.uid }}:{{ hedwig_user_res.group }}"
     ports: "{{ hedwig_container_ports }}"
-    labels: "{{ hedwig_container_labels }}"
+    labels: "{{ hedwig_container_labels_complete }}"
     volumes: "{{ hedwig_container_volumes }}"
     restart_policy: "{{ hedwig_container_restart_policy }}"
     pull: true
