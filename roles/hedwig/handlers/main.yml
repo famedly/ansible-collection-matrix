@@ -1,0 +1,7 @@
+---
+
+- name: restart-hedwig
+  docker_container:
+    name: "{{ hedwig_container_name }}"
+    state: started
+    restart: yes

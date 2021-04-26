@@ -21,6 +21,7 @@
     owner: "{{ hedwig_user_res.uid }}"
     group: "{{ hedwig_user_res.group }}"
     mode: 0770
+  notify: restart-hedwig
 
 - name: Start hedwig container
   docker_container:
@@ -34,6 +35,5 @@
     restart_policy: "{{ hedwig_container_restart_policy }}"
     pull: true
     healthcheck:
-      test: >-
-        curl http://127.0.0.1:{{ hedwig_listen_port }}/health || exit 1
-
+      test: "curl http://127.0.0.1:{{ hedwig_listen_port }}/health || exit 1"
+    state: started
