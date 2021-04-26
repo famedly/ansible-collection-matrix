@@ -1,0 +1,38 @@
+---
+
+- name: Create barad-dur system user
+  user:
+    name: "{{ barad_dur_user }}"
+    state: present
+    system: yes
+  register: barad_dur_user_res
+
+- name: Ensure host directories are present [{{ barad_dur_base_path }}]
+  file:
+    path: "{{ barad_dur_base_path }}"
+    state: directory
+    owner: "{{ barad_dur_user_res.uid }}"
+    group: "{{ barad_dur_user_res.group }}"
+    mode: 0750
+
+- name: Template configuration file for barad-dur [{{ barad_dur_config_file }}]
+  template:
+    src: config.yaml.j2
+    dest: "{{ barad_dur_config_file }}"
+    owner: "{{ barad_dur_user_res.uid }}"
+    group: "{{ barad_dur_user_res.group }}"
+    mode: 0750
+  notify: restart-barad-dur
+
+- name: Start barad-dur container
+  docker_container:
+    name: "{{ barad_dur_container_name }}"
+    image: "{{ barad_dur_container_image }}"
+    env: "{{ barad_dur_container_env }}"
+    user: "{{ barad_dur_user_res.uid }}:{{ barad_dur_user_res.group }}"
+    ports: "{{ barad_dur_container_ports }}"
+    labels: "{{ barad_dur_container_labels_complete }}"
+    volumes: "{{ barad_dur_container_volumes }}"
+    restart_policy: "{{ barad_dur_container_restart_policy }}"
+    state: "{{ barad_dur_container_state }}"
+    pull: true

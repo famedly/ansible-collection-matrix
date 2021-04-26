@@ -1,0 +1,7 @@
+---
+
+- name: restart-barad-dur
+  docker_container:
+    name: "{{ barad_dur_container_name }}"
+    state: started
+    restart: yes

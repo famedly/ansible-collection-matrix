@@ -1,0 +1,32 @@
+---
+barad_dur_user: barad-dur
+barad_dur_base_path: /opt/barad-dur
+barad_dur_container_base_path: "{{ barad_dur_base_path }}"
+barad_dur_config_file: "{{ barad_dur_base_path }}/config.yaml"
+barad_dur_version: "0.1.0"
+
+barad_dur_container_name: "barad-dur"
+barad_dur_container_image_name: "registry.gitlab.com/famedly/services/barad-dur"
+barad_dur_container_image: "{{ barad_dur_container_image_name }}:{{ barad_dur_container_image_tag|default(['v', barad_dur_version]|join()) }}"
+barad_dur_container_env: {}
+barad_dur_container_ports: []
+barad_dur_container_labels: {}
+barad_dur_container_restart_policy: "unless-stopped"
+barad_dur_container_extra_volumes: []
+barad_dur_container_state: "started"
+
+barad_dur_server_listen_ip: "[::]"
+barad_dur_server_listen_port: 8080
+barad_dur_server_listen: "{{ barad_dur_server_listen_ip }}:{{ barad_dur_server_listen_port }}"
+
+barad_dur_database_scheme: "postgres"
+barad_dur_database_port: 5432
+barad_dur_database_url: >-
+  {{ [
+    barad_dur_database_scheme, '://',
+    barad_dur_database_user, ':',
+    barad_dur_database_password, '@',
+    barad_dur_database_host, ':',
+    barad_dur_database_port, '/',
+    barad_dur_database_name
+  ] | join }}
