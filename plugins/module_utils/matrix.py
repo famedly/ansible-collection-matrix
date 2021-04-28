@@ -86,11 +86,11 @@ class AnsibleNioModule():
         await self.client.close()
         self.module.exit_json(**result)
 
-    async def error_json(self, **result):
+    async def fail_json(self, **result):
         if self.module.params['token'] is None and self.user_logout == True:
             await self.matrix_logout()
         await self.client.close()
-        self.module.error_json(**result)
+        self.module.fail_json(**result)
 
     @staticmethod
     def __common_argument_spec(custom_spec: dict):
