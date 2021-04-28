@@ -45,3 +45,4 @@ deploying commonly used matrix services:
   able to run in the browser, maintained by element.
 - [`hedwig`](roles/hedwig/README.md): Hedwig, a push-gateway server alternative
   to `sygnal`, developed by Famedly.
+- [`barad-dur`](roles/barad-dur/README.md): Barad-dûr, a matrix phone-home stats collector alternative, developed by Famedly.
