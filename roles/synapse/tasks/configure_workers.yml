@@ -182,7 +182,6 @@
             - names: [ client ]
   when: matrix_synapse_worker_user_search
 
-
 - name: Collect worker configuration
   set_fact:
     matrix_synapse_workers: "{{ worker_client_info|default([]) + worker_fed_in_info|default([]) + worker_fed_out_info|default([]) + worker_media_info|default([]) + worker_pusher_info|default([]) + worker_appservice_info|default([]) + worker_user_dir_info|default([]) }}"
@@ -203,5 +202,3 @@
     group: synapse
     mode: 0640
   loop: "{{ matrix_synapse_workers }}"
-
-

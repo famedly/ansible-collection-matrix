@@ -93,4 +93,3 @@
       notify:
         - "reload systemd"
         - "restart matrix-synapse"
-
