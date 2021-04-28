@@ -19,7 +19,7 @@
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
-      labels: {}
+      labels: "{{ matrix_synapse_docker_labels_base }}"
       ports:
         - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ port }}:{{ port }}"
       listeners:
@@ -48,7 +48,7 @@
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
-      labels: {}
+      labels: "{{ matrix_synapse_docker_labels_base }}"
       ports:
         - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ port }}:{{ port }}"
       listeners:
@@ -75,7 +75,7 @@
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
-      labels: {}
+      labels: "{{ matrix_synapse_docker_labels_base }}"
       ports: []
       listeners: []
   loop: "{{ range(1, matrix_synapse_workers_federation_out + 1) | list }}"
@@ -99,7 +99,7 @@
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
-      labels: {}
+      labels: "{{ matrix_synapse_docker_labels_base }}"
       ports:
         - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ port }}:{{ port }}"
       listeners:
@@ -126,7 +126,7 @@
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
-      labels: {}
+      labels: "{{ matrix_synapse_docker_labels_base }}"
       ports: []
       listeners: []
   when: matrix_synapse_worker_push
@@ -148,7 +148,7 @@
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
-      labels: {}
+      labels: "{{ matrix_synapse_docker_labels_base }}"
       ports: []
       listeners: []
   when: matrix_synapse_worker_appservice
@@ -172,7 +172,7 @@
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
-      labels: {}
+      labels: "{{ matrix_synapse_docker_labels_base }}"
       ports:
         - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ port }}:{{ port }}"
       listeners:
