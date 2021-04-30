@@ -29,7 +29,15 @@
       docker_container:
         name: "{{ item.container_name }}"
         image: "{{ matrix_synapse_worker_image }}"
-        labels: "{{ item.labels|default({})|combine(matrix_synapse_worker_labels[item.name]|default({})) }}"
+        labels: >-
+          {{
+            item.labels
+            | default({})
+            | combine(
+              matrix_synapse_worker_labels[item.name]
+              | default({})
+            )
+          }}
         restart_policy: unless-stopped
         state: started
         pull: true
