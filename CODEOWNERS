@@ -4,6 +4,10 @@ plugins/modules/ @jadyn.dev @jcgruenhage
 plugins/modules/matrix_signing_key.py @madonius
 plugins/modules/matrix_member.py  @transcaffeine
 
+[plugin/synapse]
+plugins/module_utils/synapse.py @jadyn.dev
+plugins/modules/synapse_ratelimit.py @jadyn.dev
+
 [role/synapse]
 roles/synapse @jcgruenhage @madonius
 

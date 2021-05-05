@@ -30,6 +30,8 @@ rooms from within ansible.
   Creates a server signing key.
 - [`synapse_register` (source)](plugins/modules/synapse_register.py):
   Registers a user using synapse's admin API.
+- [`synapse_ratelimit` (source)](plugins/modules/synapse_ratelimit.py):
+  Gets / Sets / Deletes a (local) users ratelimits
 
 For more information on how to use the modules to manage matrix rooms
 via ansible, the [README in `./plugins/modules/`](plugins/modules/README.md)
