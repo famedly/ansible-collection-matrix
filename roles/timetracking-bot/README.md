@@ -1,4 +1,5 @@
-# timetracking-bot
+# timetracking-bot | DEPRECATED
+as the timetracking-bot was deprecated, this role is no longer in use and will not see any further development or fixes
 
 Deploys a dockerized
 [timetracking-bot](https://gitlab.com/famedly/bots/timetracking) instance.
