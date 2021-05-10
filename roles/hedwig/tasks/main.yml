@@ -15,8 +15,8 @@
     group: "{{ hedwig_user_res.group }}"
 
 - name: Template configuration file for hedwig
-  template:
-    src: config.toml.j2
+  copy:
+    content: "{{ hedwig_config | to_nice_yaml(indent=2, width=1000) }}"
     dest: "{{ hedwig_config_file }}"
     owner: "{{ hedwig_user_res.uid }}"
     group: "{{ hedwig_user_res.group }}"
@@ -35,5 +35,5 @@
     restart_policy: "{{ hedwig_container_restart_policy }}"
     pull: true
     healthcheck:
-      test: "curl http://127.0.0.1:{{ hedwig_listen_port }}/health || exit 1"
+      test: "curl http://127.0.0.1:{{ hedwig_server_port }}/health || exit 1"
     state: started
