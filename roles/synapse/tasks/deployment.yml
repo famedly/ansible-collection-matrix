@@ -18,8 +18,7 @@
           - libpq-dev
         state: present
         cache_valid_time: 1800
-      tags:
-        - pre_install
+      tags: ['prepare', 'prepare-synapse']
 
     - name: Create virtualenv
       pip:
@@ -32,8 +31,7 @@
         virtualenv: "{{ matrix_synapse_base_path }}/env"
         virtualenv_python: python3
         extra_args: --upgrade
-      tags:
-        - pre_install
+      tags: ['prepare', 'prepare-synapse']
 
     - name: Clone synapse
       git:
@@ -42,21 +40,27 @@
         accept_hostkey: yes
         version: "v{{ matrix_synapse_version }}"
       register: clone_synapse
-      tags:
-        - pre_install
+      tags: ['prepare', 'prepare-synapse']
 
     - name: Install Synapse
       pip:
         name: "{{ matrix_synapse_base_path }}/synapse[matrix-synapse-ldap3,postgres,resources.consent,acme,url_preview]"
         virtualenv: "{{ matrix_synapse_base_path }}/env"
       when: clone_synapse.changed
-      tags:
-        - skip_ansible_lint # skip when clause
-        - pre_install
       notify: restart matrix-synapse
+      tags: ['deploy', 'deploy-synapse', 'skip_ansible_lint']
   when: matrix_synapse_deployment_method == "pip"
 
-- name: install synapse with docker
+- name: Ensure synapse container image is present
+  docker_image:
+    name: "{{ matrix_synapse_container_ref }}:{{ matrix_synapse_container_tag }}"
+    force_source: "{{ matrix_synapse_docker_pull }}"
+    source: pull
+    state: present
+  when: matrix_synapse_deployment_method == "docker"
+  tags: ['prepare', 'prepare-synapse']
+
+- name: Ensure synapse container is running
   docker_container:
     name: "{{ matrix_synapse_container_name }}"
     image: "{{ matrix_synapse_container_ref }}:{{ matrix_synapse_container_tag }}"
@@ -65,11 +69,12 @@
     ports: "{{ matrix_synapse_docker_ports }}"
     labels: "{{ matrix_synapse_docker_labels_complete }}"
     env: "{{ matrix_synapse_docker_env }}"
-    restart_policy: unless-stopped
     recreate: "{{ matrix_synapse_docker_recreate }}"
-    pull: "{{ matrix_synapse_docker_pull }}"
     entrypoint: "{{ matrix_synapse_docker_entrypoint }}"
     command: "{{ matrix_synapse_docker_command }}"
     user: "{{ synapse_user.uid }}:{{ appservice_group.gid }}"
     volumes: "{{ matrix_synapse_docker_volumes }}"
+    restart_policy: unless-stopped
+    state: started
   when: matrix_synapse_deployment_method == "docker"
+  tags: ['deploy', 'deploy-synapse']

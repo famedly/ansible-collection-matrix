@@ -4,33 +4,43 @@
     msg: "Either both or neither of deployment and supervision method should be docker."
   when: (matrix_synapse_supervision_method == "docker" and matrix_synapse_deployment_method != "docker") or
         (matrix_synapse_deployment_method == "docker" and matrix_synapse_supervision_method != "docker")
+  tags: ['deploy', 'deploy-synapse']
 
 - name: Fail if workers are enabled but no redis is configured for synapse
   fail:
     msg: "Redis needs to be enabled on synapse in order for workers to be able to be run"
   when: matrix_synapse_workers_enabled|bool and not matrix_synapse_redis_enabled|bool
+  tags: ['deploy', 'deploy-synapse']
 
 - name: prepare user, group and base directory
   import_tasks: prepare.yml
+  tags: ['prepare', 'prepare-synapse',
+         'deploy', 'deploy-synapse']
 
 - name: configure workers
   import_tasks: configure_workers.yml
+  tags: ['deploy', 'deploy-synapse']
   when: matrix_synapse_workers_enabled
 
 - name: configure config overrides from workers
   import_tasks: configure_worker_overrides.yml
+  tags: ['deploy', 'deploy-synapse']
   when: matrix_synapse_workers_enabled
 
 - name: configure synapse
-  import_tasks: configure.yml
+  include_tasks: configure.yml
+  tags: ['always']
 
 - name: deploy workers
   import_tasks: deploy_workers.yml
+  tags: ['deploy', 'deploy-synapse']
   when: matrix_synapse_workers_enabled
 
 - name: deploy synapse
-  import_tasks: deployment.yml
+  include_tasks: deployment.yml
+  tags: ['always']
 
 - name: configure service
   import_tasks: systemd.yml
+  tags: ['deploy', 'deploy-synapse']
   when: matrix_synapse_supervision_method == "systemd"

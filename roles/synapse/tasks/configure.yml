@@ -6,8 +6,7 @@
     owner: synapse
     group: synapse
     mode: 0750
-  tags:
-    - pre_install
+  tags: ['prepare', 'prepare-synapse']
 
 - name: Generate secrets
   include_tasks: generate_secret.yml
@@ -20,8 +19,18 @@
       var: "form_secret_file"
   loop_control:
     loop_var: secret
+  tags: ['deploy', 'deploy-synapse']
 
-- name: Create directories for media storage and tls
+- name: Create directory for tls
+  file:
+    path: "{{ matrix_synapse_base_path }}/tls"
+    state: directory
+    owner: synapse
+    group: synapse
+    mode: 0770
+  tags: ['prepare', 'prepare-synapse']
+
+- name: Create directories for media storage
   file:
     path: "{{ item }}"
     state: directory
@@ -31,12 +40,14 @@
   loop:
     - "{{ matrix_synapse_config.media_store_path }}"
     - "{{ matrix_synapse_config.uploads_path }}"
-    - "{{ matrix_synapse_base_path }}/tls"
+  # Needs matrix_synapse_config which only the previous task poplulates fully, otherwise, the secrets are undefined and break at this point
+  tags: ['deploy', 'deploy-synapse']
 
 - name: Merge replication listener config
   set_fact:
     matrix_synapse_config: "{{ matrix_synapse_config | combine(matrix_synapse_worker_config, recursive=True, list_merge='append') }}"
   when: matrix_synapse_workers_enabled
+  tags: ['deploy', 'deploy-synapse']
 
 - name: Deploy config
   copy:
@@ -47,9 +58,12 @@
     mode: 0660
   notify:
     - "restart matrix-synapse"
+  tags: ['deploy', 'deploy-synapse']
 
 - name: Configure logging
-  import_tasks: logging.yml
+  include_tasks: logging.yml
+  tags: ['always']
 
 - name: Create certificates
   include_tasks: crypto.yml
+  tags: ['always']

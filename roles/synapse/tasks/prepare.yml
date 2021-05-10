@@ -13,8 +13,6 @@
     groups: [ "matrix-appservices" ]
     append: yes
   register: synapse_user
-  tags:
-    - pre_install
 
 - name: create directory
   file:
@@ -23,7 +21,3 @@
     owner: synapse
     group: synapse
     mode: 0750
-  tags:
-    - pre_install
-
-

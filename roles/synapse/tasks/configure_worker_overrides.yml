@@ -25,5 +25,3 @@
 - name: Merge federation sender costum config into homeserver config
   set_fact:
     matrix_synapse_worker_config: "{{ [ matrix_synapse_worker_config, matrix_synapse_fed_sender_override, matrix_synapse_media_worker_override ] | combine(recursive=True) }}"
-
-
