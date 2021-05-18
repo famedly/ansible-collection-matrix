@@ -145,11 +145,6 @@ matrix_synapse_base_config:
   autocreate_auto_join_rooms: true
   enable_metrics: False
   report_stats: "{{ matrix_synapse_report_stats }}"
-  room_invite_state_types:
-      - "m.room.join_rules"
-      - "m.room.canonical_alias"
-      - "m.room.avatar"
-      - "m.room.name"
   app_service_config_files: []
   track_appservice_user_ips: False
   macaroon_secret_key: "{{ macaroon_file.content | b64decode }}"
