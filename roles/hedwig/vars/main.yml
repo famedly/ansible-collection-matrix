@@ -19,7 +19,6 @@ hedwig_base_config:
   hedwig:
     app_id: "{{ hedwig_app_id }}"
     fcm_admin_key: "{{ hedwig_fcm_admin_key }}"
-    fcm_collapse_key: "{{ hedwig_fcm_collapse_key }}"
     fcm_notification_click_action: "{{ hedwig_fcm_notification_click_action }}"
     fcm_notification_title: "{{ hedwig_fcm_notification_title }}"
     fcm_notification_body: "{{ hedwig_fcm_notification_body }}"

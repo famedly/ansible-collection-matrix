@@ -4,7 +4,7 @@ hedwig_user: hedwig
 hedwig_base_path: /opt/hedwig
 hedwig_config_filename: "config.yaml"
 hedwig_config_file: "{{ hedwig_base_path }}/{{ hedwig_config_filename }}"
-hedwig_version: "1.0.0"
+hedwig_version: "1.1.0"
 
 hedwig_container_name: "hedwig"
 hedwig_container_image_name: "registry.gitlab.com/famedly/services/hedwig"
