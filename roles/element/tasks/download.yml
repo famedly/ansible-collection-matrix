@@ -28,7 +28,7 @@
         --homedir /tmp/gpg-tmp
         --keyring /tmp/gpg-tmp/element-key
         --keyserver hkps://keyserver.ubuntu.com
-        --recv-keys 5EA7E0F70461A3BCBEBE4D5EF6151806032026F9
+        --recv-keys 2BAA9B8552BD9047
       register: get_element_gpg_key
       until: get_element_gpg_key.rc == 0
       retries: 10
