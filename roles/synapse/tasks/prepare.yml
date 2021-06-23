@@ -1,16 +1,17 @@
 ---
 - name: Create appservice group
   group:
-    name: "matrix-appservices"
+    name: "{{ item }}"
     state: present
     system: true
   register: appservice_group
+  loop: "{{ matrix_synapse_appservice_groups }}"
 
 - name: Create user
   user:
     name: synapse
     state: present
-    groups: [matrix-appservices]
+    groups: "{{ matrix_synapse_appservice_groups }}"
     append: true
   register: synapse_user
 

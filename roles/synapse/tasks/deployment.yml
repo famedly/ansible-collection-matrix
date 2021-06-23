@@ -78,7 +78,8 @@
     recreate: "{{ matrix_synapse_docker_recreate }}"
     entrypoint: "{{ matrix_synapse_docker_entrypoint }}"
     command: "{{ matrix_synapse_docker_command }}"
-    user: "{{ synapse_user.uid }}:{{ appservice_group.gid }}"
+    user: "{{ synapse_user.uid }}:{{ synapse_user.group }}"
+    groups: "{{ matrix_synapse_appservice_groups }}"
     volumes: "{{ matrix_synapse_docker_volumes }}"
     restart_policy: unless-stopped
     state: started

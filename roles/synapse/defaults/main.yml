@@ -30,6 +30,7 @@ matrix_synapse_docker_command:
   - "-c"
   - "{{ matrix_synapse_base_path }}/homeserver.yaml"
 matrix_synapse_container_name: "synapse"
+matrix_synapse_appservice_groups: []
 
 matrix_synapse_container_image_reference: >-
   {{
