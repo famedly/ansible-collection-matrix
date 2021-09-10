@@ -50,6 +50,7 @@ If deploying synapse in a docker container, check that you have `docker` and the
 | `matrix_synapse_redis_host`         | _None_                                                                    | host on which redis is running                                                                                                |
 | `matrix_synapse_redis_port`         | 6379                                                                      | port on which redis is running                                                                                                |
 | `matrix_synapse_redis_pass`         | _None_                                                                    | password to use to authentificate to redis                                                                                    |
+| `matrix_synapse_metrics_enabled`    | `false`                                                                   | If prometheus metrics should be enabled.                                                                                      |
 
 
 ### Worker control variables

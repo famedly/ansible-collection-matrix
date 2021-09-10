@@ -143,7 +143,7 @@ matrix_synapse_base_config:
       - matrix.org
       - vector.im
   autocreate_auto_join_rooms: true
-  enable_metrics: False
+  enable_metrics: "{{ matrix_synapse_metrics_enabled }}"
   report_stats: "{{ matrix_synapse_report_stats }}"
   app_service_config_files: []
   track_appservice_user_ips: False
