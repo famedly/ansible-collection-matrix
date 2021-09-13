@@ -1,8 +1,8 @@
 ---
 element_version: "{{ element_unstable | ternary(element_unstable_version, element_stable_version) }}"
 element_unstable: false
-element_stable_version: "1.8.2"
-element_unstable_version: "1.8.2"
+element_stable_version: "1.8.4"
+element_unstable_version: "1.8.4"
 element_webapp_dir: /opt/element
 element_config:
   default_server_config:
@@ -54,6 +54,7 @@ element_config:
     breadcrumbs: true
   jitsi:
     preferredDomain: jitsi.riot.im
+
 element_domain_configs: []
 element_deployment_method: 'webroot' #alternative is 'docker'
 element_docker_ports: []
