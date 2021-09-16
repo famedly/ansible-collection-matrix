@@ -209,7 +209,7 @@
       worker_replication_http_port: {{ matrix_synapse_worker_replication_port }}
       {% if item.listeners|length > 0 or matrix_synapse_worker_metrics_enabled %}
       worker_listeners:
-      {{ (item.listeners + ([ matrix_synapse_worker_metrics_listener ] if matrix_synapse_worker_metrics_enabled else [])) | to_nice_yaml }}
+      {{ (item.listeners + (matrix_synapse_worker_metrics_listener if matrix_synapse_worker_metrics_enabled else [])) | to_nice_yaml }}
       {% endif %}
     dest: "{{ item.config_file }}"
     owner: synapse
