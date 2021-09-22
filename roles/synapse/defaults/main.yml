@@ -71,3 +71,7 @@ matrix_synapse_worker_client_endpoints: >-
     + matrix_synapse_worker_client_login_endpoints
   }}
 
+# Certificate management
+matrix_synapse_container_certificate_refresh: false
+matrix_synapse_container_certificate_refresh_command: "update-ca-certificates --fresh"
+matrix_synapse_container_certificate_refresh_user_id: 0

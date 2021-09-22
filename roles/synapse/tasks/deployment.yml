@@ -87,5 +87,15 @@
     volumes: "{{ matrix_synapse_docker_volumes }}"
     restart_policy: unless-stopped
     state: started
+  register: matrix_synapse_container_started
   when: matrix_synapse_deployment_method == "docker"
+  tags: ['deploy', 'deploy-synapse']
+
+- name: Refresh container certificates if required
+  community.docker.docker_container_exec:
+    container: "{{ matrix_synapse_container_name }}"
+    command: "{{ matrix_synapse_container_certificate_refresh_command }}"
+    user: "{{ matrix_synapse_container_certificate_refresh_user_id }}"
+    notify: restart matrix-synapse
+  when: matrix_synapse_container_certificate_refresh and matrix_synapse_deployment_method == "docker" and matrix_synapse_container_started.changed
   tags: ['deploy', 'deploy-synapse']
