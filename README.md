@@ -1,5 +1,7 @@
 # Ansible Collection - `famedly.matrix`
 
+![Matrix](https://img.shields.io/matrix/ansible-famedly:matrix.org)
+
 ## Modules
 
 This collection contains modules for managing matrix rooms
