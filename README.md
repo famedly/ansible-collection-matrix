@@ -51,3 +51,4 @@ deploying commonly used matrix services:
   to `sygnal`, developed by Famedly.
 - [`barad-dur`](roles/barad-dur/README.md): Barad-dûr, a matrix phone-home stats collector alternative, developed by Famedly.
 - [`sygnal`](roles/sygnal/README.md): reference implementation of a matrix push gateway, unmaintained and no longer in use
+- [`panopticon`](roles/panopticon/README.md): matrix phone-home stats collector, created by element, role unmaintained

@@ -1,24 +1,19 @@
-panopticon
-=========
+# `famedly.matrix.panopticon` ansible role (UNMAINTAINED)
 
 Deploy panopticon together with it's database in docker.
 
-Requirements
-------------
+## Requirements
 
  - docker
 
-Role Variables
---------------
+## Role Variables
 
- - panopticon_db_password: Set this to a strong password and store it in ansible vault
+ - `panopticon_db_password`: Set this to a strong password and store it in ansible vault
 
-License
--------
+## License
 
 AGPL-3.0-or-later
 
-Author Information
-------------------
+## Author Information
 
  - Jan Christian Grünhage <jan.christian@gruenhage.xyz>
