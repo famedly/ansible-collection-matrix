@@ -1,13 +1,11 @@
-Sygnal
-=========
+# `famedly.matrix.sygnal` ansible role (UNMAINTAINED)
 
 This role installs sygnal, the reference matrix push gateway server.
 
-Role Variables
---------------
+## Role Variables
 
 specify Apps with:
-```
+```yaml
 sygnal_apps:
   - id: com.example.myapp
     type: apns
@@ -19,24 +17,25 @@ sygnal_apps:
 ```
 
 it is possible to use systemd and pip instead of docker, specify as follows:
+```yaml
 sygnal_supervision_method: systemd
 sygnal_deployment_method: pip
+```
+
 CAUTION: this role is not tested with this variables set, probably it needs maintenace to work properly
 
 You have to overide the db password in order to run sygnal
-```
-sygnal_postgresql_password:
+```yaml
+sygnal_postgresql_password: "your database password here"
 ```
 
-A complete list of all variables is in defaults/main.yml
+A complete list of all variables is in [`defaults/main.yml`](defaults/main.yml)
 
-License
--------
+## License
 
 AGPLv3
 
-Author Information
-------------------
+## Author Information
 
-Jan Christian Grünhage <jan.christian@gruenhage.xyz>
-Vincent Wilke <v.wilke@famedly.de>
+- Jan Christian Grünhage <jan.christian@gruenhage.xyz>
+- Vincent Wilke <v.wilke@famedly.de>
