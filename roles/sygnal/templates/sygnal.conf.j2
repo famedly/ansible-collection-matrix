@@ -13,12 +13,10 @@ sentry_dsn = "{{ sygnal_sentry_dsn }}"
 
 [apps]
 {% for app in sygnal_apps %}
-{% if app.ios is defined %}
-{{ app.id }}.ios.type = apns
-{{ app.id }}.ios.certfile = "{{ app.ios.certfile }}"
-{% endif %}
-{% if app.gcm is defined %}
-{{ app.id }}.android.type = gcm
-{{ app.id }}.android.apiKey = "{{ app.gcm.api_key }}"
+{{ app.id }}.type = {{ app.type }}
+{% if app.type == 'apns' %}
+{{ app.id }}.certfile = {{ app.apns_certfile }}
+{% else ifapp.type == 'gcm' %}
+{{ app.id }}.apiKey = {{ app.gcm_api_key }}
 {% endif %}
 {% endfor %}
