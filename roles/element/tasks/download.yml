@@ -16,11 +16,19 @@
       get_url:
         url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/element-v{{ element_version }}.tar.gz"
         dest: "/tmp/element-v{{ element_version }}.tar.gz"
+      register: element_source
+      until: element_source is success
+      retries: 10
+      delay: 5
 
     - name: Download element v{{ element_version }} signature
       get_url:
         url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/element-v{{ element_version }}.tar.gz.asc"
         dest: "/tmp/element-v{{ element_version }}.tar.gz.asc"
+      register: element_source_sig
+      until: element_source_sig is success
+      retries: 10
+      delay: 5
 
     - name: Retrieve the Element release key  # noqa 301
       command: >-

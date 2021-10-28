@@ -34,6 +34,17 @@
   loop: "{{ element_domain_configs }}"
   when: element_deployment_method == "webroot"
 
+- name: Ensure container image is present
+  docker_image:
+    name: "docker.io/vectorim/element-web:v{{ element_version }}"
+    force_source: "{{ element_container_image_force_pull | default(False) }}"
+    source: pull
+    state: present
+  register: element_container_image_pulled
+  until: element_container_image_pulled is success
+  retries: 10
+  delay: 5
+
 - name: Deploy docker container
   docker_container:
     name: "element-web"
