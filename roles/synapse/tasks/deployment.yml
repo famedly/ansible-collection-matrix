@@ -18,6 +18,10 @@
           - libpq-dev
         state: present
         cache_valid_time: 1800
+      register: matrix_synapse_dependencies_pulled
+      until: matrix_synapse_dependencies_pulled is success
+      retries: 10
+      delay: 5
       tags: ['prepare', 'prepare-synapse']
 
     - name: Create virtualenv
@@ -39,14 +43,17 @@
         dest: "{{ matrix_synapse_base_path }}/synapse"
         accept_hostkey: yes
         version: "v{{ matrix_synapse_version }}"
-      register: clone_synapse
+      register: matrix_synapse_source_cloned
+      until: matrix_synapse_source_cloned is success
+      retries: 10
+      delay: 5
       tags: ['prepare', 'prepare-synapse']
 
     - name: Install Synapse
       pip:
         name: "{{ matrix_synapse_base_path }}/synapse[matrix-synapse-ldap3,postgres,resources.consent,acme,url_preview]"
         virtualenv: "{{ matrix_synapse_base_path }}/env"
-      when: clone_synapse.changed
+      when: matrix_synapse_source_cloned.changed
       notify: restart matrix-synapse
       tags: ['deploy', 'deploy-synapse', 'skip_ansible_lint']
   when: matrix_synapse_deployment_method == "pip"
@@ -57,6 +64,10 @@
     force_source: "{{ matrix_synapse_docker_pull }}"
     source: pull
     state: present
+  register: matrix_synapse_container_image_pulled
+  until: matrix_synapse_container_image_pulled is success
+  retries: 10
+  delay: 5
   when: matrix_synapse_deployment_method == "docker"
   tags: ['prepare', 'prepare-synapse']
 
