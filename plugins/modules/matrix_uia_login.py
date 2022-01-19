@@ -111,15 +111,7 @@ uia_stages = {
 def pick_flow(flows):
     supported_stages = uia_stages.keys()
     # reduces each flow to a boolean telling filter if the flow consists only out of compatible stages
-    compatible_flows = list(
-        filter(
-            lambda flow: reduce(
-                (lambda compatible, stage: compatible and (stage in supported_stages)),
-                flow['stages']
-            ),
-            flows
-        )
-    )
+    compatible_flows = [flow for flow in flows if all([stage in supported_stages for stage in flow['stages']])]
     # the best flow is the one with the fewest stages, key= takes a function telling min() the weight of an entry
     best = min(compatible_flows, key=(lambda flow: len(flow['stages'])))
     return best
@@ -160,6 +152,7 @@ async def run_module():
     log.append("DEBUG: begin UIA for session=" + uia_session)
 
     # Figure out best compatible UIA login flow
+    log.append("INFO: available flows: " + str(res['flows']))
     flow_to_attempt = pick_flow(res['flows'])
     log.append("INFO: picking flow: " + (" -> ".join(flow_to_attempt['stages'])))
 
