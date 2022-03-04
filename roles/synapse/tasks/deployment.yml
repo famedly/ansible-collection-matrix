@@ -96,6 +96,6 @@
     container: "{{ matrix_synapse_container_name }}"
     command: "{{ matrix_synapse_container_certificate_refresh_command }}"
     user: "{{ matrix_synapse_container_certificate_refresh_user_id }}"
-    notify: restart matrix-synapse
   when: matrix_synapse_container_certificate_refresh and matrix_synapse_deployment_method == "docker" and matrix_synapse_container_started.changed
+  notify: restart matrix-synapse
   tags: ['deploy', 'deploy-synapse']
