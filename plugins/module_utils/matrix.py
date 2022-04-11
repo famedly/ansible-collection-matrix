@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # coding: utf-8
 
-# (c) 2021, Famedly GmbH
+# (c) 2021-2022, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
@@ -26,12 +26,12 @@ class AnsibleNioModule():
                  bypass_checks=False,
                  no_log=False,
                  mutually_exclusive=[['password', 'token']],
-                 required_together=[['user_id', 'password']],
-                 required_one_of=[['password', 'token']],
+                 required_together=None,
+                 required_one_of=[['password', 'token', 'key']],
+                 required_by={'password': 'user_id', 'key': 'user_id'},
                  add_file_common_args=False,
                  supports_check_mode=True,
                  required_if=None,
-                 required_by=None,
                  user_logout=True):
 
         #If a user/password login is provided, should we logout when exiting?
