@@ -67,8 +67,13 @@ matrix_synapse_worker_client_endpoints: >-
   {{
     matrix_synapse_worker_client_sync_endpoints
     + matrix_synapse_worker_client_api_endpoints
-    + matrix_synapse_worker_client_send_endpoints
+    + matrix_synapse_worker_client_encryption_endpoints
     + matrix_synapse_worker_client_login_endpoints
+    + matrix_synapse_worker_client_send_endpoints
+    + matrix_synapse_worker_client_device_endpoints
+    + matrix_synapse_worker_client_account_data_endpoints
+    + matrix_synapse_worker_client_receipts_endpoints
+    + matrix_synapse_worker_client_presence_endpoints
   }}
 
 # Certificate management
