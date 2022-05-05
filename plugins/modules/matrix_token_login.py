@@ -74,7 +74,7 @@ from ansible_collections.famedly.matrix.plugins.module_utils.matrix import *
 async def run_module():
     module_args = dict(
         key=dict(type='str', required=True),
-        admin=dict(type='str', required=False),
+        admin=dict(type='bool', required=False),
     )
 
     result = dict(
@@ -99,8 +99,6 @@ async def run_module():
         await module.fail_json(msg="A key has to be provided")
 
     admin = module.params['admin']
-    if admin is None:
-        admin = false
 
     method, path, data = Api.login(
         client.user,
@@ -116,9 +114,12 @@ async def run_module():
     claims = {
             "iss": "Matrix UIA Login Ansible Module",
             "sub": client.user,
-            "admin": admin,
             "exp": int(time.time()) + 60 * 30,
     }
+
+    if admin is not None:
+        claims["admin"] = admin
+
     token = jwt.JWT(header={"alg": "HS512"},
                     claims=claims)
 
