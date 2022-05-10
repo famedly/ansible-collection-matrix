@@ -7,9 +7,9 @@
           - git
           - build-essential
           - python3-dev
-          - python-virtualenv
-          - python-pip
-          - python-setuptools
+          - python3-virtualenv
+          - python3-pip
+          - python3-setuptools
           - sqlite3
           - libffi-dev
           - libssl-dev
