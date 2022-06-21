@@ -1,12 +1,26 @@
+include:
+  - project: 'famedly/company/devops/templates/ci-cd'
+    ref: 'ansible-v1'
+    file: '/ansible.yml'
+
 stages:
+  - test
   - build
   - publish
 
+# Debian Stable
+test-3.9:
+  variables: { PYTHON_VERSION: "3.9" }
+  extends: .ansible-test
+
+# Latest stable Python
+test-3.10:
+  variables: { PYTHON_VERSION: "3.10" }
+  extends: .ansible-test
+
 build:
-  image: docker.io/alpine
+  extends: .ansible
   stage: build
-  before_script:
-    - apk add --no-cache ansible
   script:
     - ansible-galaxy collection build
   artifacts:
@@ -14,10 +28,8 @@ build:
       - famedly-matrix-*.tar.gz
 
 publish:
-  image: docker.io/alpine
+  extends: .ansible
   stage: publish
-  before_script:
-    - apk add --no-cache ansible
   script:
     - ansible-galaxy collection publish ./famedly-matrix-*.tar.gz --api-key ${ANSIBLE_GALAXY_API_TOKEN}
   rules:
