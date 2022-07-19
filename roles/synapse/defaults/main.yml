@@ -10,7 +10,7 @@ matrix_synapse_signing_key_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_s
 matrix_synapse_version: "{{ matrix_synapse_unstable | ternary(matrix_synapse_unstable_version, matrix_synapse_stable_version) }}"
 matrix_synapse_unstable: false
 matrix_synapse_stable_version: "1.62.0"
-matrix_synapse_unstable_version: "1.62.0"
+matrix_synapse_unstable_version: "1.63.0rc1"
 matrix_synapse_log_dir: "/var/log/matrix_synapse"
 matrix_synapse_log_days_keep: 14
 matrix_synapse_pid_file: "{{ matrix_synapse_base_path }}/synapse.pid"
