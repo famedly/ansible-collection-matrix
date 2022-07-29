@@ -7,6 +7,7 @@
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
@@ -17,7 +18,7 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-author: "Jan Christian Grünhage"
+author: "Jan Christian Grünhage (@jcgruenhage)"
 module: matrix_token_login
 short_description: Use com.famedly.token based logins to obtain an access token
 description:
@@ -27,17 +28,30 @@ options:
         description:
             - URL of the homeserver, where the CS-API is reachable
         required: true
+        type: str
     user_id:
         description:
             - The user id of the user
-        required: true
-    key:
+        required: false
+        type: str
+    password:
         description:
-            - The key to sign the log in token with
-        required: true
+            - The password to log in with
+        required: false
+        type: str
+    token:
+        description:
+            - Authentication token for the API call
+        required: false
+        type: str
     admin:
         description:
             - Whether to set the user as admin during login
+        type: bool
+    key:
+        description: Login key to use
+        type: str
+        required: true
 requirements:
     -  matrix-nio (Python library)
     -  jwcrypto (Python library)
@@ -62,18 +76,38 @@ device_id:
   returned: When login was successful
   type: str
 '''
-import traceback
 import asyncio
 import json
 import base64
-from jwcrypto import jwt, jwk
 import time
+import traceback
 
-from ansible_collections.famedly.matrix.plugins.module_utils.matrix import *
+from ansible.module_utils.basic import missing_required_lib
+
+# Check if all required libs can load
+JWCRYPTO_IMP_ERR = None
+try:
+    from jwcrypto import jwt, jwk
+
+    HAS_JWCRYPTO = True
+except ImportError:
+    JWCRYPTO_IMP_ERR = traceback.format_exc()
+    HAS_JWCRYPTO = False
+
+NIO_IMP_ERR = None
+try:
+    from ansible_collections.famedly.matrix.plugins.module_utils.matrix import AnsibleNioModule
+    from nio import AsyncClient, Api
+
+    HAS_NIO = True
+except ImportError:
+    NIO_IMP_ERR = traceback.format_exc()
+    HAS_NIO = False
+
 
 async def run_module():
     module_args = dict(
-        key=dict(type='str', required=True),
+        key=dict(type='str', required=True, no_log=True),
         admin=dict(type='bool', required=False),
     )
 
@@ -83,6 +117,10 @@ async def run_module():
     )
 
     module = AnsibleNioModule(module_args, user_logout=False)
+    if not HAS_JWCRYPTO:
+        await module.fail_json(msg=missing_required_lib("jwcrypto"))
+    if not HAS_NIO:
+        await module.fail_json(msg=missing_required_lib("matrix-nio"))
 
     if module.check_mode:
         return result
@@ -112,9 +150,9 @@ async def run_module():
     }
     key = jwk.JWK(**key)
     claims = {
-            "iss": "Matrix UIA Login Ansible Module",
-            "sub": client.user,
-            "exp": int(time.time()) + 60 * 30,
+        "iss": "Matrix UIA Login Ansible Module",
+        "sub": client.user,
+        "exp": int(time.time()) + 60 * 30,
     }
 
     if admin is not None:
@@ -126,12 +164,12 @@ async def run_module():
     token.make_signed_token(key)
 
     auth = {
-      "type": "com.famedly.login.token",
-      "identifier" : {
-        "type": "m.id.user",
-        "user": client.user
-      },
-      "token": token.serialize()
+        "type": "com.famedly.login.token",
+        "identifier": {
+            "type": "m.id.user",
+            "user": client.user
+        },
+        "token": token.serialize()
     }
 
     payload = json.dumps(auth)

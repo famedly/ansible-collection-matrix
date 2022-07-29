@@ -6,6 +6,7 @@
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
@@ -26,14 +27,22 @@ options:
         description:
             - URL of the homeserver, where the CS-API is reachable
         required: true
+        type: str
     user_id:
         description:
             - The user id of the user
-        required: true
+        required: false
+        type: str
     password:
         description:
             - The password to log in with
-        required: true
+        required: false
+        type: str
+    token:
+        description:
+            - Authentication token for the API call
+        required: false
+        type: str
 requirements:
     -  matrix-nio (Python library)
 '''
@@ -56,10 +65,10 @@ device_id:
   returned: When login was successful
   type: str
 '''
-import traceback
 import asyncio
 
-from ansible_collections.famedly.matrix.plugins.module_utils.matrix import *
+from ansible_collections.famedly.matrix.plugins.module_utils.matrix import AnsibleNioModule
+
 
 async def run_module():
     result = dict(

@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # coding: utf-8
 
 # (c) 2021, Famedly GmbH
@@ -8,9 +7,19 @@ from __future__ import (absolute_import, division, print_function)
 
 __metaclass__ = type
 
-from typing import Union, Type
-import requests
+import traceback
 import urllib.parse
+from types import SimpleNamespace
+
+# Check if all required libs can load
+LIB_IMP_ERR = None
+try:
+    import requests
+    HAS_REQUESTS = True
+except ImportError:
+    REQUESTS_IMPORT_ERROR = traceback.format_exc()
+    HAS_REQUESTS = False
+    requests = SimpleNamespace(Response=None)
 
 
 class AdminApi:
@@ -31,39 +40,39 @@ class AdminApi:
     # Make API request
     def get(self, path: str) -> requests.Response:
         response = requests.get(url=urllib.parse.urljoin(self.api_url, path),
-                                headers={"Authorization": "Bearer {}".format(self.access_token)})
+                                headers={"Authorization": f"Bearer {self.access_token}"})
         if response.status_code == 200:
             return response
         if response.status_code == 500:
             raise Exceptions.MatrixException(
-                "Matrix Error\nHTTP-Code: {}\n Response: {}".format(response.status_code, response.text))
+                f"Matrix Error\nHTTP-Code: {response.status_code}\n Response: {response.text}")
         else:
             raise Exceptions.HTTPException(
-                "Unexpected return code\nHTTP-Code: {}\n Response: {}".format(response.status_code, response.text))
+                f"Unexpected return code\nHTTP-Code: {response.status_code}\n Response: {response.text}")
 
     def post(self, path: str, **kwargs) -> requests.Response:
         response = requests.post(url=urllib.parse.urljoin(self.api_url, path),
-                                headers={"Authorization": "Bearer {}".format(self.access_token)}, **kwargs)
+                                 headers={"Authorization": f"Bearer {self.access_token}"}, **kwargs)
         if response.status_code == 200:
             return response
         if response.status_code == 500:
             raise Exceptions.MatrixException(
-                "Matrix Error\nHTTP-Code: {}\n Response: {}".format(response.status_code, response.text))
+                f"Matrix Error\nHTTP-Code: {response.status_code}\n Response: {response.text}")
         else:
             raise Exceptions.HTTPException(
-                "Unexpected return code\nHTTP-Code: {}\n Response: {}".format(response.status_code, response.text))
+                f"Unexpected return code\nHTTP-Code: {response.status_code}\n Response: {response.text}")
 
     def delete(self, path: str) -> requests.Response:
         response = requests.delete(url=urllib.parse.urljoin(self.api_url, path),
-                                   headers={"Authorization": "Bearer {}".format(self.access_token)})
+                                   headers={"Authorization": f"Bearer {self.access_token}"})
         if response.status_code == 200:
             return response
         if response.status_code == 500:
             raise Exceptions.MatrixException(
-                "Matrix Error\nHTTP-Code: {}\n Response: {}".format(response.status_code, response.text))
+                f"Matrix Error\nHTTP-Code: {response.status_code}\n Response: {response.text}")
         else:
             raise Exceptions.HTTPException(
-                "Unexpected return code\nHTTP-Code: {}\n Response: {}".format(response.status_code, response.text))
+                f"Unexpected return code\nHTTP-Code: {response.status_code}\n Response: {response.text}")
 
     @staticmethod
     def url_encode(string: str) -> str:
@@ -83,8 +92,8 @@ class AdminApi:
         def set(self, user_id: str, messages_per_second: int = 0, burst_count: int = 0) -> dict:
             user_id = AdminApi.url_encode(user_id)
             return self.__parent.post(
-                   self.API_PATH.format(user_id=user_id), json={"messages_per_second": messages_per_second,
-                                                                "burst_count": burst_count}).json()
+                self.API_PATH.format(user_id=user_id), json={"messages_per_second": messages_per_second,
+                                                             "burst_count": burst_count}).json()
 
         def delete(self, user_id: str) -> dict:
             user_id = AdminApi.url_encode(user_id)

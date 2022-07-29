@@ -16,7 +16,7 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-author: "Jadyn Emma Jäger (@jadyn.dev)"
+author: "Jadyn Emma Jäger (@jadyndev)"
 module: synapse_ratelimit
 short_description: Change a users rate-limits
 description:
@@ -26,31 +26,34 @@ options:
         description:
             - URL of the homeserver, where the CS-API is reachable
         required: true
+        type: str
     access_token:
         description:
             - Shared secret to authenticate registration request
         required: true
+        type: str
     user_id:
         description:
             - The fully qualified MXID of a __local__ user
         required: true
+        type: str
     action:
         description:
             - Which (http) operation should be executed
-        required: True
+        required: false
         type: str
-        choices: 'get', 'set', 'delete'
+        choices: ['get', 'set', 'delete']
         default: 'get'
     messages_per_second:
         description:
             - Set the maximum messages per second (0 = disabled)
-        required: False
+        required: false
         type: int
         default: 0
     burst_count:
         description:
             - Set the maximum message burst (0 = disabled)
-        required: False
+        required: false
         type: int
         default: 0
 requirements: []
@@ -69,13 +72,21 @@ EXAMPLES = '''
 
 RETURN = '''
 ratelimit:
- - burst_count: 5
- - messages_per_second: 10
-if a ratelimit is set, otherwise `ratelimit` is empty
+    description: if a ratelimit is set, otherwise `ratelimit` is empty
+    type: dict
+    returned: success
+    sample:
+        burst_count: 5
+        messages_per_second: 10
 '''
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.famedly.matrix.plugins.module_utils.synapse import *
+from ansible.module_utils.basic import AnsibleModule, missing_required_lib
+import traceback
+
+try:
+    from ansible_collections.famedly.matrix.plugins.module_utils.synapse import AdminApi, Exceptions, HAS_REQUESTS
+except ImportError:
+    REQUESTS_IMPORT_ERROR = traceback.format_exc()
 
 
 def main():
@@ -97,6 +108,9 @@ def main():
         supports_check_mode=True
     )
 
+    if not HAS_REQUESTS:
+        module.fail_json(msg=missing_required_lib("requests"))
+
     if module.check_mode:
         return result
 
@@ -117,7 +131,7 @@ def main():
             result['ratelimit'] = synapse.ratelimit.delete(module.params['user_id'])
             result['changed'] = ratelimit != result['ratelimit']
             module.exit_json(**result)
-        raise NotImplementedError("action {} is not implemented".format(action))
+        raise NotImplementedError(f"action {action} is not implemented")
     except (Exceptions.HTTPException, Exceptions.MatrixException) as e:
         result['msg'] = str(e)
         module.fail_json(**result)

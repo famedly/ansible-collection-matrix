@@ -6,6 +6,7 @@
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
@@ -26,14 +27,17 @@ options:
         description:
             - URL of the homeserver, where the CS-API is reachable
         required: true
+        type: str
     user_id:
         description:
             - The user id of the user
         required: true
+        type: str
     password:
         description:
             - The password to register with
         required: true
+        type: str
     admin:
         description:
             - Whether or not the new user should be an admin
@@ -44,6 +48,7 @@ options:
         description:
             - Shared secret to authenticate registration request
         required: true
+        type: str
 requirements: []
 '''
 
@@ -57,21 +62,28 @@ EXAMPLES = '''
     shared_secret: "long secret string"
 '''
 
-RETURN = '''
-'''
-import traceback
 import asyncio
 import hmac
 import hashlib
-import requests
+import traceback
+
+# Check if all required libs can load
+LIB_IMP_ERR = None
+try:
+    import requests
+
+    HAS_REQUESTS = True
+except ImportError:
+    REQUESTS_IMPORT_ERROR = traceback.format_exc()
+    HAS_REQUESTS = False
 
 from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 
-def generate_mac(nonce, shared_secret, user, password, admin=False, user_type=None):
 
+def generate_mac(nonce, shared_secret, user, password, admin=False, user_type=None):
     mac = hmac.new(
-      key=shared_secret.encode('utf8'),
-      digestmod=hashlib.sha1,
+        key=shared_secret.encode('utf8'),
+        digestmod=hashlib.sha1,
     )
 
     mac.update(nonce.encode('utf8'))
@@ -86,6 +98,7 @@ def generate_mac(nonce, shared_secret, user, password, admin=False, user_type=No
         mac.update(user_type.encode('utf8'))
 
     return mac.hexdigest()
+
 
 async def run_module():
     module_args = dict(
@@ -105,18 +118,22 @@ async def run_module():
         supports_check_mode=True
     )
 
+    if not HAS_REQUESTS:
+        module.fail_json(msg=missing_required_lib("requests"))
+
     if module.check_mode:
         return result
 
     failed = False
 
-    url = "{}/_synapse/admin/v1/register".format(module.params["hs_url"])
+    url = f"{module.params['hs_url']}/_synapse/admin/v1/register"
     response = requests.get(url)
     if response.status_code != 200:
         result["msg"] = response.json()["error"]
         module.exit_json(**result)
     nonce = response.json()["nonce"]
-    mac = generate_mac(nonce, module.params["shared_secret"], module.params["user_id"], module.params["password"], module.params["admin"])
+    mac = generate_mac(nonce, module.params["shared_secret"], module.params["user_id"], module.params["password"],
+                       module.params["admin"])
 
     data = {
         "nonce": nonce,

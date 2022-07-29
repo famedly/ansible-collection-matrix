@@ -6,6 +6,7 @@
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
@@ -20,26 +21,37 @@ author: "Jan Christian Grünhage (@jcgruenhage)"
 module: matrix_room
 short_description: Join/Create matrix room
 description:
-    - This module takes a room alias and makes sure that the user identified by the access token is in such a room. If that room does not exist, it is created, if it does exist but the user is not in it, it tries to join. If the alias is taken and the user can't join the room, the module will fail. Remote aliases are not supported for creating, but work for joining.
+    - This module takes a room alias and makes sure that the user identified by the access token is in such a room.
+      If that room does not exist, it is created, if it does exist but the user is not in it, it tries to join.
+      If the alias is taken and the user can't join the room, the module will fail.
+      Remote aliases are not supported for creating, but work for joining.
 options:
-    alias:
-        description:
-            - Alias of the room to join/create
-        required: true
     hs_url:
         description:
             - URL of the homeserver, where the CS-API is reachable
         required: true
-    token:
-        description:
-            - Authentication token for the API call. If provided, user_id and password are not required
+        type: str
     user_id:
         description:
             - The user id of the user
+        required: false
+        type: str
     password:
         description:
             - The password to log in with
-equirements:
+        required: false
+        type: str
+    token:
+        description:
+            - Authentication token for the API call
+        required: false
+        type: str
+    alias:
+        description:
+            - Alias of the room to join/create
+        required: true
+        type: str
+requirements:
     -  matrix-nio (Python library)
 '''
 
@@ -55,12 +67,28 @@ RETURN = '''
 room_id:
   description: ID of the room
   type: str
-  sample: !asdfbuiarbk213e479asf:server.tld
+  returned: success
+  sample: "!asdfbuiarbk213e479asf:server.tld"
 '''
-import traceback
+
 import asyncio
 import re
-from ansible_collections.famedly.matrix.plugins.module_utils.matrix import *
+import traceback
+
+from ansible.module_utils.basic import missing_required_lib
+
+LIB_IMP_ERR = None
+try:
+    from ansible_collections.famedly.matrix.plugins.module_utils.matrix import AnsibleNioModule
+    from nio import RoomCreateResponse, RoomCreateError, \
+        JoinedRoomsResponse, JoinedRoomsError, \
+        JoinResponse, JoinError, \
+        RoomResolveAliasResponse, RoomResolveAliasError
+    HAS_LIB = True
+except ImportError:
+    LIB_IMP_ERR = traceback.format_exc()
+    HAS_LIB = False
+
 
 async def run_module():
     module_args = dict(
@@ -73,6 +101,9 @@ async def run_module():
     )
 
     module = AnsibleNioModule(module_args)
+    if not HAS_LIB:
+        await module.fail_json(msg=missing_required_lib("matrix-nio"))
+
     await module.matrix_login()
     client = module.client
 
@@ -87,7 +118,7 @@ async def run_module():
         rooms_resp = await client.joined_rooms()
         if isinstance(rooms_resp, JoinedRoomsError):
             failed = True
-            result = {"msg":"Couldn't get joined rooms."}
+            result = {"msg": "Couldn't get joined rooms."}
         elif room_id_resp.room_id in rooms_resp.rooms:
             result = {"room_id": room_id_resp.room_id, "changed": False}
         else:
@@ -99,7 +130,7 @@ async def run_module():
                 result = {"room_id": join_resp.room_id, "changed": True}
             else:
                 failed = True
-                result = {"msg": "Room exists, but couldn't join: {1}".format(join_resp)}
+                result = {"msg": f"Room exists, but couldn't join: {join_resp}"}
     else:
         # Get local part of alias
         local_part_regex = re.search("#([^:]*):(.*)", module.params['alias'])
@@ -113,12 +144,13 @@ async def run_module():
             result = {"room_id": create_room_resp.room_id, "changed": True}
         else:
             failed = True
-            result = {"msg": "Room does not exist but couldn't be created either: {0}".format(create_room_resp)}
+            result = {"msg": f"Room does not exist but couldn't be created either: {create_room_resp}"}
 
     if failed:
         await module.fail_json(**result)
     else:
         await module.exit_json(**result)
+
 
 def main():
     asyncio.run(run_module())
