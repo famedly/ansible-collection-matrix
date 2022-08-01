@@ -55,4 +55,3 @@
     volumes:
       - "{{ sygnal_base_path }}/sygnal.yml:{{ sygnal_base_path }}/sygnal.yml"
   when: sygnal_deployment_method == "docker"
-
