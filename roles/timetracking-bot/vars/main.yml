@@ -13,4 +13,3 @@ timetracking_bot_config:
 timetracking_bot_docker_labels_complete: "{{ timetracking_bot_docker_labels_base | combine(timetracking_bot_docker_labels) }}"
 timetracking_bot_docker_labels_base:
   version: "{{ timetracking_bot_container_image_tag | default(timetracking_bot_version, true) }}"
-
