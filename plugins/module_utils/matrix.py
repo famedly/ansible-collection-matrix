@@ -43,7 +43,7 @@ class AnsibleNioModule:
                  add_file_common_args=False,
                  supports_check_mode=True,
                  required_if=None,
-                 user_logout=True):
+                 user_logout=None):
 
         if required_by is None:
             required_by = {'password': 'user_id'}
@@ -56,9 +56,6 @@ class AnsibleNioModule:
 
         if custom_spec is None:
             custom_spec = {}
-
-        # If a user/password login is provided, should we logout when exiting?
-        self.user_logout = user_logout
 
         # Create the Ansible module
         self.module = AnsibleModule(
@@ -73,6 +70,12 @@ class AnsibleNioModule:
             required_if=required_if,
             required_by=required_by
         )
+
+        if user_logout is None:
+            # If a user/password login is provided, should we logout when exiting?
+            self.user_logout = self.module.params['token'] is not None
+        else:
+            self.user_logout = user_logout
 
         # Make some values from the module easly accessible
         self.check_mode = self.module.check_mode

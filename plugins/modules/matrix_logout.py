@@ -66,7 +66,7 @@ async def run_module():
         changed=False,
     )
 
-    module = AnsibleNioModule()
+    module = AnsibleNioModule(user_logout=True)
     await module.matrix_login()
     await module.matrix_logout()
     await module.exit_json(**result)
