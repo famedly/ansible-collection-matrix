@@ -10,12 +10,12 @@ stages:
 
 # Debian Stable
 sanity 3.9:
-  variables: { PYTHON_VERSION: "3.9" }
+  variables: { PYTHON_VERSION: "3.9", ANSIBLE_VERSION: "2.13.2" }
   extends: .ansible-test-sanity
 
 # Latest stable Python
 sanity 3.10:
-  variables: { PYTHON_VERSION: "3.10" }
+  variables: { PYTHON_VERSION: "3.10", ANSIBLE_VERSION: "2.13.2" }
   extends: .ansible-test-sanity
 
 unit:
