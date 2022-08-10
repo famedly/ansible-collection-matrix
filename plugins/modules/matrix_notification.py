@@ -5,17 +5,17 @@
 # (c) 2020-2021, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
 module: matrix_notification
@@ -61,9 +61,9 @@ options:
         type: str
 requirements:
     -  matrix-nio (Python library)
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Send matrix notification with token
   matrix_notification:
     msg_plain: "**hello world**"
@@ -80,10 +80,10 @@ EXAMPLES = '''
     hs_url: "https://matrix.org"
     user_id: "ansible_notification_bot"
     password: "{{ matrix_auth_password }}"
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 import asyncio
 import traceback
 
@@ -91,8 +91,11 @@ from ansible.module_utils.basic import missing_required_lib
 
 LIB_IMP_ERR = None
 try:
-    from ansible_collections.famedly.matrix.plugins.module_utils.matrix import AnsibleNioModule
+    from ansible_collections.famedly.matrix.plugins.module_utils.matrix import (
+        AnsibleNioModule,
+    )
     from nio import RoomSendResponse, RoomSendError
+
     HAS_LIB = True
 except ImportError:
     LIB_IMP_ERR = traceback.format_exc()
@@ -101,15 +104,12 @@ except ImportError:
 
 async def run_module():
     module_args = dict(
-        msg_plain=dict(type='str', required=True),
-        msg_html=dict(type='str', required=True),
-        room_id=dict(type='str', required=True),
+        msg_plain=dict(type="str", required=True),
+        msg_html=dict(type="str", required=True),
+        room_id=dict(type="str", required=True),
     )
 
-    result = dict(
-        changed=False,
-        message=''
-    )
+    result = dict(changed=False, message="")
 
     module = AnsibleNioModule(module_args)
     if not HAS_LIB:
@@ -123,14 +123,14 @@ async def run_module():
 
     # send message
     response = await client.room_send(
-        room_id=module.params['room_id'],
+        room_id=module.params["room_id"],
         message_type="m.room.message",
         content={
             "msgtype": "m.text",
-            "body": module.params['msg_plain'],
+            "body": module.params["msg_plain"],
             "format": "org.matrix.custom.html",
-            "formatted_body": module.params['msg_html'],
-        }
+            "formatted_body": module.params["msg_html"],
+        },
     )
     if isinstance(response, RoomSendError):
         await module.fail_json(**result)
@@ -142,5 +142,5 @@ def main():
     asyncio.run(run_module())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

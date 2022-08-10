@@ -5,17 +5,17 @@
 # (c) 2020-2021, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
 module: matrix_login
@@ -45,17 +45,17 @@ options:
         type: str
 requirements:
     -  matrix-nio (Python library)
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Log in to matrix
   matrix_login:
     hs_url: "https://matrix.org"
     user_id: "{{ matrix_auth_user }}"
     password: "{{ matrix_auth_password }}"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 token:
   description: The access token aquired by logging in
   returned: When login was successful
@@ -64,10 +64,12 @@ device_id:
   description: The device ID assigned by the server
   returned: When login was successful
   type: str
-'''
+"""
 import asyncio
 
-from ansible_collections.famedly.matrix.plugins.module_utils.matrix import AnsibleNioModule
+from ansible_collections.famedly.matrix.plugins.module_utils.matrix import (
+    AnsibleNioModule,
+)
 
 
 async def run_module():
@@ -77,8 +79,8 @@ async def run_module():
 
     module = AnsibleNioModule(user_logout=False)
     await module.matrix_login()
-    result['token'] = module.access_token
-    result['device_id'] = module.device_id
+    result["token"] = module.access_token
+    result["device_id"] = module.device_id
     await module.exit_json(**result)
 
 
@@ -86,5 +88,5 @@ def main():
     asyncio.run(run_module())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

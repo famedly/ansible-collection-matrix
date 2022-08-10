@@ -1,17 +1,17 @@
 #!/usr/bin/python
 # Copyright: (c) 2018
 # Apache 2.0
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 author: "Emmanouil Kampitakis (@madonius)"
 module: matrix_signing_key
@@ -26,16 +26,16 @@ options:
         type: str
 requirements:
     -  signedjson (Python library)
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Create signing key file
   matrix_signing_key:
     changed: "/path/to/file"
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 import os
 import traceback
@@ -46,6 +46,7 @@ from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 LIB_IMP_ERR = None
 try:
     from signedjson import key
+
     HAS_LIB = True
 except ImportError:
     LIB_IMP_ERR = traceback.format_exc()
@@ -53,38 +54,28 @@ except ImportError:
 
 
 def write_signing_key(path):
-    with open(path, 'w') as file:
-        key.write_signing_keys(
-            file,
-            [key.generate_signing_key('first')]
-        )
+    with open(path, "w") as file:
+        key.write_signing_keys(file, [key.generate_signing_key("first")])
 
 
 def run_module():
     module_args = dict(
-        path=dict(type='str', required=True),
+        path=dict(type="str", required=True),
     )
 
-    result = dict(
-        changed=False,
-        original_message='',
-        message=''
-    )
+    result = dict(changed=False, original_message="", message="")
 
-    module = AnsibleModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
+    module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
 
     if not HAS_LIB:
         module.fail_json(msg=missing_required_lib("signedjson"))
 
-    signing_key_path = module.params['path']
+    signing_key_path = module.params["path"]
 
     signing_key_exists = os.path.isfile(signing_key_path)
 
     if not signing_key_exists:
-        result['changed'] = True
+        result["changed"] = True
         if module.check_mode:
             module.exit_json(**result)
         try:
@@ -99,5 +90,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

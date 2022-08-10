@@ -3,7 +3,7 @@
 # (c) 2021-2022, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -14,17 +14,30 @@ from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 # Check if all required libs can load
 LIB_IMP_ERR = None
 try:
-    from nio import AsyncClient, AsyncClientConfig, \
-        Api, \
-        LoginResponse, LoginError, \
-        LogoutResponse, LogoutError, \
-        RoomGetStateResponse, RoomGetStateError, \
-        RoomBanResponse, RoomBanError, \
-        RoomUnbanResponse, RoomUnbanError, \
-        RoomKickResponse, RoomKickError, \
-        RoomInviteResponse, RoomInviteError, \
-        RoomResolveAliasResponse, RoomResolveAliasError, \
-        JoinedRoomsResponse, JoinedRoomsError
+    from nio import (
+        AsyncClient,
+        AsyncClientConfig,
+        Api,
+        LoginResponse,
+        LoginError,
+        LogoutResponse,
+        LogoutError,
+        RoomGetStateResponse,
+        RoomGetStateError,
+        RoomBanResponse,
+        RoomBanError,
+        RoomUnbanResponse,
+        RoomUnbanError,
+        RoomKickResponse,
+        RoomKickError,
+        RoomInviteResponse,
+        RoomInviteError,
+        RoomResolveAliasResponse,
+        RoomResolveAliasError,
+        JoinedRoomsResponse,
+        JoinedRoomsError,
+    )
+
     HAS_LIB = True
 except ImportError:
     LIB_IMP_ERR = traceback.format_exc()
@@ -85,7 +98,7 @@ class AnsibleNioModule:
             add_file_common_args=add_file_common_args,
             supports_check_mode=supports_check_mode,
             required_if=required_if,
-            required_by=required_by
+            required_by=required_by,
         )
 
         if user_logout is None:
@@ -129,17 +142,17 @@ class AnsibleNioModule:
         if self.client.logged_in:
             request = await self.client.logout()
             if isinstance(request, LogoutError):
-                result = {'msg': request.message}
+                result = {"msg": request.message}
                 self.module.fail_json(**result)
 
     async def exit_json(self, **result):
-        if self.module.params.get('token') is None and self.user_logout is True:
+        if self.module.params.get("token") is None and self.user_logout is True:
             await self.matrix_logout()
         await self.client.close()
         self.module.exit_json(**result)
 
     async def fail_json(self, **result):
-        if self.module.params.get('token') is None and self.user_logout is True:
+        if self.module.params.get("token") is None and self.user_logout is True:
             await self.matrix_logout()
         await self.client.close()
         self.module.fail_json(**result)
@@ -147,9 +160,9 @@ class AnsibleNioModule:
     @staticmethod
     def __common_argument_spec(custom_spec: dict):
         argument_spec = dict(
-            hs_url=dict(type='str', required=True),
-            user_id=dict(type='str', required=False),
-            password=dict(type='str', required=False, no_log=True),
-            token=dict(type='str', required=False, no_log=True)
+            hs_url=dict(type="str", required=True),
+            user_id=dict(type="str", required=False),
+            password=dict(type="str", required=False, no_log=True),
+            token=dict(type="str", required=False, no_log=True),
         )
         return {**argument_spec, **custom_spec}

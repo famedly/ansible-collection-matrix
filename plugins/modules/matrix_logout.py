@@ -5,17 +5,17 @@
 # (c) 2020-2021, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
 module: matrix_logout
@@ -45,20 +45,22 @@ options:
         type: str
 requirements:
     -  matrix-nio (Python library)
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Invalidate access token
   matrix_logout:
     hs_url: "https://matrix.org"
     token: "{{ matrix_auth_token }}"
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 import asyncio
 
-from ansible_collections.famedly.matrix.plugins.module_utils.matrix import AnsibleNioModule
+from ansible_collections.famedly.matrix.plugins.module_utils.matrix import (
+    AnsibleNioModule,
+)
 
 
 async def run_module():
@@ -76,5 +78,5 @@ def main():
     asyncio.run(run_module())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

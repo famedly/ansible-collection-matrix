@@ -5,17 +5,17 @@
 # (c) 2020-2021, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
 module: matrix_room
@@ -53,23 +53,23 @@ options:
         type: str
 requirements:
     -  matrix-nio (Python library)
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Create notification room
   matrix_room:
     alias: "#ansible-notifications:matrix.org"
     hs_url: "https://matrix.org"
     token: "{{ matrix_auth_token }}"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 room_id:
   description: ID of the room
   type: str
   returned: success
   sample: "!asdfbuiarbk213e479asf:server.tld"
-'''
+"""
 
 import asyncio
 import re
@@ -79,11 +79,20 @@ from ansible.module_utils.basic import missing_required_lib
 
 LIB_IMP_ERR = None
 try:
-    from ansible_collections.famedly.matrix.plugins.module_utils.matrix import AnsibleNioModule
-    from nio import RoomCreateResponse, RoomCreateError, \
-        JoinedRoomsResponse, JoinedRoomsError, \
-        JoinResponse, JoinError, \
-        RoomResolveAliasResponse, RoomResolveAliasError
+    from ansible_collections.famedly.matrix.plugins.module_utils.matrix import (
+        AnsibleNioModule,
+    )
+    from nio import (
+        RoomCreateResponse,
+        RoomCreateError,
+        JoinedRoomsResponse,
+        JoinedRoomsError,
+        JoinResponse,
+        JoinError,
+        RoomResolveAliasResponse,
+        RoomResolveAliasError,
+    )
+
     HAS_LIB = True
 except ImportError:
     LIB_IMP_ERR = traceback.format_exc()
@@ -91,14 +100,9 @@ except ImportError:
 
 
 async def run_module():
-    module_args = dict(
-        alias=dict(type='str', required=True)
-    )
+    module_args = dict(alias=dict(type="str", required=True))
 
-    result = dict(
-        changed=False,
-        message=''
-    )
+    result = dict(changed=False, message="")
 
     module = AnsibleNioModule(module_args)
     if not HAS_LIB:
@@ -108,7 +112,7 @@ async def run_module():
     client = module.client
 
     # Try to look up room_id
-    room_id_resp = await client.room_resolve_alias(module.params['alias'])
+    room_id_resp = await client.room_resolve_alias(module.params["alias"])
 
     failed = False
     result = {}
@@ -123,7 +127,7 @@ async def run_module():
             result = {"room_id": room_id_resp.room_id, "changed": False}
         else:
             # Try to join room
-            join_resp = await client.join(module.params['alias'])
+            join_resp = await client.join(module.params["alias"])
 
             # If successful, return, changed=true
             if isinstance(join_resp, JoinResponse):
@@ -133,7 +137,7 @@ async def run_module():
                 result = {"msg": f"Room exists, but couldn't join: {join_resp}"}
     else:
         # Get local part of alias
-        local_part_regex = re.search("#([^:]*):(.*)", module.params['alias'])
+        local_part_regex = re.search("#([^:]*):(.*)", module.params["alias"])
         local_part = local_part_regex.groups()[0]
 
         # Try to create room with alias
@@ -144,7 +148,9 @@ async def run_module():
             result = {"room_id": create_room_resp.room_id, "changed": True}
         else:
             failed = True
-            result = {"msg": f"Room does not exist but couldn't be created either: {create_room_resp}"}
+            result = {
+                "msg": f"Room does not exist but couldn't be created either: {create_room_resp}"
+            }
 
     if failed:
         await module.fail_json(**result)
@@ -156,5 +162,5 @@ def main():
     asyncio.run(run_module())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

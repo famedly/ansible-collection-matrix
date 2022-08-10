@@ -26,6 +26,12 @@ integration:
   variables: { PYTHON_VERSION: "3.10" }
   extends: .ansible-test-integration
 
+black:
+  stage: test
+  image: registry.gitlab.com/pipeline-components/black:latest
+  script:
+    - black --check --verbose -- plugins
+
 build:
   image: docker.io/alpine
   stage: build

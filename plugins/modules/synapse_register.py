@@ -5,17 +5,17 @@
 # (c) 2020, Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
 module: synapse_register
@@ -50,9 +50,9 @@ options:
         required: true
         type: str
 requirements: []
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Log in to matrix
   synapse_register:
     hs_url: "https://matrix.org"
@@ -60,7 +60,7 @@ EXAMPLES = '''
     password: "{{ matrix_auth_password }}"
     admin: true
     shared_secret: "long secret string"
-'''
+"""
 
 import asyncio
 import hmac
@@ -82,41 +82,38 @@ from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 
 def generate_mac(nonce, shared_secret, user, password, admin=False, user_type=None):
     mac = hmac.new(
-        key=shared_secret.encode('utf8'),
+        key=shared_secret.encode("utf8"),
         digestmod=hashlib.sha1,
     )
 
-    mac.update(nonce.encode('utf8'))
+    mac.update(nonce.encode("utf8"))
     mac.update(b"\x00")
-    mac.update(user.encode('utf8'))
+    mac.update(user.encode("utf8"))
     mac.update(b"\x00")
-    mac.update(password.encode('utf8'))
+    mac.update(password.encode("utf8"))
     mac.update(b"\x00")
     mac.update(b"admin" if admin else b"notadmin")
     if user_type:
         mac.update(b"\x00")
-        mac.update(user_type.encode('utf8'))
+        mac.update(user_type.encode("utf8"))
 
     return mac.hexdigest()
 
 
 async def run_module():
     module_args = dict(
-        hs_url=dict(type='str', required=True),
-        user_id=dict(type='str', required=True),
-        password=dict(type='str', required=True, no_log=True),
-        admin=dict(type='bool', required=False, default=False),
-        shared_secret=dict(type='str', required=True, no_log=True),
+        hs_url=dict(type="str", required=True),
+        user_id=dict(type="str", required=True),
+        password=dict(type="str", required=True, no_log=True),
+        admin=dict(type="bool", required=False, default=False),
+        shared_secret=dict(type="str", required=True, no_log=True),
     )
 
     result = dict(
         changed=False,
     )
 
-    module = AnsibleModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
+    module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
 
     if not HAS_REQUESTS:
         module.fail_json(msg=missing_required_lib("requests"))
@@ -132,8 +129,13 @@ async def run_module():
         result["msg"] = response.json()["error"]
         module.exit_json(**result)
     nonce = response.json()["nonce"]
-    mac = generate_mac(nonce, module.params["shared_secret"], module.params["user_id"], module.params["password"],
-                       module.params["admin"])
+    mac = generate_mac(
+        nonce,
+        module.params["shared_secret"],
+        module.params["user_id"],
+        module.params["password"],
+        module.params["admin"],
+    )
 
     data = {
         "nonce": nonce,
@@ -159,5 +161,5 @@ def main():
     asyncio.run(run_module())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

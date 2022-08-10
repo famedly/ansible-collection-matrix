@@ -6,17 +6,17 @@
 # (c) 2022 Famedly GmbH
 # GNU Affero General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/agpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 author: "Jan Christian Grünhage (@jcgruenhage)"
 module: matrix_token_login
@@ -45,18 +45,18 @@ options:
 requirements:
     -  matrix-nio (Python library)
     -  jwcrypto (Python library)
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Log in to matrix
   matrix_token_login:
     hs_url: "https://example.famedly.care"
     user_id: "{{ matrix_user }}"
     admin: false
     key: "{{ matrix_token_login_key }}"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 token:
   description: The access token aquired by logging in
   returned: When login was successful
@@ -65,7 +65,7 @@ device_id:
   description: The device ID assigned by the server
   returned: When login was successful
   type: str
-'''
+"""
 import asyncio
 import json
 import base64
@@ -86,7 +86,9 @@ except ImportError:
 
 NIO_IMP_ERR = None
 try:
-    from ansible_collections.famedly.matrix.plugins.module_utils.matrix import AnsibleNioModule
+    from ansible_collections.famedly.matrix.plugins.module_utils.matrix import (
+        AnsibleNioModule,
+    )
     from nio import AsyncClient, Api
 
     HAS_NIO = True
@@ -127,15 +129,15 @@ async def run_module():
     failed = False
 
     # Create client object
-    client = AsyncClient(module.params['hs_url'], module.params['user_id'])
+    client = AsyncClient(module.params["hs_url"], module.params["user_id"])
     module.client = client
 
     # Collect and check login information
-    key = module.params['key']
+    key = module.params["key"]
     if key is None:
         await module.fail_json(msg="A key has to be provided")
 
-    admin = module.params['admin']
+    admin = module.params["admin"]
 
     method, path, data = Api.login(
         client.user,
@@ -145,7 +147,7 @@ async def run_module():
     key = {
         # See rfc7518#section-6.4.1: k should contain the base64url encoded binary key.
         "k": base64.urlsafe_b64encode(key.encode("utf-8")).decode("utf-8"),
-        "kty": "oct"
+        "kty": "oct",
     }
     key = jwk.JWK(**key)
     claims = {
@@ -157,25 +159,21 @@ async def run_module():
     if admin is not None:
         claims["admin"] = admin
 
-    token = jwt.JWT(header={"alg": "HS512"},
-                    claims=claims)
+    token = jwt.JWT(header={"alg": "HS512"}, claims=claims)
 
     token.make_signed_token(key)
 
     auth = {
         "type": "com.famedly.login.token",
-        "identifier": {
-            "type": "m.id.user",
-            "user": client.user
-        },
-        "token": token.serialize()
+        "identifier": {"type": "m.id.user", "user": client.user},
+        "token": token.serialize(),
     }
 
     payload = json.dumps(auth)
 
     headers = {
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Length": str(len(payload))
+        "Content-Length": str(len(payload)),
     }
 
     raw_response = await client.send(method, path, payload, headers)
@@ -183,7 +181,7 @@ async def run_module():
 
     if raw_response.status != 200:
         failed = True
-        result['msg'] = await raw_response.text()
+        result["msg"] = await raw_response.text()
     else:
         result["token"] = res["access_token"]
         result["device_id"] = res["device_id"]
@@ -198,5 +196,5 @@ def main():
     asyncio.run(run_module())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
