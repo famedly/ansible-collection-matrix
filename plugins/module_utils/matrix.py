@@ -90,7 +90,7 @@ class AnsibleNioModule:
 
         if user_logout is None:
             # If a user/password login is provided, should we logout when exiting?
-            self.user_logout = self.module.params.get('token') is not None
+            self.user_logout = self.module.params.get("token") is None
         else:
             self.user_logout = user_logout
 
@@ -105,21 +105,25 @@ class AnsibleNioModule:
 
     async def matrix_login(self):
         # Login with token or supplied user account
-        if self.module.params.get('token') is None:
-            self.client = AsyncClient(self.module.params.get('hs_url'), self.module.params.get('user_id'))
-            login_response = await self.client.login(password=self.module.params.get('password'))
+        if self.module.params.get("token") is None:
+            self.client = AsyncClient(
+                self.module.params.get("hs_url"), self.module.params.get("user_id")
+            )
+            login_response = await self.client.login(
+                password=self.module.params.get("password")
+            )
+            if isinstance(login_response, LoginResponse):
+                self.access_token = login_response.access_token
+                self.device_id = login_response.device_id
+            else:
+                result = {
+                    "msg": login_response.message,
+                    "http_status_code": login_response.status_code,
+                }
+                self.module.fail_json(**result)
         else:
-            self.client = AsyncClient(self.module.params.get('hs_url'))
-            login_response = await self.client.login(token=self.module.params.get('token'))
-        if isinstance(login_response, LoginResponse):
-            self.access_token = login_response.access_token
-            self.device_id = login_response.device_id
-        else:
-            result = {
-                'msg': login_response.message,
-                'http_status_code': login_response.status_code
-            }
-            self.module.fail_json(**result)
+            self.client = AsyncClient(self.module.params.get("hs_url"))
+            self.client.access_token = self.module.params.get("token")
 
     async def matrix_logout(self):
         if self.client.logged_in:
