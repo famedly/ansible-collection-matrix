@@ -32,26 +32,16 @@ options:
     user_id:
         description:
             - The user id of the user
-        required: false
+        required: true
         type: str
-    password:
-        description:
-            - The password to log in with
-        required: false
-        type: str
-    token:
-        description:
-            - Authentication token for the API call
-        required: false
-        type: str
-    admin:
-        description:
-            - Whether to set the user as admin during login
-        type: bool
     key:
         description: Login key to use
         type: str
         required: true
+    admin:
+        description:
+            - Whether to set the user as admin during login
+        type: bool
 requirements:
     -  matrix-nio (Python library)
     -  jwcrypto (Python library)
@@ -107,8 +97,10 @@ except ImportError:
 
 async def run_module():
     module_args = dict(
-        key=dict(type='str', required=True, no_log=True),
-        admin=dict(type='bool', required=False),
+        hs_url=dict(type="str", required=True),
+        user_id=dict(type="str", required=True),
+        key=dict(type="str", required=True, no_log=True),
+        admin=dict(type="bool", required=False),
     )
 
     result = dict(
@@ -116,7 +108,14 @@ async def run_module():
         msg="",
     )
 
-    module = AnsibleNioModule(module_args, user_logout=False)
+    args = {
+        "add_default_arguments": False,
+        "required_by": {},
+        "required_one_of": [],
+        "mutually_exclusive": [],
+    }
+
+    module = AnsibleNioModule(module_args, user_logout=False, **args)
     if not HAS_JWCRYPTO:
         await module.fail_json(msg=missing_required_lib("jwcrypto"))
     if not HAS_NIO:

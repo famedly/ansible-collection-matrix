@@ -32,34 +32,51 @@ except ImportError:
 
 
 class AnsibleNioModule:
-    def __init__(self,
-                 custom_spec=None,
-                 bypass_checks=False,
-                 no_log=False,
-                 mutually_exclusive=None,
-                 required_together=None,
-                 required_one_of=None,
-                 required_by=None,
-                 add_file_common_args=False,
-                 supports_check_mode=True,
-                 required_if=None,
-                 user_logout=None):
+    def __init__(
+        self,
+        custom_spec=None,
+        bypass_checks=False,
+        no_log=False,
+        mutually_exclusive=None,
+        required_together=None,
+        required_one_of=None,
+        required_by=None,
+        add_file_common_args=False,
+        supports_check_mode=True,
+        required_if=None,
+        user_logout=None,
+        add_default_arguments=True,
+    ):
+        if add_default_arguments:
+            if required_by is None:
+                required_by = {"password": "user_id"}
 
-        if required_by is None:
-            required_by = {'password': 'user_id'}
+            if required_one_of is None:
+                required_one_of = [["password", "token"]]
 
-        if required_one_of is None:
-            required_one_of = [['password', 'token']]
+            if mutually_exclusive is None:
+                mutually_exclusive = [["password", "token"]]
 
-        if mutually_exclusive is None:
-            mutually_exclusive = [['password', 'token']]
+            if custom_spec is None:
+                custom_spec = {}
 
-        if custom_spec is None:
-            custom_spec = {}
+            custom_spec = AnsibleNioModule.__common_argument_spec(custom_spec)
+        else:
+            if required_by is None:
+                required_by = {}
+
+            if required_one_of is None:
+                required_one_of = []
+
+            if mutually_exclusive is None:
+                mutually_exclusive = []
+
+            if custom_spec is None:
+                custom_spec = {}
 
         # Create the Ansible module
         self.module = AnsibleModule(
-            argument_spec=AnsibleNioModule.__common_argument_spec(custom_spec),
+            argument_spec=custom_spec,
             bypass_checks=bypass_checks,
             no_log=no_log,
             mutually_exclusive=mutually_exclusive,
@@ -73,7 +90,7 @@ class AnsibleNioModule:
 
         if user_logout is None:
             # If a user/password login is provided, should we logout when exiting?
-            self.user_logout = self.module.params['token'] is not None
+            self.user_logout = self.module.params.get('token') is not None
         else:
             self.user_logout = user_logout
 
@@ -88,12 +105,12 @@ class AnsibleNioModule:
 
     async def matrix_login(self):
         # Login with token or supplied user account
-        if self.module.params['token'] is None:
-            self.client = AsyncClient(self.module.params['hs_url'], self.module.params['user_id'])
-            login_response = await self.client.login(password=self.module.params['password'])
+        if self.module.params.get('token') is None:
+            self.client = AsyncClient(self.module.params.get('hs_url'), self.module.params.get('user_id'))
+            login_response = await self.client.login(password=self.module.params.get('password'))
         else:
-            self.client = AsyncClient(self.module.params['hs_url'])
-            login_response = await self.client.login(token=self.module.params['token'])
+            self.client = AsyncClient(self.module.params.get('hs_url'))
+            login_response = await self.client.login(token=self.module.params.get('token'))
         if isinstance(login_response, LoginResponse):
             self.access_token = login_response.access_token
             self.device_id = login_response.device_id
@@ -112,13 +129,13 @@ class AnsibleNioModule:
                 self.module.fail_json(**result)
 
     async def exit_json(self, **result):
-        if self.module.params['token'] is None and self.user_logout is True:
+        if self.module.params.get('token') is None and self.user_logout is True:
             await self.matrix_logout()
         await self.client.close()
         self.module.exit_json(**result)
 
     async def fail_json(self, **result):
-        if self.module.params['token'] is None and self.user_logout is True:
+        if self.module.params.get('token') is None and self.user_logout is True:
             await self.matrix_logout()
         await self.client.close()
         self.module.fail_json(**result)
