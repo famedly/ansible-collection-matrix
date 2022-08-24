@@ -8,6 +8,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import traceback
+from typing import Union
 
 from ansible.module_utils.basic import AnsibleModule, missing_required_lib
 
@@ -125,10 +126,7 @@ class AnsibleNioModule:
             login_response = await self.client.login(
                 password=self.module.params.get("password")
             )
-            if isinstance(login_response, LoginResponse):
-                self.access_token = login_response.access_token
-                self.device_id = login_response.device_id
-            else:
+            if not isinstance(login_response, LoginResponse):
                 result = {
                     "msg": login_response.message,
                     "http_status_code": login_response.status_code,
@@ -137,6 +135,14 @@ class AnsibleNioModule:
         else:
             self.client = AsyncClient(self.module.params.get("hs_url"))
             self.client.access_token = self.module.params.get("token")
+
+    @property
+    def access_token(self) -> str:
+        return self.client.access_token
+
+    @property
+    def device_id(self) -> Union[str, None]:
+        return self.client.device_id
 
     async def matrix_logout(self):
         if self.client.logged_in:
