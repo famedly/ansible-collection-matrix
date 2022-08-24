@@ -3,7 +3,7 @@ from typing import List
 
 
 class ClientSimulator:
-    INITIAL_DATA = {'rooms': []}
+    INITIAL_DATA = {"rooms": []}
 
     def __init__(self, data: str = json.dumps(INITIAL_DATA)):
         try:
@@ -15,7 +15,7 @@ class ClientSimulator:
         return json.dumps(self.data)
 
     def join(self, room_id: str):
-        self.data['rooms'].append(room_id)
+        self.data["rooms"].append(room_id)
 
     def get_joined_rooms(self) -> List[str]:
-        return self.data['rooms']
+        return self.data["rooms"]

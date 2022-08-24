@@ -18,25 +18,25 @@ class AnsibleFailJson(Exception):
 
 
 def set_module_args(args):
-    if '_ansible_remote_tmp' not in args:
-        args['_ansible_remote_tmp'] = '/tmp'
-    if '_ansible_keep_remote_files' not in args:
-        args['_ansible_keep_remote_files'] = False
+    if "_ansible_remote_tmp" not in args:
+        args["_ansible_remote_tmp"] = "/tmp"
+    if "_ansible_keep_remote_files" not in args:
+        args["_ansible_keep_remote_files"] = False
 
-    args = json.dumps({'ANSIBLE_MODULE_ARGS': args})
+    args = json.dumps({"ANSIBLE_MODULE_ARGS": args})
     basic._ANSIBLE_ARGS = to_bytes(args)
 
 
 def exit_json(*args, **kwargs):
     """function to patch over exit_json; package return data into an exception"""
-    if 'changed' not in kwargs:
-        kwargs['changed'] = False
+    if "changed" not in kwargs:
+        kwargs["changed"] = False
     raise AnsibleExitJson(kwargs)
 
 
 def fail_json(*args, **kwargs):
     """function to patch over fail_json; package return data into an exception"""
-    kwargs['failed'] = True
+    kwargs["failed"] = True
     raise AnsibleFailJson(kwargs)
 
 

@@ -5,7 +5,6 @@ import requests
 
 
 class RequestsBase(metaclass=abc.ABCMeta):
-
     @staticmethod
     @abc.abstractmethod
     def get(url, params=None, **kwargs):
@@ -18,14 +17,14 @@ class RequestsBase(metaclass=abc.ABCMeta):
         :return: :class:`Response <Response>` object
         :rtype: requests.Response
         """
-        data: dict = json_parser.loads(os.environ.get('REQUESTS_GET_RESPONSE', '{}'))
+        data: dict = json_parser.loads(os.environ.get("REQUESTS_GET_RESPONSE", "{}"))
         response_data: dict = data.get(url, {})
 
         response = requests.Response()
         response.url = url
-        response.status_code = response_data.get('status', 200)
-        response.encoding = response_data.get('encoding', 'UTF-8')
-        response._content = bytes(response_data.get('content', ''), response.encoding)
+        response.status_code = response_data.get("status", 200)
+        response.encoding = response_data.get("encoding", "UTF-8")
+        response._content = bytes(response_data.get("content", ""), response.encoding)
         print(url)
         return response
 
@@ -39,14 +38,16 @@ class RequestsBase(metaclass=abc.ABCMeta):
         :return: :class:`Response <Response>` object
         :rtype: requests.Response
         """
-        data: dict = json_parser.loads(os.environ.get('REQUESTS_OPTIONS_RESPONSE', '{}'))
+        data: dict = json_parser.loads(
+            os.environ.get("REQUESTS_OPTIONS_RESPONSE", "{}")
+        )
         response_data: dict = data.get(url, {})
 
         response = requests.Response()
         response.url = url
-        response.status_code = response_data.get('status', 200)
-        response.encoding = response_data.get('encoding', 'UTF-8')
-        response._content = bytes(response_data.get('content', ''), response.encoding)
+        response.status_code = response_data.get("status", 200)
+        response.encoding = response_data.get("encoding", "UTF-8")
+        response._content = bytes(response_data.get("content", ""), response.encoding)
         print(url)
         return response
 
@@ -62,14 +63,14 @@ class RequestsBase(metaclass=abc.ABCMeta):
         :return: :class:`Response <Response>` object
         :rtype: requests.Response
         """
-        data: dict = json_parser.loads(os.environ.get('REQUESTS_HEAD_RESPONSE', '{}'))
+        data: dict = json_parser.loads(os.environ.get("REQUESTS_HEAD_RESPONSE", "{}"))
         response_data: dict = data.get(url, {})
 
         response = requests.Response()
         response.url = url
-        response.status_code = response_data.get('status', 200)
-        response.encoding = response_data.get('encoding', 'UTF-8')
-        response._content = bytes(response_data.get('content', ''), response.encoding)
+        response.status_code = response_data.get("status", 200)
+        response.encoding = response_data.get("encoding", "UTF-8")
+        response._content = bytes(response_data.get("content", ""), response.encoding)
         print(url)
         return response
 
@@ -86,14 +87,14 @@ class RequestsBase(metaclass=abc.ABCMeta):
         :return: :class:`Response <Response>` object
         :rtype: requests.Response
         """
-        data: dict = json_parser.loads(os.environ.get('REQUESTS_POST_RESPONSE', '{}'))
+        data: dict = json_parser.loads(os.environ.get("REQUESTS_POST_RESPONSE", "{}"))
         response_data: dict = data.get(url, {})
 
         response = requests.Response()
         response.url = url
-        response.status_code = response_data.get('status', 200)
-        response.encoding = response_data.get('encoding', 'UTF-8')
-        response._content = bytes(response_data.get('content', ''), response.encoding)
+        response.status_code = response_data.get("status", 200)
+        response.encoding = response_data.get("encoding", "UTF-8")
+        response._content = bytes(response_data.get("content", ""), response.encoding)
         print(url)
         return response
 
@@ -110,14 +111,14 @@ class RequestsBase(metaclass=abc.ABCMeta):
         :return: :class:`Response <Response>` object
         :rtype: requests.Response
         """
-        data: dict = json_parser.loads(os.environ.get('REQUESTS_PUT_RESPONSE', '{}'))
+        data: dict = json_parser.loads(os.environ.get("REQUESTS_PUT_RESPONSE", "{}"))
         response_data: dict = data.get(url, {})
 
         response = requests.Response()
         response.url = url
-        response.status_code = response_data.get('status', 200)
-        response.encoding = response_data.get('encoding', 'UTF-8')
-        response._content = bytes(response_data.get('content', ''), response.encoding)
+        response.status_code = response_data.get("status", 200)
+        response.encoding = response_data.get("encoding", "UTF-8")
+        response._content = bytes(response_data.get("content", ""), response.encoding)
         print(url)
         return response
 
@@ -134,14 +135,14 @@ class RequestsBase(metaclass=abc.ABCMeta):
         :return: :class:`Response <Response>` object
         :rtype: requests.Response
         """
-        data: dict = json_parser.loads(os.environ.get('REQUESTS_PATCH_RESPONSE', '{}'))
+        data: dict = json_parser.loads(os.environ.get("REQUESTS_PATCH_RESPONSE", "{}"))
         response_data: dict = data.get(url, {})
 
         response = requests.Response()
         response.url = url
-        response.status_code = response_data.get('status', 200)
-        response.encoding = response_data.get('encoding', 'UTF-8')
-        response._content = bytes(response_data.get('content', ''), response.encoding)
+        response.status_code = response_data.get("status", 200)
+        response.encoding = response_data.get("encoding", "UTF-8")
+        response._content = bytes(response_data.get("content", ""), response.encoding)
         print(url)
         return response
 
@@ -155,13 +156,13 @@ class RequestsBase(metaclass=abc.ABCMeta):
         :return: :class:`Response <Response>` object
         :rtype: requests.Response
         """
-        data: dict = json_parser.loads(os.environ.get('REQUESTS_DELETE_RESPONSE', '{}'))
+        data: dict = json_parser.loads(os.environ.get("REQUESTS_DELETE_RESPONSE", "{}"))
         response_data: dict = data.get(url, {})
 
         response = requests.Response()
         response.url = url
-        response.status_code = response_data.get('status', 200)
-        response.encoding = response_data.get('encoding', 'UTF-8')
-        response._content = bytes(response_data.get('content', ''), response.encoding)
+        response.status_code = response_data.get("status", 200)
+        response.encoding = response_data.get("encoding", "UTF-8")
+        response._content = bytes(response_data.get("content", ""), response.encoding)
         print(url)
         return response
