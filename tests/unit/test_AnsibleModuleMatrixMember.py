@@ -32,11 +32,11 @@ class TestAnsibleModuleMatrixMember:
         simulator = RoomSimulator()
         simulator.add_room('!myroomid:matrix.example.tld')
         simulator.m_room_create('!myroomid:matrix.example.tld', '@admin:example.tld')
-        simulator.m_room_member(room_id='!myroomid:matrix.example.tld', membership="join", sender='myuser',
+        simulator.m_room_member(room_id='!myroomid:matrix.example.tld', membership="join", sender='@myuser:matrix.example.tld',
                                 state_key='@user1:matrix.example.tld')
-        simulator.m_room_member(room_id='!myroomid:matrix.example.tld', membership="join", sender='myuser',
+        simulator.m_room_member(room_id='!myroomid:matrix.example.tld', membership="join", sender='@myuser:matrix.example.tld',
                                 state_key='@user2:matrix.example.tld')
-        simulator.m_room_member(room_id='!myroomid:matrix.example.tld', membership="ban", sender='myuser',
+        simulator.m_room_member(room_id='!myroomid:matrix.example.tld', membership="ban", sender='@myuser:matrix.example.tld',
                                 state_key='@user0:matrix.example.tld')
         monkeypatch.setenv('ROOM_SIMULATOR', simulator.export())
 
