@@ -1,5 +1,5 @@
 ---
-- name: "Deploy Hedwig - A dead simple Matrix Push Gateway"
+- name: Deploy Hedwig - A dead simple Matrix Push Gateway
   hosts: "{{ hedwig_hosts | default('hedwig') }}"
   become: true
   roles:
