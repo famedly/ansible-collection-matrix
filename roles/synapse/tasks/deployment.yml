@@ -83,6 +83,7 @@
     volumes: "{{ matrix_synapse_docker_volumes }}"
     restart_policy: unless-stopped
     state: started
+    ulimits: "{{ matrix_synapse_container_ulimits }}"
   register: matrix_synapse_container_started
   when: matrix_synapse_deployment_method == "docker"
   tags: ['deploy', 'deploy-synapse']
