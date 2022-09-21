@@ -15,8 +15,6 @@ hedwig_container_labels: {}
 hedwig_container_restart_policy: "unless-stopped"
 hedwig_container_extra_volumes: []
 
-hedwig_container_workdir: "{{ hedwig_base_path }}"
-
 hedwig_extra_config: {}
 #hedwig_fcm_admin_key: "my_secret_key_here"
 hedwig_server_port: 7022

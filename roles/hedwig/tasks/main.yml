@@ -32,6 +32,7 @@
     ports: "{{ hedwig_container_ports }}"
     labels: "{{ hedwig_container_labels_complete }}"
     volumes: "{{ hedwig_container_volumes }}"
+    working_dir: "{{ hedwig_base_path }}"
     restart_policy: "{{ hedwig_container_restart_policy }}"
     pull: true
     healthcheck:

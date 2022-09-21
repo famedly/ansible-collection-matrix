@@ -1,8 +1,7 @@
 ---
 
-hedwig_container_config_file: "{{ hedwig_container_workdir }}/{{ hedwig_config_filename }}"
 hedwig_container_base_volumes:
-  - "{{ hedwig_config_file }}:{{ hedwig_container_config_file }}:ro"
+  - "{{ hedwig_base_path }}:{{ hedwig_base_path }}:ro"
 
 hedwig_container_volumes: "{{ hedwig_container_base_volumes + hedwig_container_extra_volumes }}"
 
