@@ -23,6 +23,20 @@
     mode: 0770
   notify: restart-hedwig
 
+- name: Write FCM service account file
+  copy:
+    content: >
+      {% if hedwig_fcm_service_account_credentials is mapping %}
+      {{ hedwig_fcm_service_account_credentials | to_json }}
+      {% else %}
+      {{ hedwig_fcm_service_account_credentials }}
+      {% endif %}
+    dest: "{{ hedwig_fcm_service_account_file }}"
+    owner: "{{ hedwig_user_res.uid }}"
+    group: "{{ hedwig_user_res.group }}"
+    mode: 0770
+  notify: restart-hedwig
+
 - name: Start hedwig container
   docker_container:
     name: "{{ hedwig_container_name }}"
@@ -35,6 +49,7 @@
     working_dir: "{{ hedwig_base_path }}"
     restart_policy: "{{ hedwig_container_restart_policy }}"
     pull: true
-    healthcheck:
-      test: "curl http://127.0.0.1:{{ hedwig_server_port }}/health || exit 1"
+    ## Commented out for now, because the new hedwig version doesn't have healthchecks
+    # healthcheck:
+    #   test: "curl http://[::1]:{{ hedwig_server_port }}/health || exit 1"
     state: started

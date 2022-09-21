@@ -4,7 +4,8 @@ hedwig_user: hedwig
 hedwig_base_path: /opt/hedwig
 hedwig_config_filename: "config.yaml"
 hedwig_config_file: "{{ hedwig_base_path }}/{{ hedwig_config_filename }}"
-hedwig_version: "1.3.0"
+hedwig_fcm_service_account_file: "{{ hedwig_base_path }}/fcm-auth.json"
+hedwig_version: "1.5.2"
 
 hedwig_container_name: "hedwig"
 hedwig_container_image_name: "registry.gitlab.com/famedly/company/backend/services/hedwig"
@@ -16,11 +17,11 @@ hedwig_container_restart_policy: "unless-stopped"
 hedwig_container_extra_volumes: []
 
 hedwig_extra_config: {}
-#hedwig_fcm_admin_key: "my_secret_key_here"
 hedwig_server_port: 7022
 hedwig_server_bind_address: "::"
 hedwig_log_level: INFO
 #hedwig_app_id: "org.matrix.awesome_client"
+hedwig_max_jitter_delay: 20.0
 hedwig_fcm_collapse_key: "org.matrix.default_notification"
 #hedwig_fcm_notification_click_action: "FLUTTER_NOTIFICATION_CLICK"
 hedwig_fcm_notification_title: "<count> unread rooms"
@@ -29,3 +30,4 @@ hedwig_fcm_notification_sound: "default"
 hedwig_fcm_notification_icon: "notifications_icon"
 hedwig_fcm_notification_tag: "org.matrix.default_notification"
 hedwig_fcm_notification_android_channel_id: "org.matrix.app.message"
+hedwig_fcm_push_max_retries: 5

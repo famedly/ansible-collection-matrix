@@ -17,7 +17,9 @@ hedwig_base_config:
     port: "{{ hedwig_server_port }}"
   hedwig:
     app_id: "{{ hedwig_app_id }}"
-    fcm_admin_key: "{{ hedwig_fcm_admin_key }}"
+    max_jitter_delay: "{{ hedwig_max_jitter_delay }}"
+    fcm_push_max_retries: "{{ hedwig_fcm_push_max_retries }}"
+    fcm_service_account_token_path: "{{ hedwig_fcm_service_account_file }}"
     fcm_notification_click_action: "{{ hedwig_fcm_notification_click_action }}"
     fcm_notification_title: "{{ hedwig_fcm_notification_title }}"
     fcm_notification_body: "{{ hedwig_fcm_notification_body }}"
