@@ -9,8 +9,8 @@ matrix_synapse_public_baseurl: "https://{{ matrix_server_name }}"
 matrix_synapse_signing_key_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.signing.key"
 matrix_synapse_version: "{{ matrix_synapse_unstable | ternary(matrix_synapse_unstable_version, matrix_synapse_stable_version) }}"
 matrix_synapse_unstable: false
-matrix_synapse_stable_version: "1.67.0"
-matrix_synapse_unstable_version: "1.67.0"
+matrix_synapse_stable_version: "1.68.0"
+matrix_synapse_unstable_version: "1.68.0"
 matrix_synapse_log_dir: "/var/log/matrix_synapse"
 matrix_synapse_log_days_keep: 14
 matrix_synapse_pid_file: "{{ matrix_synapse_base_path }}/synapse.pid"
