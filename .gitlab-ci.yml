@@ -1,5 +1,5 @@
 include:
-  - project: 'famedly/company/devops/templates/ci-cd'
+  - project: 'famedly/infra/templates/ci-cd'
     ref: 'ansible-v2'
     file: '/ansible.yml'
 

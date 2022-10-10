@@ -6,7 +6,7 @@ barad_dur_config_file: "{{ barad_dur_base_path }}/config.yaml"
 barad_dur_version: "0.1.0"
 
 barad_dur_container_name: "barad-dur"
-barad_dur_container_image_name: "registry.gitlab.com/famedly/company/devops/services/barad-dur"
+barad_dur_container_image_name: "registry.gitlab.com/famedly/infra/services/barad-dur"
 barad_dur_container_image: "{{ barad_dur_container_image_name }}:{{ barad_dur_container_image_tag|default(['v', barad_dur_version]|join()) }}"
 barad_dur_container_env: {}
 barad_dur_container_ports: []
