@@ -9,10 +9,10 @@
 
 - name: Register all federation senders to synapse
   set_fact:
-    matrix_synapse_worker_fed_senders: >
-      {{ matrix_synapse_worker_fed_senders }}
+    matrix_synapse_worker_fed_senders: >-2
+      {{ matrix_synapse_worker_fed_senders | default([])
       +
-      ["worker_fed_out_{{ item }}"]
+      [ ('worker_fed_out_' + item | string) ] }}
   loop: "{{ range(1, matrix_synapse_workers_federation_out + 1) | list }}"
 
 - name: Build homeserver federation override
