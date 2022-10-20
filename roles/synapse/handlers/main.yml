@@ -20,7 +20,7 @@
   listen: "restart matrix-synapse"
   loop: >-2
     {{ [matrix_synapse_container_name]
-    + matrix_synapse_workers | map(attribute='container_name') }}
+    + matrix_synapse_workers | default([]) | map(attribute='container_name') }}
 
 - name: restart rsyslog
   become: yes
