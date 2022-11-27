@@ -1,0 +1,23 @@
+---
+- name: Collect Matrix auth info
+  ansible.builtin.meta: noop
+  vars: &matrix_auth
+    hs_url: "{{ matrix_hs_url }}"
+    token: "{{ matrix_token }}"
+
+- name: Create room
+  famedly.matrix.matrix_room:
+    <<: *matrix_auth
+    alias: "{{ matrix_room_alias }}"
+  register: room_result
+
+- name: Set up room state
+  famedly.matrix.matrix_state:
+    <<: *matrix_auth
+    room_id: "{{ room_result.room_id }}"
+    event_type: "{{ state.event_type }}"
+    state_key: "{{ state.state_key }}"
+    content: "{{ state.content }}"
+  loop_control:
+    loop_var: state
+  loop: "{{ matrix_room_merged_state }}"

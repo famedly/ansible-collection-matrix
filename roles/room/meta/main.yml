@@ -1,0 +1,9 @@
+---
+galaxy_info:
+  author: Jan Christian Grünhage
+  description: Manage Matrix rooms using Ansible
+  company: Famedly GmbH
+  license: AGPL-3.0-only
+  min_ansible_version: "2.12"
+  galaxy_tags: []
+dependencies: []

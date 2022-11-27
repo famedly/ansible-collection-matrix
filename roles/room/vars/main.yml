@@ -1,0 +1,36 @@
+---
+matrix_room_merged_state: |
+  {{
+    ([join_rules_state] if matrix_room_join_rule else [])
+    + ([room_name_state] if matrix_room_name else [])
+    + ([room_topic_state] if matrix_room_topic else [])
+    + ([encryption_state] if matrix_room_enable_encryption else [])
+    + matrix_room_additional_state
+  }}
+
+join_rules_state:
+  event_type: "m.room.join_rules"
+  state_key: ""
+  content: |
+    {{
+      {
+        'join_rule': matrix_room_join_rule
+      } | combine({
+        'allow': matrix_room_join_rules_restricted_allow
+      } if matrix_room_join_rule in ['restricted', 'knock_restricted'] else {})
+    }}
+
+room_name_state:
+  event_type: "m.room.name"
+  state_key: ""
+  content: { name: "{{ matrix_room_name }}" }
+
+room_topic_state:
+  event_type: "m.room.topic"
+  state_key: ""
+  content: { topic: "{{ matrix_room_topic }}" }
+
+encryption_state:
+  event_type: "m.room.encryption"
+  state_key: ""
+  content: { algorithm: "m.megolm.v1.aes-sha2" }
