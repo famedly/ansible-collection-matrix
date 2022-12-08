@@ -37,23 +37,18 @@
         extra_args: --upgrade
       tags: ['prepare', 'prepare-synapse']
 
-    - name: Clone synapse
-      git:
-        repo: https://github.com/matrix-org/synapse
-        dest: "{{ matrix_synapse_base_path }}/synapse"
-        accept_hostkey: yes
-        version: "v{{ matrix_synapse_version }}"
-      register: matrix_synapse_source_cloned
-      until: matrix_synapse_source_cloned is success
-      retries: 10
-      delay: 5
-      tags: ['prepare', 'prepare-synapse']
+    - name: Remove old Synapse clone
+      file:
+        path: "{{ matrix_synapse_base_path }}/synapse"
+        state: absent
+      register: clone_removed
 
     - name: Install Synapse
       pip:
-        name: "{{ matrix_synapse_base_path }}/synapse[matrix-synapse-ldap3,postgres,resources.consent,acme,url_preview]"
+        name: "matrix-synapse[all]"
         virtualenv: "{{ matrix_synapse_base_path }}/env"
-      when: matrix_synapse_source_cloned.changed
+        version: "{{ matrix_synapse_version }}"
+        state: "{{ 'forcereinstall' if clone_removed.changed else 'present' }}"
       notify: restart matrix-synapse
       tags: ['deploy', 'deploy-synapse', 'skip_ansible_lint']
   when: matrix_synapse_deployment_method == "pip"
