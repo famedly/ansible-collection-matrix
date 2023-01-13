@@ -1,0 +1,48 @@
+---
+- name: Ensure standupbot user is created
+  become: true
+  ansible.builtin.user:
+    name: standupbot
+    state: present
+    system: true
+
+- name: Ensure base directory for standupbot is created
+  become: true
+  ansible.builtin.file:
+    path: "{{ standupbot_base_path }}"
+    state: directory
+    owner: standupbot
+    group: standupbot
+    mode: 0755
+
+- name: Ensure config file is up to date
+  become: true
+  ansible.builtin.copy:
+    content: "{{ standupbot_config | to_nice_json }}"
+    dest: "{{ standupbot_base_path }}/config.json"
+    owner: standupbot
+    group: standupbot
+    mode: 0600
+  notify: restart-standupbot
+
+- name: Ensure password file is up to date
+  become: true
+  ansible.builtin.copy:
+    content: "{{ standupbot_password }}"
+    dest: "{{ standupbot_config.PasswordFile }}"
+    owner: standupbot
+    group: standupbot
+    mode: 0600
+  notify: restart-standupbot
+
+- name: Ensure standupbot container is running
+  become: true
+  community.docker.docker_container:
+    image: ghcr.io/famedly/standupbot:latest
+    name: standupbot
+    restart_policy: unless-stopped
+    volumes:
+      - "{{ standupbot_base_path }}:{{ standupbot_base_path }}"
+      - "{{ standupbot_base_path }}/data:/root/.local/share/standupbot"
+    working_dir: "{{ standupbot_base_path }}"
+    command: "/usr/local/bin/standupbot"

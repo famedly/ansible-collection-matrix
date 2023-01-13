@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: Jan Christian Grünhage <jan.christian@gruenhage.xyz>
+  description: Deploy a containerized standupbot instance
+  company: Famedly GmbH
+
+  license: AGPL-3.0-only
+
+  min_ansible_version: "2.11"
+
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+
+  galaxy_tags: []
+
+dependencies: []

@@ -1,0 +1,5 @@
+---
+- name: Deploy standupbot
+  hosts: "{{ standupbot_hosts | default('standupbot') }}"
+  roles:
+    - standupbot

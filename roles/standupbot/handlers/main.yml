@@ -1,0 +1,7 @@
+---
+- name: Restart standupbot
+  community.docker.docker_container:
+    name: standupbot
+    state: started
+    restart: true
+  listen: restart-standupbot

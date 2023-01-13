@@ -1,0 +1,5 @@
+---
+standupbot_config:
+  Homeserver: "{{ standupbot_homeserver }}"
+  Username: "{{ standupbot_username }}"
+  PasswordFile: "{{ standupbot_base_path }}/password_file"
