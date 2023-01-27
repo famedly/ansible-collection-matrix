@@ -23,7 +23,7 @@ hedwig_base_config:
     fcm_notification_click_action: "{{ hedwig_fcm_notification_click_action }}"
     fcm_notification_title: "{{ hedwig_fcm_notification_title }}"
     fcm_notification_body: "{{ hedwig_fcm_notification_body }}"
-    fcm_notification_sound: "{{ hedwig_fcm_notification_body }}"
+    fcm_notification_sound: "{{ hedwig_fcm_notification_sound }}"
     fcm_notification_icon: "{{ hedwig_fcm_notification_icon }}"
     fcm_notification_tag: "{{ hedwig_fcm_notification_tag }}"
     fcm_notification_android_channel_id: "{{ hedwig_fcm_notification_android_channel_id }}"
