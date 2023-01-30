@@ -154,13 +154,15 @@ class AnsibleNioModule:
     async def exit_json(self, **result):
         if self.module.params.get("token") is None and self.user_logout is True:
             await self.matrix_logout()
-        await self.client.close()
+        if not self.module.check_mode:
+            await self.client.close()
         self.module.exit_json(**result)
 
     async def fail_json(self, **result):
         if self.module.params.get("token") is None and self.user_logout is True:
             await self.matrix_logout()
-        await self.client.close()
+        if not self.module.check_mode:
+            await self.client.close()
         self.module.fail_json(**result)
 
     @staticmethod
