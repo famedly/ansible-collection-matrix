@@ -111,6 +111,11 @@ async def run_module():
     await module.matrix_login()
     client = module.client
 
+    if module.check_mode:
+        result["changed"] = True
+        result["room_id"] = "!fakeRoomId:localhost"
+        await module.exit_json(**result)
+
     # Try to look up room_id
     room_id_resp = await client.room_resolve_alias(module.params["alias"])
 

@@ -131,8 +131,11 @@ async def run_module():
     client = module.client
 
     if module.check_mode:
-        # TODO: Do proper check
-        return result
+        # TODO: Attempt to check if the state event is already present
+        # Implementation note: this might not be possible as a previous check-moded
+        # login token might be invalid / not provided
+        result["changed"] = True
+        await module.exit_json(**result)
 
     failed = False
 

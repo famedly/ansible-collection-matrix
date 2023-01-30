@@ -199,10 +199,6 @@ async def run_module():
         await module.fail_json(msg=missing_required_lib("matrix-nio"))
 
     await module.matrix_login()
-
-    if module.check_mode:
-        return result
-
     action = module.params["state"]
     room_id = module.params["room_id"]
     user_ids = module.params["user_ids"]
@@ -210,6 +206,11 @@ async def run_module():
     # Check for valid parameter combination
     if module.params["exclusive"] and action != "member":
         await module.fail_json(msg="exclusive=True can only be used with state=member")
+
+    # Handle ansible check mode
+    if module.check_mode:
+        result["members"] = user_ids
+        await module.exit_json(**result)
 
     # Create client object
     client = module.client

@@ -124,7 +124,10 @@ async def run_module():
         await module.fail_json(msg=missing_required_lib("matrix-nio"))
 
     if module.check_mode:
-        return result
+        result["changed"] = True
+        result["device_id"] = "FAKEDEVICE"
+        result["token"] = "syt_fake_token"
+        await module.exit_json(**result)
 
     failed = False
 
@@ -136,6 +139,13 @@ async def run_module():
     key = module.params["key"]
     if key is None:
         await module.fail_json(msg="A key has to be provided")
+
+    # Move check-mode handling after check for missing key
+    if module.check_mode:
+        result["changed"] = True
+        result["device_id"] = "FAKEDEVICE"
+        result["token"] = "syt_fake_token"
+        await module.exit_json(**result)
 
     admin = module.params["admin"]
 

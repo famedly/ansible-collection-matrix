@@ -116,7 +116,8 @@ async def run_module():
         await module.fail_json(msg=missing_required_lib("matrix-nio"))
 
     if module.check_mode:
-        return result
+        result["changed"] = True
+        await module.exit_json(**result)
 
     await module.matrix_login()
     client = module.client
@@ -134,6 +135,8 @@ async def run_module():
     )
     if isinstance(response, RoomSendError):
         await module.fail_json(**result)
+    else:
+        result["changed"] = True
 
     await module.exit_json(**result)
 
