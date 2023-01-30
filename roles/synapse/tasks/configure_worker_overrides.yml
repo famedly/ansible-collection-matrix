@@ -14,6 +14,8 @@
       +
       [ ('worker_fed_out_' + item | string) ] }}
   loop: "{{ range(1, matrix_synapse_workers_federation_out + 1) | list }}"
+  loop_control:
+    label: "worker_fed_out_{{ item | string }}"
 
 - name: Build homeserver federation override
   set_fact:
