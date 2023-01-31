@@ -145,7 +145,7 @@ class AnsibleNioModule:
         return self.client.device_id
 
     async def matrix_logout(self):
-        if self.client.logged_in:
+        if not self.module.check_mode and self.client.logged_in:
             request = await self.client.logout()
             if isinstance(request, LogoutError):
                 result = {"msg": request.message}
