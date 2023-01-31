@@ -71,6 +71,32 @@ class TestAnsibleModuleMatrixMember:
         )
         monkeypatch.setenv("ROOM_SIMULATOR", simulator.export())
 
+    def test_check_mode(self, monkeypatch):
+        self.patchAnsibleNioModule(monkeypatch, MatrixNioSuccess)
+        set_module_args(
+            {
+                "hs_url": "matrix.example.tld",
+                "user_id": "myuser",
+                "password": "supersecretpassword",
+                "room_id": "!myroomid:matrix.example.tld",
+                "state": "member",
+                "user_ids": ["@user1:matrix.example.tld", "@user2:matrix.example.tld"],
+            },
+            check_mode=True
+        )
+        with pytest.raises(AnsibleExitJson) as result:
+            matrix_member.main()
+        ansible_result = result.value.result
+        assert_expression(ansible_result["changed"] is True)
+        assert_expression(ansible_result["banned"] == [])
+        assert_expression(ansible_result["unbanned"] == [])
+        assert_expression(ansible_result["kicked"] == [])
+        assert_expression(ansible_result["invited"] == [])
+        assert_expression(
+            list(ansible_result["members"])
+            == ["@user1:matrix.example.tld", "@user2:matrix.example.tld"]
+        )
+
     def test_no_changes(self, monkeypatch):
         self.patchAnsibleNioModule(monkeypatch, MatrixNioSuccess)
         set_module_args(

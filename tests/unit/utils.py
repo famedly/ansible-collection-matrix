@@ -17,11 +17,15 @@ class AnsibleFailJson(Exception):
         super().__init__(*args)
 
 
-def set_module_args(args):
+def set_module_args(args, check_mode=False, diff=False):
     if "_ansible_remote_tmp" not in args:
         args["_ansible_remote_tmp"] = "/tmp"
     if "_ansible_keep_remote_files" not in args:
         args["_ansible_keep_remote_files"] = False
+    if check_mode:
+        args["_ansible_check_mode"] = check_mode
+    if diff:
+        args["_ansible_diff"] = diff
 
     args = json.dumps({"ANSIBLE_MODULE_ARGS": args})
     basic._ANSIBLE_ARGS = to_bytes(args)
