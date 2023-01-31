@@ -40,8 +40,10 @@ options:
         required: true
     admin:
         description:
-            - Whether to set the user as admin during login
+            - Whether to set the user as admin during login.
+            - Omitting this does not alter admin status, by setting a value, the user is either pro- or demoted to/from admin.
         type: bool
+        required: false
 requirements:
     -  matrix-nio (Python library)
     -  jwcrypto (Python library)
@@ -123,12 +125,6 @@ async def run_module():
     if not HAS_NIO:
         await module.fail_json(msg=missing_required_lib("matrix-nio"))
 
-    if module.check_mode:
-        result["changed"] = True
-        result["device_id"] = "FAKEDEVICE"
-        result["token"] = "syt_fake_token"
-        await module.exit_json(**result)
-
     failed = False
 
     # Create client object
@@ -140,14 +136,16 @@ async def run_module():
     if key is None:
         await module.fail_json(msg="A key has to be provided")
 
+    admin = module.params["admin"]
+
     # Move check-mode handling after check for missing key
     if module.check_mode:
         result["changed"] = True
+        if admin is not None:
+            result["admin"] = admin
         result["device_id"] = "FAKEDEVICE"
         result["token"] = "syt_fake_token"
         await module.exit_json(**result)
-
-    admin = module.params["admin"]
 
     method, path, data = Api.login(
         client.user,
