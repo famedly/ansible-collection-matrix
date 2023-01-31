@@ -209,6 +209,7 @@ async def run_module():
 
     # Handle ansible check mode
     if module.check_mode:
+        result["changed"] = True
         result["members"] = user_ids
         await module.exit_json(**result)
 
