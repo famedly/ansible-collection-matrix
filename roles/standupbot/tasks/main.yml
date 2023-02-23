@@ -38,11 +38,11 @@
 - name: Ensure standupbot container is running
   become: true
   community.docker.docker_container:
-    image: ghcr.io/famedly/standupbot:latest
+    image: ghcr.io/beeper/standupbot:latest
     name: standupbot
     restart_policy: unless-stopped
     volumes:
       - "{{ standupbot_base_path }}:{{ standupbot_base_path }}"
       - "{{ standupbot_base_path }}/data:/root/.local/share/standupbot"
     working_dir: "{{ standupbot_base_path }}"
-    command: "/usr/local/bin/standupbot"
+    command: "/usr/bin/standupbot"
