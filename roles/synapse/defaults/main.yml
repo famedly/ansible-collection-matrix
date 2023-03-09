@@ -28,9 +28,27 @@ matrix_synapse_docker_command:
   - "synapse.app.homeserver"
   - "-c"
   - "{{ matrix_synapse_base_path }}/homeserver.yaml"
-matrix_synapse_container_ref: "docker.io/matrixdotorg/synapse"
-matrix_synapse_container_tag: "v{{ matrix_synapse_version }}"
 matrix_synapse_container_name: "synapse"
+
+matrix_synapse_container_image_reference: >-
+  {{
+    matrix_synapse_container_image_repository
+    + ':'
+    + matrix_synapse_container_image_tag | default('v' + matrix_synapse_version)
+  }}
+matrix_synapse_container_image_repository: >-
+  {{
+    (
+      container_registries[matrix_synapse_container_image_registry]
+      | default(matrix_synapse_container_image_registry)
+    )
+    + '/'
+    + matrix_synapse_container_image_namespace | default('')
+    + matrix_synapse_container_image_name
+  }}
+matrix_synapse_container_image_registry: "docker.io"
+matrix_synapse_container_image_namespace: "matrixdotorg/"
+matrix_synapse_container_image_name: "synapse"
 
 # Redis config
 matrix_synapse_redis_enabled: false
@@ -51,7 +69,6 @@ matrix_synapse_worker_replication_bind_ip: "127.0.0.1"
 matrix_synapse_worker_listener_base_port: 16000
 matrix_synapse_worker_listener_bind_base_ip: "0.0.0.0"
 matrix_synapse_worker_labels: {}
-matrix_synapse_worker_image: "{{  matrix_synapse_container_ref }}:{{ matrix_synapse_container_tag }}"
 
 # Control which workers (or how many) to run
 matrix_synapse_workers_client: 0

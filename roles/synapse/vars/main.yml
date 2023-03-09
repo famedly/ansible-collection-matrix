@@ -170,7 +170,7 @@ matrix_synapse_base_config:
         action: allow
 matrix_synapse_docker_labels_complete: "{{ matrix_synapse_docker_labels_base | combine(matrix_synapse_docker_labels) }}"
 matrix_synapse_docker_labels_base:
-  version: "{{ matrix_synapse_version if (matrix_synapse_container_tag == 'v' + matrix_synapse_version) else matrix_synapse_container_tag }}"
+  version: "{{ matrix_synapse_container_image_tag | default(matrix_synapse_version) }}"
 matrix_synapse_worker_labels_base: "{{ matrix_synapse_docker_labels_base }}"
 
 # Control where which paths get routed

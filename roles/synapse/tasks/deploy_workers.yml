@@ -28,7 +28,7 @@
     - name: Deploy workers (docker)
       docker_container:
         name: "{{ item.container_name }}"
-        image: "{{ matrix_synapse_worker_image }}"
+        image: "{{ matrix_synapse_container_image_reference }}"
         labels: >-
           {{
             item.labels

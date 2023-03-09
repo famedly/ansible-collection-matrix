@@ -55,7 +55,7 @@
 
 - name: Ensure synapse container image is present
   docker_image:
-    name: "{{ matrix_synapse_container_ref }}:{{ matrix_synapse_container_tag }}"
+    name: "{{ matrix_synapse_container_image_reference }}"
     force_source: "{{ matrix_synapse_docker_pull }}"
     source: pull
     state: present
@@ -69,7 +69,7 @@
 - name: Ensure synapse container is running
   docker_container:
     name: "{{ matrix_synapse_container_name }}"
-    image: "{{ matrix_synapse_container_ref }}:{{ matrix_synapse_container_tag }}"
+    image: "{{ matrix_synapse_container_image_reference }}"
     networks: "{{ matrix_synapse_docker_networks }}"
     etc_hosts: "{{ matrix_synapse_docker_etc_hosts }}"
     ports: "{{ matrix_synapse_docker_ports }}"
