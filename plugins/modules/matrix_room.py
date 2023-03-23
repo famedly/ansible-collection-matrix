@@ -51,6 +51,12 @@ options:
             - Alias of the room to join/create
         required: true
         type: str
+    no_create:
+        description:
+            - Prevent creation of room
+        required: false
+        default: false
+        type: bool
 requirements:
     -  matrix-nio (Python library)
 """
@@ -100,7 +106,10 @@ except ImportError:
 
 
 async def run_module():
-    module_args = dict(alias=dict(type="str", required=True))
+    module_args = dict(
+        alias=dict(type="str", required=True),
+        no_create=dict(type="bool", required=False, default=False),
+    )
 
     result = dict(changed=False, message="")
 
@@ -141,22 +150,27 @@ async def run_module():
                 failed = True
                 result = {"msg": f"Room exists, but couldn't join: {join_resp}"}
     else:
-        # Get local part of alias
-        local_part_regex = re.search("#([^:]*):(.*)", module.params["alias"])
-        local_part = local_part_regex.groups()[0]
-
-        # Try to create room with alias
-        create_room_resp = await client.room_create(alias=local_part)
-
-        # If successful, exit with changed=true and room_id
-        if isinstance(create_room_resp, RoomCreateResponse):
-            result = {"room_id": create_room_resp.room_id, "changed": True}
-        else:
+        if module.params["no_create"]:
             failed = True
             result = {
-                "msg": f"Room does not exist but couldn't be created either: {create_room_resp}"
+                "msg": "Room doesn't exist, but room creation was explicitly disabled"
             }
+        else:
+            # Get local part of alias
+            local_part_regex = re.search("#([^:]*):(.*)", module.params["alias"])
+            local_part = local_part_regex.groups()[0]
 
+            # Try to create room with alias
+            create_room_resp = await client.room_create(alias=local_part)
+
+            # If successful, exit with changed=true and room_id
+            if isinstance(create_room_resp, RoomCreateResponse):
+                result = {"room_id": create_room_resp.room_id, "changed": True}
+            else:
+                failed = True
+                result = {
+                    "msg": f"Room does not exist but couldn't be created either: {create_room_resp}"
+                }
     if failed:
         await module.fail_json(**result)
     else:
