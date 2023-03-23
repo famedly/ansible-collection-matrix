@@ -57,6 +57,12 @@ options:
         required: false
         default: false
         type: bool
+    no_join:
+        description:
+            - Prevent joining of room
+        required: false
+        default: false
+        type: bool
 requirements:
     -  matrix-nio (Python library)
 """
@@ -109,6 +115,7 @@ async def run_module():
     module_args = dict(
         alias=dict(type="str", required=True),
         no_create=dict(type="bool", required=False, default=False),
+        no_join=dict(type="bool", required=False, default=False),
     )
 
     result = dict(changed=False, message="")
@@ -139,6 +146,11 @@ async def run_module():
             result = {"msg": "Couldn't get joined rooms."}
         elif room_id_resp.room_id in rooms_resp.rooms:
             result = {"room_id": room_id_resp.room_id, "changed": False}
+        elif module.params["no_join"]:
+            failed = True
+            result = {
+                "msg": "Room exists, we aren't a member of it, but joining was explicitly disabled"
+            }
         else:
             # Try to join room
             join_resp = await client.join(module.params["alias"])
