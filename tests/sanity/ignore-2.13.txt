@@ -2,6 +2,7 @@ plugins/modules/matrix_signing_key.py validate-modules:missing-gplv3-license # i
 plugins/modules/synapse_register.py validate-modules:missing-gplv3-license # ignore license check
 plugins/modules/matrix_notification.py validate-modules:missing-gplv3-license # ignore license check
 plugins/modules/matrix_state.py validate-modules:missing-gplv3-license # ignore license check
+plugins/modules/matrix_state_info.py validate-modules:missing-gplv3-license # ignore license check
 plugins/modules/matrix_room.py validate-modules:missing-gplv3-license # ignore license check
 plugins/modules/matrix_uia_login.py validate-modules:missing-gplv3-license # ignore license check
 plugins/modules/synapse_ratelimit.py validate-modules:missing-gplv3-license # ignore license check
