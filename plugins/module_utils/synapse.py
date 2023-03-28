@@ -36,6 +36,7 @@ class AdminApi:
 
         # init subclasses
         self.ratelimit = self.__Ratelimit(self)
+        self.join = self.__Join(self)
 
     # Make API request
     def get(self, path: str) -> requests.Response:
@@ -117,6 +118,19 @@ class AdminApi:
         def delete(self, user_id: str) -> dict:
             user_id = AdminApi.url_encode(user_id)
             return self.__parent.delete(self.API_PATH.format(user_id=user_id)).json()
+
+    class __Join:
+        API_PATH = "v1/join/{room_id}"
+
+        def __init__(self, parent):
+            self.__parent = parent
+
+        def join(self, room_id: str, user_id: str) -> dict:
+            room_id = AdminApi.url_encode(room_id)
+            return self.__parent.post(
+                self.API_PATH.format(room_id=room_id),
+                json={"user_id": user_id},
+            ).json()
 
 
 class Exceptions:

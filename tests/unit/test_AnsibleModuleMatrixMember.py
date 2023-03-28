@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function, annotations
 
+import json
 import types
 
 import pytest
@@ -18,6 +19,11 @@ from ansible_collections.famedly.matrix.tests.unit.mock_nio.utils.RoomSimulator 
     RoomSimulator,
 )
 from ansible_collections.famedly.matrix.tests.unit.mock_nio.room import failure
+
+from ansible_collections.famedly.matrix.plugins.module_utils import synapse
+from ansible_collections.famedly.matrix.tests.unit.mock_synapse.requests.RequestsBase import (
+    RequestsBase,
+)
 
 from ansible_collections.famedly.matrix.tests.unit.utils import (
     AnsibleExitJson,
@@ -71,6 +77,20 @@ class TestAnsibleModuleMatrixMember:
         )
         monkeypatch.setenv("ROOM_SIMULATOR", simulator.export())
 
+    @staticmethod
+    def patchAdminApiModule(
+        monkeypatch: MonkeyPatch, target_module, mock_class: type(RequestsBase)
+    ):
+        # Mock Admin API
+        for method in RequestsBase.__dict__:
+            if isinstance(
+                getattr(mock_class, method),
+                (types.FunctionType, types.BuiltinFunctionType),
+            ):
+                monkeypatch.setattr(
+                    synapse.requests, method, getattr(mock_class, method)
+                )
+
     def test_check_mode(self, monkeypatch):
         self.patchAnsibleNioModule(monkeypatch, MatrixNioSuccess)
         set_module_args(
@@ -82,7 +102,7 @@ class TestAnsibleModuleMatrixMember:
                 "state": "member",
                 "user_ids": ["@user1:matrix.example.tld", "@user2:matrix.example.tld"],
             },
-            check_mode=True
+            check_mode=True,
         )
         with pytest.raises(AnsibleExitJson) as result:
             matrix_member.main()
@@ -242,7 +262,7 @@ class TestAnsibleModuleMatrixMember:
                 "room_id": "!myroomid:matrix.example.tld",
                 "state": "member",
                 "exclusive": True,
-                "user_ids": ["@user2:matrix.example.tld"],
+                "user_ids": ["@user2:matrix.example.tld", "@user3:matrix.example.tld"],
             }
         )
         with pytest.raises(AnsibleExitJson) as result:
@@ -252,9 +272,132 @@ class TestAnsibleModuleMatrixMember:
         assert_expression(ansible_result["banned"] == [])
         assert_expression(ansible_result["unbanned"] == [])
         assert_expression(ansible_result["kicked"] == ["@user1:matrix.example.tld"])
-        assert_expression(ansible_result["invited"] == [])
+        assert_expression(ansible_result["invited"] == ["@user3:matrix.example.tld"])
         assert_expression(
-            list(ansible_result["members"]) == ["@user2:matrix.example.tld"]
+            list(ansible_result["members"])
+            == ["@user2:matrix.example.tld", "@user3:matrix.example.tld"]
+        )
+
+    def test_force_join(self, monkeypatch):
+        self.patchAnsibleNioModule(monkeypatch, MatrixNioSuccess)
+        self.patchAdminApiModule(monkeypatch, matrix_member, RequestsBase)
+        set_module_args(
+            {
+                "hs_url": "matrix.example.tld",
+                "token": "supersecrettoken",
+                "room_id": "!myroomid:matrix.example.tld",
+                "state": "member",
+                "force_join": True,
+                "user_ids": ["@user3:matrix.example.tld"],
+            }
+        )
+        response = {
+            "_synapse/admin/v1/join/%21myroomid%3Amatrix.example.tld": {
+                "status": 200,
+                "content": '{"room_id": "!myroomid:matrix.example.tld"}',
+            }
+        }
+        monkeypatch.setenv("REQUESTS_POST_RESPONSE", json.dumps(response))
+        with pytest.raises(AnsibleExitJson) as result:
+            matrix_member.main()
+        ansible_result = result.value.result
+        print(ansible_result)
+        assert_expression(ansible_result["changed"] is True)
+        assert_expression(ansible_result["banned"] == [])
+        assert_expression(ansible_result["unbanned"] == [])
+        assert_expression(ansible_result["kicked"] == [])
+        assert_expression(ansible_result["invited"] == [])
+        assert_expression(ansible_result["joined"] == ["@user3:matrix.example.tld"])
+        # TODO: make this assertion work. Needs proper mocking of Admin API that
+        #       calls the mocked nio in order to have the members changed
+        # assert_expression(
+        #     list(ansible_result["members"])
+        #     == [
+        #         "@user1:matrix.example.tld",
+        #         "@user2:matrix.example.tld",
+        #         "@user3:matrix.example.tld",
+        #     ]
+        # )
+
+    def test_exclusive_force_join(self, monkeypatch):
+        self.patchAnsibleNioModule(monkeypatch, MatrixNioSuccess)
+        self.patchAdminApiModule(monkeypatch, matrix_member, RequestsBase)
+        set_module_args(
+            {
+                "hs_url": "matrix.example.tld",
+                "token": "supersecrettoken",
+                "room_id": "!myroomid:matrix.example.tld",
+                "state": "member",
+                "force_join": True,
+                "exclusive": True,
+                "user_ids": ["@user3:matrix.example.tld"],
+            }
+        )
+        response = {
+            "_synapse/admin/v1/join/%21myroomid%3Amatrix.example.tld": {
+                "status": 200,
+                "content": '{"room_id": "!myroomid:matrix.example.tld"}',
+            }
+        }
+        monkeypatch.setenv("REQUESTS_POST_RESPONSE", json.dumps(response))
+        with pytest.raises(AnsibleExitJson) as result:
+            matrix_member.main()
+        ansible_result = result.value.result
+        print(ansible_result)
+        assert_expression(ansible_result["changed"] is True)
+        assert_expression(ansible_result["banned"] == [])
+        assert_expression(ansible_result["unbanned"] == [])
+        assert_expression(
+            ansible_result["kicked"]
+            == ["@user1:matrix.example.tld", "@user2:matrix.example.tld"]
+        )
+        assert_expression(ansible_result["invited"] == [])
+        assert_expression(ansible_result["joined"] == ["@user3:matrix.example.tld"])
+        # TODO: make this assertion work. Needs proper mocking of Admin API that
+        #       calls the mocked nio in order to have the members changed
+        # assert_expression(
+        #     list(ansible_result["members"])
+        #     == [
+        #         "@user3:matrix.example.tld",
+        #     ]
+        # )
+
+    def test_exclusive_kick_fail(self, monkeypatch):
+        self.patchAnsibleNioModule(monkeypatch, MatrixNioSuccess)
+        set_module_args(
+            {
+                "hs_url": "matrix.example.tld",
+                "token": "supersecrettoken",
+                "room_id": "!myroomid:matrix.example.tld",
+                "state": "kicked",
+                "user_ids": ["@user1:matrix.example.tld"],
+                "exclusive": True,
+            },
+        )
+        with pytest.raises(AnsibleFailJson) as result:
+            matrix_member.main()
+        assert_expression(
+            "exclusive=True can only be used with state=member"
+            in result.value.result["msg"]
+        )
+
+    def test_force_join_kick_fail(self, monkeypatch):
+        self.patchAnsibleNioModule(monkeypatch, MatrixNioSuccess)
+        set_module_args(
+            {
+                "hs_url": "matrix.example.tld",
+                "token": "supersecrettoken",
+                "room_id": "!myroomid:matrix.example.tld",
+                "state": "kicked",
+                "user_ids": ["@user1:matrix.example.tld"],
+                "force_join": True,
+            },
+        )
+        with pytest.raises(AnsibleFailJson) as result:
+            matrix_member.main()
+        assert_expression(
+            "force_join=True can only be used with state=member"
+            in result.value.result["msg"]
         )
 
     def test_add_user_fail(self, monkeypatch):
@@ -350,3 +493,54 @@ class TestAnsibleModuleMatrixMember:
         )
         with pytest.raises(AnsibleFailJson) as result:
             matrix_member.main()
+
+    def test_force_join_fail_privileges(self, monkeypatch):
+        self.patchAnsibleNioModule(monkeypatch, MatrixNioSuccess)
+        self.patchAdminApiModule(monkeypatch, matrix_member, RequestsBase)
+        set_module_args(
+            {
+                "hs_url": "matrix.example.tld",
+                "token": "notaserveradmintoken",
+                "room_id": "!myroomid:matrix.example.tld",
+                "state": "member",
+                "force_join": True,
+                "user_ids": ["@user3:matrix.example.tld"],
+            }
+        )
+        response = {
+            "_synapse/admin/v1/join/%21myroomid%3Amatrix.example.tld": {
+                "status": 403,
+                "content": '{"errcode": "M_FORBIDDEN", "error": "You are not a server admin"}',
+            }
+        }
+        monkeypatch.setenv("REQUESTS_POST_RESPONSE", json.dumps(response))
+        with pytest.raises(AnsibleFailJson) as result:
+            matrix_member.main()
+        print(result.value.result["msg"])
+        assert_expression("M_FORBIDDEN" in result.value.result["msg"])
+
+    def test_exclusive_force_join_fail_privileges(self, monkeypatch):
+        self.patchAnsibleNioModule(monkeypatch, MatrixNioSuccess)
+        self.patchAdminApiModule(monkeypatch, matrix_member, RequestsBase)
+        set_module_args(
+            {
+                "hs_url": "matrix.example.tld",
+                "token": "notaserveradmintoken",
+                "room_id": "!myroomid:matrix.example.tld",
+                "state": "member",
+                "force_join": True,
+                "exclusive": True,
+                "user_ids": ["@user3:matrix.example.tld"],
+            }
+        )
+        response = {
+            "_synapse/admin/v1/join/%21myroomid%3Amatrix.example.tld": {
+                "status": 403,
+                "content": '{"errcode": "M_FORBIDDEN", "error": "You are not a server admin"}',
+            }
+        }
+        monkeypatch.setenv("REQUESTS_POST_RESPONSE", json.dumps(response))
+        with pytest.raises(AnsibleFailJson) as result:
+            matrix_member.main()
+        print(result.value.result["msg"])
+        assert_expression("M_FORBIDDEN" in result.value.result["msg"])

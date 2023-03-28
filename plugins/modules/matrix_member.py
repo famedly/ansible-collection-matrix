@@ -68,8 +68,18 @@ options:
         default: false
         type: bool
         required: false
+    force_join:
+        description:
+            - If state=member, the module force joins the user by calling the
+              `/_synapse/admin/v1/join/{room-id}` endpoint of synapses admin API.
+            - Only works for synapse homeservers and if the provided credentials have admin privileges.
+            - Only works for local users.
+        default: false
+        type: bool
+        required: false
 requirements:
     -  matrix-nio (Python library)
+    -  requests (Python library)
 """
 
 EXAMPLES = """
@@ -98,6 +108,10 @@ LIB_IMP_ERR = None
 try:
     from ansible_collections.famedly.matrix.plugins.module_utils.matrix import (
         AnsibleNioModule,
+    )
+    from ansible_collections.famedly.matrix.plugins.module_utils.synapse import (
+        AdminApi,
+        Exceptions,
     )
     from nio import (
         RoomGetStateError,
@@ -176,12 +190,19 @@ async def invite_to_room(client, room_id, user_id, res):
     res["invited"].append(user_id)
 
 
+async def force_join_into_room(admin_client, room_id, user_id, res):
+    admin_client.join.join(room_id, user_id)
+    res["changed"] = True
+    res["joined"].append(user_id)
+
+
 async def run_module():
     module_args = dict(
         state=dict(choices=["member", "kicked", "banned"], required=True),
         room_id=dict(type="str", required=True),
         user_ids=dict(type="list", required=True, elements="str"),
         exclusive=dict(type="bool", required=False, default=False),
+        force_join=dict(type="bool", required=False, default=False),
     )
 
     result = dict(
@@ -190,6 +211,7 @@ async def run_module():
         unbanned=[],
         kicked=[],
         invited=[],
+        joined=[],
         members=[],
         msg="",
     )
@@ -202,10 +224,13 @@ async def run_module():
     action = module.params["state"]
     room_id = module.params["room_id"]
     user_ids = module.params["user_ids"]
+    force_join = module.params["force_join"]
 
     # Check for valid parameter combination
     if module.params["exclusive"] and action != "member":
         await module.fail_json(msg="exclusive=True can only be used with state=member")
+    if module.params["force_join"] and action != "member":
+        await module.fail_json(msg="force_join=True can only be used with state=member")
 
     # Handle ansible check mode
     if module.check_mode:
@@ -215,6 +240,9 @@ async def run_module():
 
     # Create client object
     client = module.client
+    admin_client = AdminApi(
+        home_server=module.params["hs_url"], access_token=module.params["token"]
+    )
 
     try:
         # Query all room members (invited users count as member, as they _can_ be in the room)
@@ -233,7 +261,12 @@ async def run_module():
                 if action == "member" and user_id not in present_members:
                     if user_id in banned_members:
                         await unban_from_room(client, room_id, user_id, result)
-                    await invite_to_room(client, room_id, user_id, result)
+                    if force_join:
+                        await force_join_into_room(
+                            admin_client, room_id, user_id, result
+                        )
+                    else:
+                        await invite_to_room(client, room_id, user_id, result)
                 elif action == "kicked" and user_id in present_members:
                     await kick_from_room(client, room_id, user_id, result)
                 elif action == "kicked" and user_id in banned_members:
@@ -242,6 +275,9 @@ async def run_module():
                     await ban_from_room(client, room_id, user_id, result)
         except NioOperationError:
             await module.fail_json(**result)
+        except (Exceptions.HTTPException, Exceptions.MatrixException) as e:
+            result["msg"] = str(e)
+            await module.fail_json(**result)
     else:
         # Handle exclusive mode: get state and make lists of users to be kicked or invited
         to_invite = list(filter(lambda m: m not in present_members, user_ids))
@@ -249,10 +285,16 @@ async def run_module():
 
         try:
             for user_id in to_invite:
-                await invite_to_room(client, room_id, user_id, result)
+                if force_join:
+                    await force_join_into_room(admin_client, room_id, user_id, result)
+                else:
+                    await invite_to_room(client, room_id, user_id, result)
             for user_id in to_kick:
                 await kick_from_room(client, room_id, user_id, result)
         except NioOperationError:
+            await module.fail_json(**result)
+        except (Exceptions.HTTPException, Exceptions.MatrixException) as e:
+            result["msg"] = str(e)
             await module.fail_json(**result)
 
     # Get all current members from the room
