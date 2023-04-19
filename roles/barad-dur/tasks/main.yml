@@ -27,7 +27,7 @@
 - name: Start barad-dur container
   docker_container:
     name: "{{ barad_dur_container_name }}"
-    image: "{{ barad_dur_container_image }}"
+    image: "{{ barad_dur_container_image_reference }}"
     env: "{{ barad_dur_container_env }}"
     user: "{{ barad_dur_user_res.uid }}:{{ barad_dur_user_res.group }}"
     ports: "{{ barad_dur_container_ports }}"
