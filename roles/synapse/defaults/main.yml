@@ -65,7 +65,12 @@ matrix_synapse_worker_metrics_port: 9101
 matrix_synapse_workers_enabled: false
 matrix_synapse_worker_replication_host: "{{ matrix_synapse_container_name }}"
 matrix_synapse_worker_replication_port: 9003
-matrix_synapse_worker_replication_bind_ip: "127.0.0.1"
+matrix_synapse_worker_replication_bind_addresses: >-2
+  {{
+    [matrix_synapse_worker_replication_bind_ip]
+    if matrix_synapse_worker_replication_bind_ip is defined
+    else ["::1", "127.0.0.1"]
+  }}
 matrix_synapse_worker_listener_base_port: 16000
 matrix_synapse_worker_listener_bind_base_ip: "0.0.0.0"
 matrix_synapse_worker_labels: {}
