@@ -30,6 +30,12 @@
       pusher_instances: "worker_pusher"
   when: matrix_synapse_worker_push
 
+- name: Build homeserver appservice notifier override
+  set_fact:
+    matrix_synapse_appservice_override:
+      pusher_instances: "worker_appservice"
+  when: matrix_synapse_worker_appservice
+
 - name: Merge worker config into homeserver config
   set_fact:
     matrix_synapse_worker_config: >-2
@@ -37,6 +43,7 @@
         [ matrix_synapse_worker_config,
           matrix_synapse_media_worker_override,
           matrix_synapse_fed_sender_override,
-          matrix_synapse_pusher_override
+          matrix_synapse_pusher_override,
+          matrix_synapse_appservice_override
         ] | combine(recursive=True)
       }}
