@@ -13,12 +13,12 @@ matrix_synapse_media_worker_override: {}
 matrix_synapse_fed_sender_override: {}
 matrix_synapse_pusher_override: {}
 matrix_synapse_appservice_override: {}
+matrix_synapse_user_dir_override: {}
 matrix_synapse_worker_fed_senders: []
 matrix_synapse_worker_metrics_listener:
   - type: metrics
     port: "{{ matrix_synapse_worker_metrics_port }}"
 matrix_synapse_worker_config:
-  update_user_directory: "{{ not matrix_synapse_worker_user_search }}"
   listeners:
     - port: "{{ matrix_synapse_worker_replication_port }}"
       bind_addresses:

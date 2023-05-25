@@ -171,7 +171,7 @@
     worker_user_dir_info: "{{ [ worker_config ] }}"
   vars:
     name: "worker_user_dir"
-    app: "synapse.app.user_dir"
+    app: "synapse.app.generic_worker"
     config_file: "{{ matrix_synapse_base_path }}/{{ name }}.yaml"
     port: "{{ matrix_synapse_worker_listener_base_port|int + 300 }}"
     worker_labels:
