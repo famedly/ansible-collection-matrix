@@ -24,6 +24,19 @@
       federation_sender_instances: "{{ matrix_synapse_worker_fed_senders }}"
   when: matrix_synapse_workers_federation_out|int > 0
 
-- name: Merge federation sender costum config into homeserver config
+- name: Build homeserver pusher override
   set_fact:
-    matrix_synapse_worker_config: "{{ [ matrix_synapse_worker_config, matrix_synapse_fed_sender_override, matrix_synapse_media_worker_override ] | combine(recursive=True) }}"
+    matrix_synapse_pusher_override:
+      pusher_instances: "worker_pusher"
+  when: matrix_synapse_worker_push
+
+- name: Merge worker config into homeserver config
+  set_fact:
+    matrix_synapse_worker_config: >-2
+      {{
+        [ matrix_synapse_worker_config,
+          matrix_synapse_media_worker_override,
+          matrix_synapse_fed_sender_override,
+          matrix_synapse_pusher_override
+        ] | combine(recursive=True)
+      }}

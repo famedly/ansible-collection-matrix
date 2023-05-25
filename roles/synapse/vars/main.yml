@@ -11,12 +11,12 @@ matrix_synapse_config: "{{ matrix_synapse_base_config | combine(matrix_synapse_e
 # Worker-specific config
 matrix_synapse_media_worker_override: {}
 matrix_synapse_fed_sender_override: {}
+matrix_synapse_pusher_override: {}
 matrix_synapse_worker_fed_senders: []
 matrix_synapse_worker_metrics_listener:
   - type: metrics
     port: "{{ matrix_synapse_worker_metrics_port }}"
 matrix_synapse_worker_config:
-  start_pushers: "{{ not matrix_synapse_worker_push }}"
   notify_appservices: "{{ not matrix_synapse_worker_appservice }}"
   update_user_directory: "{{ not matrix_synapse_worker_user_search }}"
   listeners:
