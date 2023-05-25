@@ -26,6 +26,10 @@ matrix_synapse_worker_config:
       type: http
       resources:
         - names: [ replication ]
+  instance_map:
+    main:
+      host: "{{ matrix_synapse_worker_replication_host }}"
+      port: "{{ matrix_synapse_worker_replication_port }}"
 
 # homeserver.yml
 matrix_synapse_base_config:
