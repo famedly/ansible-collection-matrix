@@ -20,7 +20,6 @@
 - name: Build homeserver federation override
   set_fact:
     matrix_synapse_fed_sender_override:
-      send_federation: False
       federation_sender_instances: "{{ matrix_synapse_worker_fed_senders }}"
   when: matrix_synapse_workers_federation_out|int > 0
 

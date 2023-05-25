@@ -68,7 +68,7 @@
     worker_fed_out_info: "{{ worker_fed_out_info|default([]) + [ worker_config ] }}"
   vars:
     name: "worker_fed_out_{{ item }}"
-    app: "synapse.app.federation_sender"
+    app: "synapse.app.generic_worker"
     config_file: "{{ matrix_synapse_base_path }}/{{ name }}.yaml"
     worker_labels:
       labels: "{{ matrix_synapse_worker_labels_base }}"
