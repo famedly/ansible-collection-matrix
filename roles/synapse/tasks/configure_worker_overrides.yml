@@ -26,13 +26,13 @@
 - name: Build homeserver pusher override
   set_fact:
     matrix_synapse_pusher_override:
-      pusher_instances: "worker_pusher"
+      pusher_instances: ["worker_pusher"]
   when: matrix_synapse_worker_push
 
 - name: Build homeserver appservice notifier override
   set_fact:
     matrix_synapse_appservice_override:
-      pusher_instances: "worker_appservice"
+      notify_appservices_from_worker: "worker_appservice"
   when: matrix_synapse_worker_appservice
 
 - name: Build homeserver user dir override
