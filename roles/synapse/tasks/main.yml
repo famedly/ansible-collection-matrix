@@ -22,11 +22,6 @@
   tags: ['deploy', 'deploy-synapse']
   when: matrix_synapse_workers_enabled
 
-- name: configure config overrides from workers
-  import_tasks: configure_worker_overrides.yml
-  tags: ['deploy', 'deploy-synapse']
-  when: matrix_synapse_workers_enabled
-
 - name: configure synapse
   include_tasks: configure.yml
   tags: ['always']

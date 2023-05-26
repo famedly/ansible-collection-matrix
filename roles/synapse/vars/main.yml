@@ -9,16 +9,17 @@ matrix_synapse_base_docker_volumes:
 matrix_synapse_config: "{{ matrix_synapse_base_config | combine(matrix_synapse_extra_config, recursive=True) }}"
 
 # Worker-specific config
-matrix_synapse_media_worker_override: {}
-matrix_synapse_fed_sender_override: {}
-matrix_synapse_pusher_override: {}
-matrix_synapse_appservice_override: {}
-matrix_synapse_user_dir_override: {}
-matrix_synapse_worker_fed_senders: []
+matrix_synapse_worker_fed_senders: >-2
+  {{
+    ['worker_fed_out_']
+    | product(range(1, matrix_synapse_workers_federation_out + 1))
+    | list
+    | map('join', '')
+  }}
 matrix_synapse_worker_metrics_listener:
   - type: metrics
     port: "{{ matrix_synapse_worker_metrics_port }}"
-matrix_synapse_worker_config:
+matrix_synapse_worker_config_base:
   listeners:
     - port: "{{ matrix_synapse_worker_replication_port }}"
       bind_addresses: "{{ matrix_synapse_worker_replication_bind_addresses }}"
@@ -29,6 +30,28 @@ matrix_synapse_worker_config:
     main:
       host: "{{ matrix_synapse_worker_replication_host }}"
       port: "{{ matrix_synapse_worker_replication_port }}"
+matrix_synapse_worker_config_media:
+  enable_media_repo: false
+  media_instance_running_background_jobs: "worker_media_1"
+matrix_synapse_worker_config_federation_sender:
+  federation_sender_instances: "{{ matrix_synapse_worker_fed_senders }}"
+matrix_synapse_worker_config_pusher:
+  pusher_instances: ["worker_pusher"]
+matrix_synapse_worker_config_appservice:
+  notify_appservices_from_worker: "worker_appservice"
+matrix_synapse_worker_config_user_dir:
+  update_user_directory_from_worker: "worker_user_dir"
+matrix_synapse_worker_config: >-2
+  {{
+    (
+      [matrix_synapse_worker_config_base]
+      + ([matrix_synapse_worker_config_media] if matrix_synapse_workers_media > 0 else [])
+      + ([matrix_synapse_worker_config_federation_sender] if matrix_synapse_workers_federation_out > 0 else [])
+      + ([matrix_synapse_worker_config_pusher] if matrix_synapse_worker_push else [])
+      + ([matrix_synapse_worker_config_appservice] if matrix_synapse_worker_appservice else [])
+      + ([matrix_synapse_worker_config_user_dir] if matrix_synapse_worker_user_search else [])
+    ) | combine(recursive=True)
+  }}
 
 # homeserver.yml
 matrix_synapse_base_config:
