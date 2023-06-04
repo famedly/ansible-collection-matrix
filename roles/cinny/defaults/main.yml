@@ -1,0 +1,34 @@
+---
+
+cinny_user: "cinny"
+cinny_version: "2.2.6"
+cinny_base_path: "/opt/cinny"
+cinny_config_file: "{{ cinny_base_path }}/config.json"
+cinny_sources_path: "{{ cinny_base_path }}/src"
+cinny_source_repo_url: "https://github.com/cinnyapp/cinny.git"
+
+cinny_container_name: cinny
+cinny_container_image_registry: "ghcr.io"
+cinny_container_image_namespace: "cinnyapp/"
+cinny_container_image_name: "cinny"
+cinny_container_image_repository: >-
+  {{
+    (container_registries[cinny_container_image_registry]
+      | default(cinny_container_image_registry))
+    + '/' + (cinny_container_image_namespace | default(''))
+    + cinny_container_image_name
+  }}
+cinny_container_image_reference: >-
+  {{ ((cinny_container_image_repository + ':')
+       if not cinny_container_image_build_local else '')
+     + (cinny_container_image_tag | default('v' + cinny_version)) }}
+cinny_container_image_build_local: false
+cinny_container_labels: {}
+cinny_container_volumes: []
+cinny_container_combined_labels: >-
+  {{ cinny_container_preset_labels | combine(cinny_container_labels) }}
+
+cinny_config_default_homeserver: ~
+cinny_config_homeserver_list: []
+cinny_config_allow_custom_homeservers: true
+cinny_config: ~

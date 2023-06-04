@@ -1,0 +1,24 @@
+---
+
+cinny_container_preset_labels:
+  version: "{{ cinny_container_image_tag | default('v' + cinny_user, true) }}"
+
+cinny_config_from_defaults:
+  homeserverList: >-2
+    {{
+      ([ cinny_config_default_homeserver ]
+        if cinny_config_default_homeserver else [])
+      + cinny_config_homeserver_list | default([])
+    }}
+  allowCustomHomeservers: "{{ cinny_config_allow_custom_homeservers | bool }}"
+cinny_config_complete: >-
+  {{
+    cinny_config_from_defaults
+    | combine({'defaultHomeserver': 0} if cinny_config_default_homeserver else {}, recursive=true)
+    | combine(cinny_config | default({}, true), recursive=true)
+  }}
+  
+cinny_container_preset_volumes:
+  - "{{ cinny_config_file }}:/usr/share/nginx/html/config.json:ro"
+cinny_container_combined_volumes: >-
+  {{ cinny_container_preset_volumes + cinny_container_volumes }}

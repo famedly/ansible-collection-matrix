@@ -1,0 +1,67 @@
+---
+
+- name: Ensure cinny user '{{ cinny_user }}' exists
+  ansible.builtin.user:
+    name: "{{ cinny_user }}"
+    state: present
+    system: true
+  register: cinny_user_info
+
+- name: Ensure cinny host directories exist
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ cinny_user_info.uid | default(cinny_user) }}"
+    group: "{{ cinny_user_info.group | default(cinny_user) }}"
+    mode: "{{ item.mode | default('0750') }}"
+  loop:
+    - path: "{{ cinny_base_path }}"
+    - path: "{{ cinny_sources_path }}"
+
+- name: Ensure cinny sources are available
+  ansible.builtin.git:
+    repo: "{{ cinny_source_repo_url }}"
+    dest: "{{ cinny_sources_path }}"
+    version: "{{ cinny_container_image_tag | default('v' + cinny_version) }}"
+    accept_newhostkey: true
+  when: cinny_container_image_build_local
+
+- name: Ensure cinny container image is present
+  community.docker.docker_image:
+    name: "{{ cinny_container_image_reference }}"
+    state: present
+    source: pull
+    force_source: "{{ cinny_container_image_tag | default(false, true) | bool }}"
+  when: not cinny_container_image_build_local
+
+- name: Ensure cinny container image is built
+  community.docker.docker_image:
+    name: "{{ cinny_container_image_reference }}"
+    build:
+      path: "{{ cinny_sources_path }}"
+    state: present
+    source: build
+  when: cinny_container_image_build_local
+
+- name: Ensure cinny config.json is up to date
+  ansible.builtin.copy:
+    content: "{{ cinny_config_complete | to_nice_json }}"
+    dest: "{{ cinny_config_file }}"
+    owner: "{{ cinny_user_info.uid | default(cinny_user) }}"
+    group: "{{ cinny_user_info.group | default(cinny_user) }}"
+    mode: "0644"
+  notify:
+    - restart-cinny
+
+- name: Ensure cinny container named '{{ cinny_container_name }}' is running
+  community.docker.docker_container:
+    name: "{{ cinny_container_name }}"
+    image: "{{ cinny_container_image_reference }}"
+    env: "{{ cinny_container_env | default(omit, true) }}"
+    user: "{{ cinny_container_user | default(omit, true) }}"
+    ports: "{{ cinny_container_ports | default(omit, true) }}"
+    labels: "{{ cinny_container_combined_labels }}"
+    volumes: "{{ cinny_container_combined_volumes }}"
+    networks: "{{ cinny_container_networks | default(omit, true) }}"
+    purge_networks: "{{ cinny_container_purge_networks | default(omit, true) }}"
+    etc_hosts: "{{ cinny_container_etc_hosts | default(omit, true) }}"
