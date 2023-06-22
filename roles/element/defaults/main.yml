@@ -1,8 +1,8 @@
 ---
 element_version: "{{ element_unstable | ternary(element_unstable_version, element_stable_version) }}"
 element_unstable: false
-element_stable_version: "1.11.31"
-element_unstable_version: "1.11.31"
+element_stable_version: "1.11.34"
+element_unstable_version: "1.11.34"
 element_webapp_dir: /opt/element
 element_config:
   default_server_config:
