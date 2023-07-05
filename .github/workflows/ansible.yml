@@ -1,0 +1,11 @@
+---
+name: Ansible CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  ansible:
+    uses: famedly/github-workflows/.github/workflows/ansible.yml@ansible-v1
+    with:
+      collection: matrix
