@@ -4,7 +4,7 @@
   user:
     name: "{{ hedwig_user }}"
     state: present
-    system: yes
+    system: true
   register: hedwig_user_res
 
 - name: Ensure host directories are present
@@ -13,14 +13,16 @@
     state: directory
     owner: "{{ hedwig_user_res.uid }}"
     group: "{{ hedwig_user_res.group }}"
+    mode: "0755"
 
 - name: Template configuration file for hedwig
   copy:
-    content: "{{ hedwig_config | to_nice_yaml(indent=2, width=1000) }}"
+    # default required to make linter happy
+    content: "{{ hedwig_config | default({}) | to_nice_yaml(indent=2, width=1000) }}"
     dest: "{{ hedwig_config_file }}"
     owner: "{{ hedwig_user_res.uid }}"
     group: "{{ hedwig_user_res.group }}"
-    mode: 0770
+    mode: "0640"
   notify: restart-hedwig
 
 - name: Write FCM service account file
@@ -34,11 +36,11 @@
     dest: "{{ hedwig_fcm_service_account_file }}"
     owner: "{{ hedwig_user_res.uid }}"
     group: "{{ hedwig_user_res.group }}"
-    mode: 0770
+    mode: "0640"
   notify: restart-hedwig
 
 - name: Start hedwig container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ hedwig_container_name }}"
     image: "{{ hedwig_container_image }}"
     env: "{{ hedwig_container_env }}"

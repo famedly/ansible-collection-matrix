@@ -6,7 +6,7 @@ hedwig_container_base_volumes:
 hedwig_container_volumes: "{{ hedwig_container_base_volumes + hedwig_container_extra_volumes }}"
 
 hedwig_container_base_labels:
-  version: "{{ hedwig_container_image_tag|default(hedwig_version) }}"
+  version: "{{ hedwig_container_image_tag | default(hedwig_version) }}"
 hedwig_container_labels_complete: "{{ hedwig_container_base_labels | combine(hedwig_container_labels) }}"
 
 hedwig_base_config:

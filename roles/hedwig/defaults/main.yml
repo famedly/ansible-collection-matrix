@@ -9,7 +9,7 @@ hedwig_version: "1.5.2"
 
 hedwig_container_name: "hedwig"
 hedwig_container_image_name: "registry.gitlab.com/famedly/company/backend/services/hedwig"
-hedwig_container_image: "{{ hedwig_container_image_name }}:{{ hedwig_container_image_tag|default(['v', hedwig_version]|join()) }}"
+hedwig_container_image: "{{ hedwig_container_image_name }}:{{ hedwig_container_image_tag | default(['v', hedwig_version] | join()) }}"
 hedwig_container_env: {}
 hedwig_container_ports: []
 hedwig_container_labels: {}
@@ -20,10 +20,10 @@ hedwig_extra_config: {}
 hedwig_server_port: 7022
 hedwig_server_bind_address: "::"
 hedwig_log_level: INFO
-#hedwig_app_id: "org.matrix.awesome_client"
+# hedwig_app_id: "org.matrix.awesome_client"
 hedwig_max_jitter_delay: 20.0
 hedwig_fcm_collapse_key: "org.matrix.default_notification"
-#hedwig_fcm_notification_click_action: "FLUTTER_NOTIFICATION_CLICK"
+# hedwig_fcm_notification_click_action: "FLUTTER_NOTIFICATION_CLICK"
 hedwig_fcm_notification_title: "<count> unread rooms"
 hedwig_fcm_notification_body: "Open app to read the messages"
 hedwig_fcm_notification_sound: "default"
