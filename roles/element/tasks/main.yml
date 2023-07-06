@@ -3,6 +3,7 @@
   file:
     dest: "{{ element_webapp_dir }}"
     state: directory
+    mode: "0755"
 
 - name: Download and install element web app
   import_tasks: download.yml
@@ -12,11 +13,13 @@
   copy:
     content: "{{ element_config | to_nice_json }}"
     dest: "{{ element_webapp_dir }}/config.json"
+    mode: "0644"
 
 - name: Write domain specific configurations
   copy:
     content: "{{ item.config | to_nice_json }}"
     dest: "{{ element_webapp_dir }}/config.{{ item.domain }}.json"
+    mode: "0644"
   loop: "{{ element_domain_configs }}"
 
 - name: Link main configuration
@@ -35,7 +38,7 @@
   when: element_deployment_method == "webroot"
 
 - name: Ensure container image is present
-  docker_image:
+  community.docker.docker_image:
     name: "docker.io/vectorim/element-web:v{{ element_version }}"
     force_source: "{{ element_container_image_force_pull | default(False) }}"
     source: pull
@@ -47,7 +50,7 @@
   delay: 5
 
 - name: Deploy docker container
-  docker_container:
+  community.docker.docker_container:
     name: "element-web"
     image: "docker.io/vectorim/element-web:v{{ element_version }}"
     ports: "{{ element_docker_ports }}"

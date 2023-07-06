@@ -5,17 +5,19 @@
   register: element_app_directory
 
 - name: Deploy element
+  when: not element_app_directory.stat.exists
   block:
     - name: Create gpg temporary home directory
       file:
         dest: /tmp/gpg-tmp
         state: directory
-        mode: 0700
+        mode: "0700"
 
     - name: Download element v{{ element_version }}
       get_url:
         url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/element-v{{ element_version }}.tar.gz"
         dest: "/tmp/element-v{{ element_version }}.tar.gz"
+        mode: "0600"
       register: element_source
       until: element_source is success
       retries: 10
@@ -25,12 +27,13 @@
       get_url:
         url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/element-v{{ element_version }}.tar.gz.asc"
         dest: "/tmp/element-v{{ element_version }}.tar.gz.asc"
+        mode: "0600"
       register: element_source_sig
       until: element_source_sig is success
       retries: 10
       delay: 5
 
-    - name: Retrieve the Element release key  # noqa 301
+    - name: Retrieve the Element release key  # noqa no-changed-when
       command: >-
         gpg --no-default-keyring
         --homedir /tmp/gpg-tmp
@@ -42,7 +45,7 @@
       retries: 10
       delay: 2
 
-    - name: "Verify element v{{ element_version }}'s signature"  # noqa 301
+    - name: "Verify element v{{ element_version }}'s signature"  # noqa no-changed-when
       command: >-
         gpg --no-default-keyring
         --homedir /tmp/gpg-tmp
@@ -55,11 +58,10 @@
       unarchive:
         src: "/tmp/element-v{{ element_version }}.tar.gz"
         dest: "{{ element_webapp_dir }}"
-        remote_src: yes
+        remote_src: true
       when: element_tarball_verification.rc == 0
 
     - name: Clean temporary gpg directory
       file:
         dest: /tmp/gpg-tmp
         state: absent
-  when: not element_app_directory.stat.exists

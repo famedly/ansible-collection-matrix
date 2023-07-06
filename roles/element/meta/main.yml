@@ -3,9 +3,9 @@ galaxy_info:
   author: Emmanouil Kampitakis (@madonius)
   description: Installs and configures element
 
-  license: MIT
+  license: AGPL-3.0-or-later
 
-  min_ansible_version: 2.7
+  min_ansible_version: "6"
 
   platforms:
     - name: Debian
