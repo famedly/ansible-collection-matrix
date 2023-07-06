@@ -1,0 +1,8 @@
+---
+
+- name: Restart barad-dur container
+  community.docker.docker_container:
+    name: "{{ barad_dur_container_name }}"
+    state: started
+    restart: true
+  listen: restart-barad-dur

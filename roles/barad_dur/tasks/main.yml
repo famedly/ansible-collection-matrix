@@ -6,8 +6,7 @@
     state: present
     system: true
   register: barad_dur_user_res
-  tags: [ 'prepare', 'prepare-barad_dur',
-          'deploy', 'deploy-barad_dur' ]
+  tags: ['prepare', 'prepare-barad_dur', 'deploy', 'deploy-barad_dur']
 
 - name: Create base-directory for barad-dur [{{ barad_dur_base_path }}]
   file:
@@ -16,7 +15,7 @@
     owner: "{{ barad_dur_user_res.uid }}"
     group: "{{ barad_dur_user_res.group }}"
     mode: "0755"
-  tags: [ 'prepare', 'prepare-barad_dur' ]
+  tags: ['prepare', 'prepare-barad_dur']
 
 - name: Template configuration file for barad-dur [{{ barad_dur_config_file }}]
   template:
@@ -26,10 +25,10 @@
     group: "{{ barad_dur_user_res.group }}"
     mode: "0640"
   notify: restart-barad-dur
-  tags: [ 'deploy', 'deploy-barad_dur' ]
+  tags: ['deploy', 'deploy-barad_dur']
 
 - name: Pull barad-dur container
-  docker_image:
+  community.docker.docker_image:
     name: "{{ barad_dur_container_image_reference }}"
     source: pull
     state: present
@@ -38,10 +37,10 @@
   until: barad_dur_container_image_pulled is success
   retries: 10
   delay: 5
-  tags: [ 'prepare', 'prepare-barad_dur' ]
+  tags: ['prepare', 'prepare-barad_dur']
 
 - name: Start barad-dur container
-  docker_container:
+  community.docker.docker_container:
     name: "{{ barad_dur_container_name }}"
     image: "{{ barad_dur_container_image_reference }}"
     env: "{{ barad_dur_container_env }}"
@@ -51,4 +50,4 @@
     volumes: "{{ barad_dur_container_volumes }}"
     restart_policy: "{{ barad_dur_container_restart_policy }}"
     state: "{{ barad_dur_container_state }}"
-  tags: [ 'deploy', 'deploy-barad_dur' ]
+  tags: ['deploy', 'deploy-barad_dur']

@@ -1,10 +1,9 @@
 ---
-
 barad_dur_container_base_volumes:
   - "{{ barad_dur_config_file }}:{{ barad_dur_container_base_path }}/config.yaml:ro"
 
 barad_dur_container_volumes: "{{ barad_dur_container_base_volumes + barad_dur_container_extra_volumes }}"
 
 barad_dur_container_base_labels:
-  version: "{{ barad_dur_container_image_tag|default(barad_dur_version) }}"
+  version: "{{ barad_dur_container_image_tag | default(barad_dur_version) }}"
 barad_dur_container_labels_complete: "{{ barad_dur_container_base_labels | combine(barad_dur_container_labels) }}"
