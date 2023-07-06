@@ -5,7 +5,7 @@
     state: directory
     owner: synapse
     group: synapse
-    mode: 0750
+    mode: "0755"
   tags: ['prepare', 'prepare-synapse']
 
 - name: Generate secrets
@@ -27,7 +27,7 @@
     state: directory
     owner: synapse
     group: synapse
-    mode: 0770
+    mode: "0775"
   tags: ['prepare', 'prepare-synapse']
 
 - name: Create directories for media storage
@@ -36,7 +36,7 @@
     state: directory
     owner: synapse
     group: synapse
-    mode: 0770
+    mode: "0775"
   loop:
     - "{{ matrix_synapse_config.media_store_path }}"
     - "{{ matrix_synapse_config.uploads_path }}"
@@ -51,13 +51,13 @@
 
 - name: Deploy config
   copy:
-    content: "{{ matrix_synapse_config | to_nice_yaml }}"
+    # default required to make linter happy
+    content: "{{ matrix_synapse_config | default({}) | to_nice_yaml }}"
     dest: "{{ matrix_synapse_base_path }}/homeserver.yaml"
     owner: synapse
     group: synapse
-    mode: 0660
-  notify:
-    - "restart matrix-synapse"
+    mode: "0660"
+  notify: "restart-matrix-synapse"
   tags: ['deploy', 'deploy-synapse']
 
 - name: Configure logging

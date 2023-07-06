@@ -7,14 +7,15 @@
 - name: Create signing key
   matrix_signing_key:
     path: "{{ matrix_synapse_config.signing_key_path }}"
-  notify:
-    - "restart matrix-synapse"
+  notify: "restart-matrix-synapse"
   tags: ['deploy', 'deploy-synapse']
 
 - name: Write server's certificate and private key
+  when: not matrix_synapse_config.no_tls
+  tags: ['deploy', 'deploy-synapse']
   block:
-    - name: create DH parameters
-      openssl_dhparam:
+    - name: Create DH parameters
+      community.crypto.openssl_dhparam:
         path: "{{ matrix_synapse_dh_path }}"
         owner: synapse
     - name: Write certificate
@@ -31,5 +32,3 @@
         owner: synapse
         group: synapse
         mode: "0600"
-  when: not matrix_synapse_config.no_tls
-  tags: ['deploy', 'deploy-synapse']

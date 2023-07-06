@@ -4,8 +4,8 @@
   block:
 
     - name: Query all running docker containers
-      docker_host_info:
-        containers: yes
+      community.docker.docker_host_info:
+        containers: true
       register: matrix_docker_host_res
 
     - name: Filter all running synapse workers
@@ -20,13 +20,13 @@
           }}
 
     - name: Stop leftover running containers
-      docker_container:
+      community.docker.docker_container:
         name: "{{ item }}"
         state: absent
       loop: "{{ matrix_synapse_running_workers | difference(matrix_synapse_workers | map(attribute='container_name')) }}"
 
     - name: Deploy workers (docker)
-      docker_container:
+      community.docker.docker_container:
         name: "{{ item.container_name }}"
         image: "{{ matrix_synapse_container_image_reference }}"
         labels: >-
@@ -54,7 +54,6 @@
 - name: Deploy workers using systemd
   when: matrix_synapse_supervision_method == "systemd"
   block:
-
     - name: Query all running services
       service_facts:
 
@@ -97,7 +96,6 @@
       template:
         src: worker.service.j2
         dest: "/etc/systemd/system/matrix-{{ item.name }}.service"
+        mode: "0644"
       loop: "{{ matrix_synapse_workers }}"
-      notify:
-        - "reload systemd"
-        - "restart matrix-synapse"
+      notify: ["reload-systemd", "restart-matrix-synapse"]

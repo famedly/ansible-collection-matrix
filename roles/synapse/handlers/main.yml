@@ -1,30 +1,32 @@
 ---
-- name: "reload systemd"
+- name: Reload systemd
   systemd:
-    daemon_reload: yes
+    daemon_reload: true
+  listen: reload-systemd
 
-- name: "restart matrix-synapse using systemd"
+- name: Restart matrix-synapse using systemd
   service:
     name: matrix-synapse.service
     state: restarted
-    enabled: yes
+    enabled: true
   when: matrix_synapse_supervision_method == "systemd"
-  listen: "restart matrix-synapse"
+  listen: restart-matrix-synapse
 
-- name: "restart synapse using docker"
-  docker_container:
+- name: Restart synapse using docker
+  community.docker.docker_container:
     name: "{{ matrix_synapse_container_name }}"
     state: started
-    restart: yes
+    restart: true
   when: matrix_synapse_supervision_method == "docker"
-  listen: "restart matrix-synapse"
+  listen: restart-matrix-synapse
   loop: >-2
     {{ [matrix_synapse_container_name]
     + matrix_synapse_workers | default([]) | map(attribute='container_name') }}
 
-- name: restart rsyslog
-  become: yes
+- name: Restart rsyslog
+  become: true
   service:
     name: rsyslog
     state: restarted
   when: matrix_synapse_supervision_method == "systemd"
+  listen: restart-rsyslog

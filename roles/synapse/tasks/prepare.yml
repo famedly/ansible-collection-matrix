@@ -1,23 +1,23 @@
 ---
-- name: create appservice group
+- name: Create appservice group
   group:
     name: "matrix-appservices"
     state: present
-    system: yes
+    system: true
   register: appservice_group
 
-- name: create user
+- name: Create user
   user:
     name: synapse
     state: present
-    groups: [ "matrix-appservices" ]
-    append: yes
+    groups: [matrix-appservices]
+    append: true
   register: synapse_user
 
-- name: create directory
+- name: Create directory
   file:
     path: "{{ matrix_synapse_base_path }}"
     state: directory
     owner: synapse
     group: synapse
-    mode: 0750
+    mode: "0750"

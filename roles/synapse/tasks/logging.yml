@@ -1,37 +1,40 @@
 ---
 - name: Logging config (systemd)
+  when: matrix_synapse_supervision_method == "systemd"
   block:
-    - name: create logging folder
+    - name: Create logging folder
       file:
         name: "{{ matrix_synapse_log_dir }}"
         state: directory
         owner: synapse
         group: synapse
+        mode: "0755"
       tags: ['prepare', 'prepare-synapse']
 
-    - name: copy syslog config
+    - name: Copy syslog config
       template:
         src: syslog-synapse.conf.j2
         dest: /etc/rsyslog.d/matrix_synapse.conf
         owner: root
-      notify: restart rsyslog
+        mode: "0644"
+      notify: restart-rsyslog
       tags: ['deploy', 'deploy-synapse']
 
-    - name: template logrotate config
+    - name: Template logrotate config
       template:
         src: logrotate.j2
         dest: /etc/logrotate.d/matrix_synapse
         owner: root
+        mode: "0644"
       tags: ['deploy', 'deploy-synapse']
-  when: matrix_synapse_supervision_method == "systemd"
-  # TODO: Figure out how to make sure that logging ends up in rsyslog no matter what system we run on
 
+# TODO: Figure out how to make sure that logging ends up in rsyslog no matter what system we run on
 - name: Deploy log config
   copy:
     src: "log.config"
     dest: "{{ matrix_synapse_base_path }}/log.config"
     owner: synapse
     group: synapse
-  notify:
-    - "restart matrix-synapse"
+    mode: "0644"
+  notify: restart-matrix-synapse
   tags: ['deploy', 'deploy-synapse']

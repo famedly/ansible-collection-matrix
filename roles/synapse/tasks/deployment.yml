@@ -1,5 +1,6 @@
 ---
-- name: install synapse with pip into virtualenv
+- name: Install synapse with pip into virtualenv
+  when: matrix_synapse_deployment_method == "pip"
   block:
     - name: Install dependencies
       apt:
@@ -49,12 +50,11 @@
         virtualenv: "{{ matrix_synapse_base_path }}/env"
         version: "{{ matrix_synapse_version }}"
         state: "{{ 'forcereinstall' if clone_removed.changed else 'present' }}"
-      notify: restart matrix-synapse
+      notify: restart-matrix-synapse
       tags: ['deploy', 'deploy-synapse', 'skip_ansible_lint']
-  when: matrix_synapse_deployment_method == "pip"
 
 - name: Ensure synapse container image is present
-  docker_image:
+  community.docker.docker_image:
     name: "{{ matrix_synapse_container_image_reference }}"
     force_source: "{{ matrix_synapse_docker_pull }}"
     source: pull
@@ -67,7 +67,7 @@
   tags: ['prepare', 'prepare-synapse']
 
 - name: Ensure synapse container is running
-  docker_container:
+  community.docker.docker_container:
     name: "{{ matrix_synapse_container_name }}"
     image: "{{ matrix_synapse_container_image_reference }}"
     networks: "{{ matrix_synapse_docker_networks }}"
@@ -92,5 +92,5 @@
     command: "{{ matrix_synapse_container_certificate_refresh_command }}"
     user: "{{ matrix_synapse_container_certificate_refresh_user_id }}"
   when: matrix_synapse_container_certificate_refresh and matrix_synapse_deployment_method == "docker" and matrix_synapse_container_started.changed
-  notify: restart matrix-synapse
+  notify: restart-matrix-synapse
   tags: ['deploy', 'deploy-synapse']

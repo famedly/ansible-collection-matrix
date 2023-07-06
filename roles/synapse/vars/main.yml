@@ -25,7 +25,7 @@ matrix_synapse_worker_config_base:
       bind_addresses: "{{ matrix_synapse_worker_replication_bind_addresses }}"
       type: http
       resources:
-        - names: [ replication ]
+        - names: [replication]
   instance_map:
     main:
       host: "{{ matrix_synapse_worker_replication_host }}"
@@ -124,57 +124,57 @@ matrix_synapse_base_config:
   max_image_pixels: "32M"
   dynamic_thumbnails: false
   thumbnail_sizes:
-  - width: 32
-    height: 32
-    method: crop
-  - width: 96
-    height: 96
-    method: crop
-  - width: 320
-    height: 240
-    method: scale
-  - width: 640
-    height: 480
-    method: scale
-  - width: 800
-    height: 600
-    method: scale
+    - width: 32
+      height: 32
+      method: crop
+    - width: 96
+      height: 96
+      method: crop
+    - width: 320
+      height: 240
+      method: scale
+    - width: 640
+      height: 480
+      method: scale
+    - width: 800
+      height: 600
+      method: scale
   url_preview_enabled: true
   url_preview_ip_range_blacklist:
-  - '127.0.0.0/8'
-  - '10.0.0.0/8'
-  - '172.16.0.0/12'
-  - '192.168.0.0/16'
-  - '100.64.0.0/10'
-  - '169.254.0.0/16'
-  - '::1/128'
-  - 'fe80::/64'
-  - 'fc00::/7'
+    - '127.0.0.0/8'
+    - '10.0.0.0/8'
+    - '172.16.0.0/12'
+    - '192.168.0.0/16'
+    - '100.64.0.0/10'
+    - '169.254.0.0/16'
+    - '::1/128'
+    - 'fe80::/64'
+    - 'fc00::/7'
   url_preview_url_blacklist:
-  - username: '*'
-  - netloc: 'google.com'
-  - netloc: '*.google.com'
-  - netloc: 'twitter.com'
-  - netloc: '*.twitter.com'
-  - netloc: 't.co'
-  - netloc: '*.t.co'
+    - username: '*'
+    - netloc: 'google.com'
+    - netloc: '*.google.com'
+    - netloc: 'twitter.com'
+    - netloc: '*.twitter.com'
+    - netloc: 't.co'
+    - netloc: '*.t.co'
   max_spider_size: "10M"
-  enable_registration: False
+  enable_registration: false
   registration_shared_secret: >-
     {{ registration_shared_secret_file.content | b64decode }}
   form_secret: "{{ form_secret_file.content | b64decode }}"
   bcrypt_rounds: 12
-  allow_guest_access: False
+  allow_guest_access: false
   trusted_third_party_id_servers:
-      - matrix.org
-      - vector.im
+    - matrix.org
+    - vector.im
   autocreate_auto_join_rooms: true
   enable_metrics: "{{ matrix_synapse_metrics_enabled }}"
   report_stats: "{{ matrix_synapse_report_stats }}"
   app_service_config_files: []
-  track_appservice_user_ips: False
+  track_appservice_user_ips: false
   macaroon_secret_key: "{{ macaroon_file.content | b64decode }}"
-  expire_access_token: False
+  expire_access_token: false
   signing_key_path: "{{ matrix_synapse_signing_key_path }}"
   old_signing_keys: {}
   key_refresh_interval: "1d" # 1 Day.
@@ -191,9 +191,9 @@ matrix_synapse_base_config:
     include_content: false
   enable_group_creation: true
   alias_creation_rules:
-      - user_id: "*"
-        alias: "*"
-        action: allow
+    - user_id: "*"
+      alias: "*"
+      action: allow
 matrix_synapse_docker_labels_complete: "{{ matrix_synapse_docker_labels_base | combine(matrix_synapse_docker_labels) }}"
 matrix_synapse_docker_labels_base:
   version: "{{ matrix_synapse_container_image_tag | default(matrix_synapse_version) }}"
@@ -297,6 +297,6 @@ matrix_synapse_worker_sso_generic_endpoints:
   - "/_synapse/client/pick_username"
   - "/_synapse/client/new_user_consent$"
   - "/_synapse/client/sso_register$"
-matrix_synapse_worker_sso_oidc_endpoints: "{{ matrix_synapse_worker_sso_generic_endpoints + [ '/_synapse/client/oidc/callback$' ] }}"
-matrix_synapse_worker_sso_saml_endpoints: "{{ matrix_synapse_worker_sso_generic_endpoints + [ '/_synapse/client/saml2/authn_response$' ] }}"
-matrix_synapse_worker_sso_cas_endpoints: "{{ matrix_synapse_worker_sso_generic_endpoints + [ '/_matrix/client/(api/v1|r0|v3|unstable)/login/cas/ticket$' ] }}"
+matrix_synapse_worker_sso_oidc_endpoints: "{{ matrix_synapse_worker_sso_generic_endpoints + ['/_synapse/client/oidc/callback$'] }}"
+matrix_synapse_worker_sso_saml_endpoints: "{{ matrix_synapse_worker_sso_generic_endpoints + ['/_synapse/client/saml2/authn_response$'] }}"
+matrix_synapse_worker_sso_cas_endpoints: "{{ matrix_synapse_worker_sso_generic_endpoints + ['/_matrix/client/(api/v1|r0|v3|unstable)/login/cas/ticket$'] }}"
