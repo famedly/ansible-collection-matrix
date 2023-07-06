@@ -17,7 +17,7 @@ cinny_config_complete: >-
     | combine({'defaultHomeserver': 0} if cinny_config_default_homeserver else {}, recursive=true)
     | combine(cinny_config | default({}, true), recursive=true)
   }}
-  
+
 cinny_container_preset_volumes:
   - "{{ cinny_config_file }}:/usr/share/nginx/html/config.json:ro"
 cinny_container_combined_volumes: >-
