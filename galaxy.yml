@@ -1,11 +1,12 @@
 namespace: famedly
 name: matrix
 version: 0.2.2
+repository: https://github.com/famedly/ansible-collection-matrix
 readme: README.md
 authors:
-- Jan Christian Grünhage <jan.christian@gruenhage.xyz>
-- Emmanouil Kampitakis
-- Johanna Dorothea Reichmann
+  - Jan Christian Grünhage <jan.christian@gruenhage.xyz>
+  - Emmanouil Kampitakis
+  - Johanna Dorothea Reichmann
 description: roles and modules for managing a matrix.org deployment
 license:
-- AGPL-3.0-only
+  - AGPL-3.0-only
