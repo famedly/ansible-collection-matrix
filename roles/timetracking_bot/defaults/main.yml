@@ -14,7 +14,12 @@ timetracking_bot_pg_db: "matrix-timetracking"
 timetracking_bot_version: "0.4.4"
 timetracking_bot_container_image_tag: ~
 timetracking_bot_container_image: "registry.gitlab.com/famedly/bots/timetracking"
-timetracking_bot_container_image_ref: '{{ timetracking_bot_container_image }}:{{ timetracking_bot_container_image_tag | default("v" + timetracking_bot_version, true) }}'
+timetracking_bot_container_image_ref: >-
+  {{
+    timetracking_bot_container_image
+    ~ ':'
+    ~ timetracking_bot_container_image_tag | default("v" + timetracking_bot_version, true)
+  }}
 
 timetracking_bot_docker_ports: []
 timetracking_bot_docker_env: {}

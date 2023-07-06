@@ -1,7 +1,9 @@
+---
 galaxy_info:
   author: Jan Christian Grünhage
   description: deploys a dockerized matrix timetracking bot
   company: Famedly GmbH
-  min_ansible_version: 2.9
+  license: AGPL-3.0-only
+  min_ansible_version: "6"
   galaxy_tags: []
 dependencies: []

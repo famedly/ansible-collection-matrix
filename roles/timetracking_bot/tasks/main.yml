@@ -1,16 +1,16 @@
 ---
 # tasks file for timetracking-bot
-- name: create timetracking bot user
+- name: Create timetracking bot user
   user:
     name: matrix-timetracking
     state: present
-    system: yes
+    system: true
   register: timetracking_bot_user_res
 
-- name: create application directories
+- name: Create application directories
   file:
     path: "{{ item }}"
-    mode: 0750
+    mode: "0755"
     owner: "{{ timetracking_bot_user_res.uid }}"
     group: "{{ timetracking_bot_user_res.group }}"
     state: directory
@@ -19,20 +19,21 @@
     - "{{ timetracking_bot_store_path }}"
     - "{{ timetracking_bot_session_path }}"
 
-- name: template config
+- name: Template config
   copy:
+    # default required to make linter happy
     content: |
       {{ 'Managed by ansible' | comment('plain', prefix='#####', postfix='#####') }}
-      {{ timetracking_bot_config | to_nice_yaml }}
+      {{ timetracking_bot_config | default({}) | to_nice_yaml }}
     dest: "{{ timetracking_bot_config_path }}"
-    mode: 0640
+    mode: "0640"
     owner: "{{ timetracking_bot_user_res.uid }}"
     group: "{{ timetracking_bot_user_res.group }}"
   notify:
-    - restart timetracking-bot
+    - restart-timetracking-bot
 
-- name: start container
-  docker_container:
+- name: Start container
+  community.docker.docker_container:
     name: "timetracking-bot"
     image: "{{ timetracking_bot_container_image_ref }}"
     restart_policy: "unless-stopped"
