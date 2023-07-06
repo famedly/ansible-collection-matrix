@@ -1,8 +1,8 @@
 ---
 # tasks file for panopticon
-- name: launch mariadb
-  become: yes
-  docker_container:
+- name: Launch mariadb for panopticon
+  become: true
+  community.docker.docker_container:
     name: panopticon-db
     image: "docker.io/mariadb:{{ panopticon_db_version }}"
     volumes:
@@ -16,9 +16,9 @@
     labels: "{{ panopticon_db_docker_labels_complete }}"
     ports: "{{ panopticon_db_docker_ports }}"
 
-- name: launch panopticon
-  become: yes
-  docker_container:
+- name: Launch panopticon
+  become: true
+  community.docker.docker_container:
     name: panopticon
     image: registry.gitlab.com/famedly/containers/panopticon
     pull: true

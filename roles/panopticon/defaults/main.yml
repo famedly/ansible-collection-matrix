@@ -7,8 +7,8 @@ panopticon_db_host: mariadb
 panopticon_db_port: 3306
 panopticon_db_docker_ports:
   - "172.17.0.1:3306:{{ panopticon_db_port }}"
-panopticon_db_docker_labels: {} #override this
+panopticon_db_docker_labels: {} # override this
 
 panopticon_version: "no version yet"
 panopticon_docker_ports: []
-panopticon_docker_labels: {} #override this
+panopticon_docker_labels: {} # override this
