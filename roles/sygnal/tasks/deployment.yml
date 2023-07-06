@@ -1,5 +1,6 @@
 ---
-- name: install sygnal with pip into virtualenv
+- name: Install sygnal with pip into virtualenv
+  when: sygnal_deployment_method == "pip"
   block:
     - name: Install dependencies
       apt:
@@ -27,21 +28,20 @@
       git:
         repo: https://github.com/matrix-org/sygnal
         dest: "{{ sygnal_base_path }}/sygnal"
-        accept_hostkey: yes
+        accept_hostkey: true
         version: "master"
       register: clone_sygnal
 
-    - name: Install sygnal
+    - name: Install sygnal # noqa no-handler
       pip:
         name: "{{ sygnal_base_path }}/sygnal"
         virtualenv: "{{ sygnal_base_path }}/env"
         virtualenv_python: python2
       when: clone_sygnal.changed
-      notify: restart sygnal
-  when: sygnal_deployment_method == "pip"
+      notify: restart-sygnal
 
-- name: install sygnal with docker
-  docker_container:
+- name: Install sygnal with docker
+  community.docker.docker_container:
     name: "{{ sygnal_docker_name }}"
     image: "{{ sygnal_docker_image }}"
     ports: "{{ sygnal_docker_ports }}"

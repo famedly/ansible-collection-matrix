@@ -1,20 +1,23 @@
 ---
-- name: create_user
+- name: Create user
   user:
     name: sygnal
     state: present
   register: sygnal_user
 
-- name: create base directory
+- name: Create base directory
   file:
     path: "{{ sygnal_base_path }}"
     state: directory
     owner: sygnal
     group: sygnal
+    mode: "0755"
 
-- name: deploy sygnal config
+- name: Deploy sygnal config
   template:
     src: sygnal.yml.j2
     dest: "{{ sygnal_base_path }}/sygnal.yml"
     owner: sygnal
     group: sygnal
+    mode: "0600"
+  notify: restart-sygnal
