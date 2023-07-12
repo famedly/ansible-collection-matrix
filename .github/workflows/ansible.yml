@@ -6,6 +6,6 @@ on:
     branches: [main]
 jobs:
   ansible:
-    uses: famedly/github-workflows/.github/workflows/ansible.yml@ansible-v1
+    uses: famedly/github-workflows/.github/workflows/ansible/ansible.yml@ansible-v1
     with:
       collection: matrix
