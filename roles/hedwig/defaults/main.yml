@@ -8,8 +8,26 @@ hedwig_fcm_service_account_file: "{{ hedwig_base_path }}/fcm-auth.json"
 hedwig_version: "1.5.2"
 
 hedwig_container_name: "hedwig"
-hedwig_container_image_name: "registry.gitlab.com/famedly/company/backend/services/hedwig"
-hedwig_container_image: "{{ hedwig_container_image_name }}:{{ hedwig_container_image_tag | default(['v', hedwig_version] | join()) }}"
+hedwig_container_image_reference: >-
+  {{
+    hedwig_container_image_repository
+    + ':'
+    + hedwig_container_image_tag | default('v' + hedwig_version)
+  }}
+hedwig_container_image_repository: >-
+  {{
+    (
+      container_registries[hedwig_container_image_registry]
+      | default(hedwig_container_image_registry)
+    )
+    + '/'
+    + hedwig_container_image_namespace | default('')
+    + hedwig_container_image_name
+  }}
+hedwig_container_image_registry: "registry.gitlab.com"
+hedwig_container_image_namespace: "famedly/company/backend/services/"
+hedwig_container_image_name: "hedwig"
+
 hedwig_container_env: {}
 hedwig_container_ports: []
 hedwig_container_labels: {}

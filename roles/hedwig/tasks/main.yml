@@ -42,7 +42,7 @@
 - name: Start hedwig container
   community.docker.docker_container:
     name: "{{ hedwig_container_name }}"
-    image: "{{ hedwig_container_image }}"
+    image: "{{ hedwig_container_image_reference }}"
     env: "{{ hedwig_container_env }}"
     user: "{{ hedwig_user_res.uid }}:{{ hedwig_user_res.group }}"
     ports: "{{ hedwig_container_ports }}"
