@@ -1,13 +1,15 @@
 ---
 
-hedwig_user: hedwig
-hedwig_base_path: /opt/hedwig
+hedwig_user: "{{ hedwig_prefix }}hedwig"
+hedwig_base_path: /opt/{{ hedwig_prefix }}hedwig
+# prefix used in different places to allow for multiple instances on the same host
+hedwig_prefix: ""
 hedwig_config_filename: "config.yaml"
 hedwig_config_file: "{{ hedwig_base_path }}/{{ hedwig_config_filename }}"
 hedwig_fcm_service_account_file: "{{ hedwig_base_path }}/fcm-auth.json"
 hedwig_version: "1.5.2"
 
-hedwig_container_name: "hedwig"
+hedwig_container_name: "{{ hedwig_prefix }}hedwig"
 hedwig_container_image_name: "registry.gitlab.com/famedly/company/backend/services/hedwig"
 hedwig_container_image: "{{ hedwig_container_image_name }}:{{ hedwig_container_image_tag | default(['v', hedwig_version] | join()) }}"
 hedwig_container_env: {}
