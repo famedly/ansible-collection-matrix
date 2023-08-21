@@ -1,27 +1,9 @@
-[plugin/matrix]
-plugins/module_utils/matrix.py @jadyn.dev
-plugins/modules/ @jadyn.dev @jcgruenhage
-plugins/modules/matrix_signing_key.py @madonius
-plugins/modules/matrix_member.py  @transcaffeine
+* @famedly/infrastructure
 
-[plugin/synapse]
-plugins/module_utils/synapse.py @jadyn.dev
-plugins/modules/synapse_ratelimit.py @jadyn.dev
+plugins/modules/ @jcgruenhage @famedly/infrastructure
+plugins/modules/matrix_member.py @jdreichmann @famedly/infrastructure
 
-[role/synapse]
-roles/synapse @jcgruenhage @madonius
-
-[role/element]
-roles/element @jcgruenhage @madonius
-
-[role/barad-dur]
-roles/barad-dur @jadyn.dev
-
-[role/hedwig]
-roles/hedwig @transcaffeine
-
-[role/timetracking-bot]
-roles/timetracking-bot @jcgruenhage
-
-[Team Lead]
-* @jcgruenhage
+roles/synapse @jcgruenhage @famedly/infrastructure
+roles/element @jcgruenhage @famedly/infrastructure
+roles/hedwig @jdreichmann @famedly/infrastructure
+roles/timetracking-bot @jcgruenhage @famedly/infrastructure
