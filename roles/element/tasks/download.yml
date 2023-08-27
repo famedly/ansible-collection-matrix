@@ -54,14 +54,23 @@
         /tmp/element-v{{ element_version }}.tar.gz
       register: element_tarball_verification
 
-    - name: Unpack element
+    - name: Unpack element to temp dir
       unarchive:
         src: "/tmp/element-v{{ element_version }}.tar.gz"
-        dest: "{{ element_webapp_dir }}"
+        dest: "/tmp/element-web"
         remote_src: true
       when: element_tarball_verification.rc == 0
 
-    - name: Clean temporary gpg directory
+    - name: Copy element-web from temp dir to {{ element_webapp_dir }}
+      copy:
+        src: "/tmp/element-web/element-{{ element_version }}"
+        dest: "{{ element_webapp_dir }}"
+        remote_src: true
+
+    - name: Clean temporary directories
       file:
-        dest: /tmp/gpg-tmp
+        dest: "{{ item }}"
         state: absent
+      loop:
+        - "/tmp/gpg-tmp"
+        - "/tmp/element-web"
