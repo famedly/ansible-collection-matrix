@@ -5,7 +5,7 @@ hedwig_base_path: /opt/hedwig
 hedwig_config_filename: "config.yaml"
 hedwig_config_file: "{{ hedwig_base_path }}/{{ hedwig_config_filename }}"
 hedwig_fcm_service_account_file: "{{ hedwig_base_path }}/fcm-auth.json"
-hedwig_version: "1.5.2"
+hedwig_version: "1.5.5"
 
 hedwig_container_name: "hedwig"
 hedwig_container_image_reference: >-
@@ -24,8 +24,8 @@ hedwig_container_image_repository: >-
     + hedwig_container_image_namespace | default('')
     + hedwig_container_image_name
   }}
-hedwig_container_image_registry: "registry.gitlab.com"
-hedwig_container_image_namespace: "famedly/company/backend/services/"
+hedwig_container_image_registry: "docker.nexus.famedly.de"
+hedwig_container_image_namespace: ""
 hedwig_container_image_name: "hedwig"
 
 hedwig_container_env: {}
