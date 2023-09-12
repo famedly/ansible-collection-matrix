@@ -171,13 +171,6 @@ matrix_synapse_base_config:
   signing_key_path: "{{ matrix_synapse_signing_key_path }}"
   old_signing_keys: {}
   key_refresh_interval: "1d" # 1 Day.
-  # TODO: More servers should be added
-  perspectives:
-    servers:
-      "matrix.org":
-        verify_keys:
-          "ed25519:auto":
-            key: "Noi6WqcDj0QmPxCNQqgezwTlBKrfqehY1u2FyWP9uYw"
   password_config:
     enabled: true
   push:
