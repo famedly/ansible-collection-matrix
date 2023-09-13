@@ -7,6 +7,7 @@ matrix_synapse_base_docker_volumes:
   - "{{ matrix_synapse_base_path }}/log.config:{{ matrix_synapse_base_path }}/log.config"
   - "{{ matrix_synapse_base_path }}/tls:{{ matrix_synapse_base_path }}/tls"
 matrix_synapse_config: "{{ matrix_synapse_base_config | combine(matrix_synapse_extra_config, recursive=True) }}"
+matrix_synapse_log_config: "{{ matrix_synapse_base_log_config | combine(matrix_synapse_extra_log_config, recursive=True) }}"
 
 # Worker-specific config
 matrix_synapse_worker_fed_senders: >-2
@@ -52,6 +53,31 @@ matrix_synapse_worker_config: >-2
       + ([matrix_synapse_worker_config_user_dir] if matrix_synapse_worker_user_search else [])
     ) | combine(recursive=True)
   }}
+
+matrix_synapse_base_log_config:
+  version: 1
+  formatters:
+    precise:
+      format: '%(name)s - %(lineno)d - %(levelname)s - %(request)s- %(message)s'
+  filters:
+    context:
+      (): synapse.util.logcontext.LoggingContextFilter
+      request: ""
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: precise
+      filters: [context]
+  loggers:
+    synapse:
+      level: INFO
+    synapse.storage.SQL:
+      # beware: increasing this to DEBUG will make synapse log sensitive
+      # information such as access tokens.
+      level: INFO
+  root:
+    level: INFO
+    handlers: [console]
 
 # homeserver.yml
 matrix_synapse_base_config:

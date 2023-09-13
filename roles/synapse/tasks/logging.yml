@@ -31,7 +31,7 @@
 # TODO: Figure out how to make sure that logging ends up in rsyslog no matter what system we run on
 - name: Deploy log config
   copy:
-    src: "log.config"
+    content: "{{ matrix_synapse_log_config | default({}) | to_nice_yaml }}"
     dest: "{{ matrix_synapse_base_path }}/log.config"
     owner: synapse
     group: synapse
