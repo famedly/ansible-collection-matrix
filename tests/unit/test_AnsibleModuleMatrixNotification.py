@@ -91,7 +91,7 @@ class TestAnsibleModuleMatrixNotification:
                 "msg_plain": "**hello world**",
                 "msg_html": "<b>hello world</b>",
             },
-            check_mode=True
+            check_mode=True,
         )
         with pytest.raises(AnsibleExitJson) as result:
             matrix_notification.main()

@@ -52,7 +52,7 @@ class TestAnsibleModuleMatrixTokenLogin:
                 "user_id": "myuser",
                 "key": "static-psk",
             },
-            check_mode=True
+            check_mode=True,
         )
         with pytest.raises(AnsibleExitJson) as result:
             matrix_token_login.main()
@@ -70,9 +70,9 @@ class TestAnsibleModuleMatrixTokenLogin:
                 "hs_url": "matrix.example.tld",
                 "user_id": "myuser",
                 "key": "static-psk",
-                "admin": True
+                "admin": True,
             },
-            check_mode=True
+            check_mode=True,
         )
         with pytest.raises(AnsibleExitJson) as result:
             matrix_token_login.main()
@@ -89,9 +89,9 @@ class TestAnsibleModuleMatrixTokenLogin:
                 "hs_url": "matrix.example.tld",
                 "user_id": "myuser",
                 "key": "static-psk",
-                "admin": False
+                "admin": False,
             },
-            check_mode=True
+            check_mode=True,
         )
         with pytest.raises(AnsibleExitJson) as result:
             matrix_token_login.main()
