@@ -1,0 +1,13 @@
+bots:
+  - user_id: "@howler:homeserver1.xyz"
+    homeserver: "https://homeserver1.xyz"
+    password: "correcthorsebatterystaple"
+    device_id: "bot"
+    message_timeout: 10
+    ratelimit: 1
+default_templates:
+  plain: ./templates/default.plain
+  html: ./templates/default.html
+receiver:
+  host: "howler.xyz:8080"
+store_path: ~/.store/
