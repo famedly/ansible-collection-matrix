@@ -42,6 +42,21 @@
     - "{{ matrix_synapse_config.uploads_path }}"
   # Needs matrix_synapse_config which only the previous task poplulates fully, otherwise, the secrets are undefined and break at this point
   tags: ['deploy', 'deploy-synapse']
+  register: synapse_media_dir_info
+
+- name: Ensure files in media storage directories belong to synapse user
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: synapse
+    group: synapse
+    recurse: true
+    mode: "u=rwX,g=rwX,o=rX"
+  loop:
+    - "{{ matrix_synapse_config.media_store_path }}"
+    - "{{ matrix_synapse_config.uploads_path }}"
+  tags: ['deploy', 'deploy-synapse']
+  when: synapse_media_dir_info.changed
 
 - name: Merge replication listener config
   set_fact:
