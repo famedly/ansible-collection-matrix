@@ -15,7 +15,7 @@
 
     - name: Download element v{{ element_version }}
       get_url:
-        url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/element-v{{ element_version }}.tar.gz"
+        url: "https://github.com/element-hq/element-web/releases/download/v{{ element_version }}/element-v{{ element_version }}.tar.gz"
         dest: "/tmp/element-v{{ element_version }}.tar.gz"
         mode: "0600"
       register: element_source
@@ -25,7 +25,7 @@
 
     - name: Download element v{{ element_version }} signature
       get_url:
-        url: "https://github.com/vector-im/element-web/releases/download/v{{ element_version }}/element-v{{ element_version }}.tar.gz.asc"
+        url: "https://github.com/element-hq/element-web/releases/download/v{{ element_version }}/element-v{{ element_version }}.tar.gz.asc"
         dest: "/tmp/element-v{{ element_version }}.tar.gz.asc"
         mode: "0600"
       register: element_source_sig
