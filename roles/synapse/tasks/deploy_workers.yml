@@ -43,6 +43,7 @@
         pull: true
         entrypoint: "python"
         command: "{{ item.container_command }}"
+        env: "{{ matrix_synapse_docker_env }}"
         user: "{{ synapse_user.uid }}:{{ appservice_group.gid }}"
         volumes: "{{ matrix_synapse_docker_volumes + item.extra_volumes }}"
         ports: "{{ item.ports | default(omit) }}"
