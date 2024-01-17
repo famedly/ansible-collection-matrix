@@ -1,6 +1,6 @@
 # matrix-synapse
 
-Deploy [synapse](https://github.com/matrix-org/synapse/), a matrix homeserver implementation in python, using ansible.
+Deploy [synapse](https://github.com/element-hq/synapse/), a matrix homeserver implementation in python, using ansible.
 
 The role supports deployment both as systemd-services or as a docker container.
 
@@ -36,11 +36,11 @@ If deploying synapse in a docker container, check that you have `docker` and the
 | :---                                | :---                                                                      | :---                                                                                                                          |
 | `matrix_synapse_base_path`          | "/opt/synapse"                                                            |                                                                                                                               |
 | `matrix_synapse_secrets_path`       | "{{ matrix_synapse_base_path }}/secrets"                                  |                                                                                                                               |
-| `matrix_synapse_extra_config`       | _None_                                                                    | configuration parameters as given in the [synapse configuration file](https://github.com/matrix-org/synapse/tree/master/docs) |
+| `matrix_synapse_extra_config`       | _None_                                                                    | configuration parameters as given in the [synapse configuration file](https://github.com/element-hq/synapse/tree/master/docs) |
 | `matrix_synapse_dh_path`            | "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.dh"          |                                                                                                                               |
 | `matrix_synapse_public_baseurl`     | "https://{{ matrix_server_name }}"                                        |                                                                                                                               |
 | `matrix_synapse_signing_key_path`   | "{{ matrix_synapse_base_path }}/ssl/{{ matrix_server_name }}.signing.key" |                                                                                                                               |
-| `matrix_synapse_version`            | "v1.98.0"                                                                 |                                                                                                                               |
+| `matrix_synapse_version`            | "v1.99.0"                                                                 |                                                                                                                               |
 | `matrix_synapse_unstable`           | false                                                                     | when true, release candidate versions are deployed too                                                                        |
 | `matrix_synapse_log_days_keep`      | 14                                                                        |                                                                                                                               |
 | `matrix_synapse_deployment_method`  | pip                                                                       | Either pip or docker [¹](#footnote_1)                                                                                         |
