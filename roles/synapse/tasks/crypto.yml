@@ -1,7 +1,7 @@
 ---
 - name: Install signedjson
-  pip:
-    name: signedjson
+  ansible.builtin.apt:
+    name: python3-signedjson
   tags: ['prepare', 'prepare-synapse']
 
 - name: Create signing key
