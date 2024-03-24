@@ -10,8 +10,8 @@ matrix_synapse_public_baseurl: "https://{{ matrix_server_name }}"
 matrix_synapse_signing_key_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.signing.key"
 matrix_synapse_version: "{{ matrix_synapse_unstable | ternary(matrix_synapse_unstable_version, matrix_synapse_stable_version) }}"
 matrix_synapse_unstable: false
-matrix_synapse_stable_version: "1.101.0"
-matrix_synapse_unstable_version: "1.101.0"
+matrix_synapse_stable_version: "1.103.0"
+matrix_synapse_unstable_version: "1.103.0"
 matrix_synapse_log_dir: "/var/log/matrix_synapse"
 matrix_synapse_log_days_keep: 14
 matrix_synapse_pid_file: "{{ matrix_synapse_base_path }}/synapse.pid"
@@ -30,6 +30,7 @@ matrix_synapse_docker_command:
   - "-c"
   - "{{ matrix_synapse_base_path }}/homeserver.yaml"
 matrix_synapse_container_name: "synapse"
+matrix_synapse_appservice_groups: []
 
 matrix_synapse_container_image_reference: >-
   {{
@@ -98,6 +99,8 @@ matrix_synapse_worker_client_endpoints: >-
     + matrix_synapse_worker_client_receipts_endpoints
     + matrix_synapse_worker_client_presence_endpoints
   }}
+
+matrix_synapse_container_ulimits: []
 
 # Certificate management
 matrix_synapse_container_certificate_refresh: false
