@@ -4,10 +4,10 @@ barad_dur_base_path: /opt/barad-dur
 barad_dur_container_base_path: "{{ barad_dur_base_path }}"
 barad_dur_config_file: "{{ barad_dur_base_path }}/config.yaml"
 
-barad_dur_container_image_registry: "registry.gitlab.com"
-barad_dur_container_image_namespace: "famedly/company/backend/services/"
+barad_dur_container_image_registry: "docker-oss.nexus.famedly.de"
+#barad_dur_container_image_namespace: "famedly/company/backend/services/"
 barad_dur_container_image_name: "barad-dur"
-barad_dur_version: "0.1.2"
+barad_dur_version: "0.2.0"
 # barad_dur_container_image_tag: ~
 barad_dur_container_force_pull: "{{ barad_dur_container_image_tag is defined }}"
 
