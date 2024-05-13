@@ -79,7 +79,7 @@
     entrypoint: "{{ matrix_synapse_docker_entrypoint }}"
     command: "{{ matrix_synapse_docker_command }}"
     user: "{{ synapse_user.uid }}:{{ synapse_user.group }}"
-    groups: "{{ matrix_synapse_appservice_groups }}"
+    groups: "{{ appservice_group.results | map(attribute='gid') }}"
     volumes: "{{ matrix_synapse_docker_volumes }}"
     restart_policy: unless-stopped
     state: started
