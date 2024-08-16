@@ -1,0 +1,78 @@
+---
+livekit_version: "v1.7"
+livekit_jwt_service_version: "sha-4a29504"
+livekit_domain: "{{ famedly_instance_domain }}"
+livekit_turnserver_domain: ~
+livekit_redis_enabled: false
+livekit_ws_port: 7880
+livekit_rtc_port: 7881
+livekit_rtc_udp_port_start: 50000
+livekit_rtc_udp_port_end: 60000
+livekit_turns_port: 5349
+livekit_turn_port: 3478
+livekit_redis_port: 6379
+livekit_jwt_service_external_port: 8888
+livekit_user: "livekit"
+livekit_container_image_reference: "livekit/livekit-server:{{ livekit_version }}"
+livekit_config_path: "/opt/livekit"
+livekit_config_file: "livekit.yaml"
+livekit_container_config: "/etc/livekit.yaml"
+livekit_container_command: "--config {{ livekit_container_config }}"
+livekit_config_basic:
+  port: "{{ livekit_ws_port }}"
+  bind_addresses:
+    - "127.0.0.1"
+  room:
+    enabled_codecs:
+      - mime: audio/opus
+      - mime: video/vp8
+      - mime: video/h264
+      - mime: video/vp9
+      - mime: video/av1
+  rtc:
+    tcp_port: "{{ livekit_rtc_port }}"
+    port_range_start: "{{ livekit_rtc_udp_port_start }}"
+    port_range_end: "{{ livekit_rtc_udp_port_end }}"
+    use_external_ip: true
+    # enable_loopback_candidate: false
+    congestion_control:
+      enabled: true
+      allow_pause: true
+  turn:
+    enabled: true
+    domain: "{{ livekit_turnserver_domain }}"
+    tls_port: "{{ livekit_turns_port }}"
+    udp_port: "{{ livekit_turn_port }}"
+    external_tls: true
+  keys:
+    secret: "{{ livekit_secret_key }}"
+livekit_config_redis:
+  redis:
+    address: "127.0.0.1:{{ livekit_redis_port }}"
+    username: ""
+    password: ""
+    db: 0
+    use_tls: false
+    sentinel_master_name: ""
+    sentinel_username: ""
+    sentinel_password: ""
+    sentinel_addresses: []
+    cluster_addresses: []
+    max_redirects: null
+livekit_config_complete: >-
+  {{ livekit_config_basic | combine(livekit_config_redis if (livekit_redis_enabled | bool) else []) }}
+livekit_container_name: "livekit"
+livekit_container_volumes: []
+livekit_container_preset_volumes:
+  - "{{ livekit_config_path }}/{{ livekit_config_file }}:{{ livekit_container_config }}:ro"
+livekit_container_combined_volumes: >-
+  {{ livekit_container_preset_volumes + livekit_container_volumes }}
+livekit_container_network_mode: "host"
+livekit_jwt_service_container_name: "jwt-service"
+livekit_jwt_service_container_image_reference: "ghcr.io/element-hq/lk-jwt-service:{{ livekit_jwt_service_version }}"
+livekit_jwt_service_container_env:
+  LIVEKIT_KEY: "secret"
+  LIVEKIT_SECRET: "{{ livekit_secret_key }}"
+  LIVEKIT_URL: "wss://{{ livekit_domain }}"
+livekit_jwt_service_container_ports:
+  - "127.0.0.1:{{ livekit_jwt_service_external_port }}:8080"

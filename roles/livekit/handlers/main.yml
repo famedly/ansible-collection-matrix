@@ -1,0 +1,16 @@
+---
+- name: Ensure container for livekit is restarted
+  community.docker.docker_container:
+    name: "{{ livekit_container_name }}"
+    image: "{{ livekit_container_image_reference }}"
+    state: started
+    restart: true
+  listen: "restart-livekit"
+
+- name: Ensure container for jwt-service is restarted
+  community.docker.docker_container:
+    name: "{{ livekit_jwt_service_container_name }}"
+    image: "{{ livekit_jwt_service_container_image_reference }}"
+    state: started
+    restart: true
+  listen: "restart-jwt-service"

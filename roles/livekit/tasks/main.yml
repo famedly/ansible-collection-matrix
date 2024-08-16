@@ -1,0 +1,58 @@
+---
+- name: 'Ensure livekit user exists: {{ livekit_user }}'
+  ansible.builtin.user:
+    name: "{{ livekit_user }}"
+    state: present
+    system: true
+  register: livekit_user_info
+
+- name: Ensure livekit container image is present
+  community.docker.docker_image:
+    name: "{{ livekit_container_image_reference }}"
+    state: present
+    source: pull
+    force_source: true
+
+- name: Ensure lk-jwt-service container image is present
+  community.docker.docker_image:
+    name: "{{ livekit_jwt_service_container_image_reference }}"
+    state: present
+    source: pull
+    force_source: true
+
+- name: Ensure livekit config directory exists
+  file:
+    path: "{{ livekit_config_path }}"
+    state: directory
+    mode: "0744"
+
+- name: Ensure livekit config.json is up to date
+  ansible.builtin.copy:
+    content: "{{ livekit_config_complete | to_nice_yaml }}"
+    dest: "{{ livekit_config_path }}/{{ livekit_config_file }}"
+    owner: "{{ livekit_user_info.uid | default(livekit_user) }}"
+    group: "{{ livekit_user_info.group | default(livekit_user) }}"
+    mode: "0644"
+  notify:
+    - restart-livekit
+    - restart-jwt-service
+
+- name: 'Ensure livekit container is running: {{ livekit_container_name }}'
+  community.docker.docker_container:
+    name: "{{ livekit_container_name }}"
+    image: "{{ livekit_container_image_reference }}"
+    command: "{{ livekit_container_command }}"
+    env: "{{ livekit_container_env | default(omit, true) }}"
+    user: "{{ livekit_container_user | default(omit, true) }}"
+    volumes: "{{ livekit_container_combined_volumes | default(omit, true) }}"
+    network_mode: "{{ livekit_container_network_mode | default(omit, true) }}"
+    restart_policy: unless-stopped
+
+- name: 'Ensure lk-jwt-service container is running: {{ livekit_jwt_service_container_name }}'
+  community.docker.docker_container:
+    name: "{{ livekit_jwt_service_container_name }}"
+    image: "{{ livekit_jwt_service_container_image_reference }}"
+    env: "{{ livekit_jwt_service_container_env | default(omit, true) }}"
+    ports: "{{ livekit_jwt_service_container_ports | default(omit, true) }}"
+    network_mode: "{{ livekit_jwt_service_container_network_mode | default(omit, true) }}"
+    restart_policy: unless-stopped
