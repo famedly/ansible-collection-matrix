@@ -295,6 +295,8 @@ matrix_synapse_worker_inbound_federation_transaction_request_endpoint:
   - "/_matrix/federation/v1/send/"
 matrix_synapse_worker_media_endpoints:
   - "/_matrix/media/"
+  - "/_matrix/client/v1/media/"
+  - "/_matrix/federation/v1/media/"
   - "/_synapse/admin/v1/purge_media_cache$"
   - "/_synapse/admin/v1/room/.*/media.*$"
   - "/_synapse/admin/v1/user/.*/media.*$"

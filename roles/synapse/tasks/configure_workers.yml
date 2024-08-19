@@ -113,7 +113,7 @@
         - type: http
           port: {{ port | int }}
           resources:
-            - names: [ media ]
+            - names: [ media, client, federation ]
     worker_config: "{{ worker | from_yaml | combine(worker_labels) }}"
   loop: "{{ range(1, matrix_synapse_workers_media + 1) | list }}"
 
