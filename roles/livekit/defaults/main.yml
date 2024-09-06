@@ -3,6 +3,8 @@ livekit_version: "v1.7"
 livekit_jwt_service_version: "sha-4a29504"
 livekit_domain: "{{ famedly_instance_domain }}"
 livekit_turnserver_domain: ~
+livekit_log_level: "info"
+livekit_log_sample: true
 livekit_redis_enabled: false
 livekit_ws_port: 7880
 livekit_rtc_port: 7881
@@ -20,6 +22,9 @@ livekit_container_config: "/etc/livekit.yaml"
 livekit_container_command: "--config {{ livekit_container_config }}"
 livekit_config_basic:
   port: "{{ livekit_ws_port }}"
+  logging:
+    level: "{{ livekit_log_level }}"
+    sample: "{{ livekit_log_sample }}"
   bind_addresses:
     - "127.0.0.1"
   room:

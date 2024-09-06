@@ -98,6 +98,14 @@ livekit_redis_port: 6379
 livekit_jwt_service_external_port: 8888
 ```
 
+The defaults are also used set the log level and manage log sampling (these can 
+be overwritten using the group_vars or on a per-host basis):
+
+```yaml
+livekit_log_level: "info" # can be debug, info, warn or error
+livekit_log_sample: true # 'true' avoids duplicate log entries and improves performance: https://github.com/uber-go/zap/blob/master/FAQ.md#why-sample-application-logs
+```
+
 ## Dependencies
 
 - famedly.base.redis
