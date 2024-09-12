@@ -1,9 +1,1 @@
 * @famedly/infrastructure
-
-plugins/modules/ @jcgruenhage @famedly/infrastructure
-plugins/modules/matrix_member.py @jdreichmann @famedly/infrastructure
-
-roles/synapse @jcgruenhage @famedly/infrastructure
-roles/element @jcgruenhage @famedly/infrastructure
-roles/hedwig @jdreichmann @famedly/infrastructure
-roles/timetracking-bot @jcgruenhage @famedly/infrastructure
