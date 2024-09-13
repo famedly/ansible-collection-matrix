@@ -1,6 +1,6 @@
 ---
 livekit_version: "v1.7"
-livekit_jwt_service_version: "sha-4a29504"
+livekit_jwt_service_version: "latest"
 livekit_domain: "{{ famedly_instance_domain }}"
 livekit_turnserver_domain: ~
 livekit_log_level: "info"
@@ -24,12 +24,14 @@ livekit_config_basic:
   port: "{{ livekit_ws_port }}"
   logging:
     level: "{{ livekit_log_level }}"
+    json: true
     sample: "{{ livekit_log_sample }}"
   bind_addresses:
     - "127.0.0.1"
   room:
     enabled_codecs:
       - mime: audio/opus
+      - mime: audio/red
       - mime: video/vp8
       - mime: video/h264
       - mime: video/vp9
@@ -39,7 +41,6 @@ livekit_config_basic:
     port_range_start: "{{ livekit_rtc_udp_port_start }}"
     port_range_end: "{{ livekit_rtc_udp_port_end }}"
     use_external_ip: true
-    # enable_loopback_candidate: false
     congestion_control:
       enabled: true
       allow_pause: true
@@ -74,10 +75,11 @@ livekit_container_combined_volumes: >-
   {{ livekit_container_preset_volumes + livekit_container_volumes }}
 livekit_container_network_mode: "host"
 livekit_jwt_service_container_name: "jwt-service"
-livekit_jwt_service_container_image_reference: "ghcr.io/element-hq/lk-jwt-service:{{ livekit_jwt_service_version }}"
+livekit_jwt_service_container_image_reference: "docker-oss.nexus.famedly.de/lk-jwt-service:{{ livekit_jwt_service_version }}"
 livekit_jwt_service_container_env:
   LIVEKIT_KEY: "secret"
   LIVEKIT_SECRET: "{{ livekit_secret_key }}"
   LIVEKIT_URL: "wss://{{ livekit_domain }}"
+  HS_ALLOWLIST: "*.famedly.de, *.famedly.care"
 livekit_jwt_service_container_ports:
   - "127.0.0.1:{{ livekit_jwt_service_external_port }}:8080"

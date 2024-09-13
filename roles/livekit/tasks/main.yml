@@ -47,6 +47,7 @@
     volumes: "{{ livekit_container_combined_volumes | default(omit, true) }}"
     network_mode: "{{ livekit_container_network_mode | default(omit, true) }}"
     restart_policy: unless-stopped
+    image_name_mismatch: recreate
 
 - name: 'Ensure lk-jwt-service container is running: {{ livekit_jwt_service_container_name }}'
   community.docker.docker_container:
@@ -56,3 +57,4 @@
     ports: "{{ livekit_jwt_service_container_ports | default(omit, true) }}"
     network_mode: "{{ livekit_jwt_service_container_network_mode | default(omit, true) }}"
     restart_policy: unless-stopped
+    image_name_mismatch: recreate
