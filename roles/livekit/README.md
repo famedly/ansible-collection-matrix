@@ -18,6 +18,8 @@ The following mandatory variables have to be declared in the inventory on a per-
 enable_livekit: true
 livekit_turnserver_domain: # the fqdn for the livekit TURN server
 livekit_redis_enabled: # boolean value, defining if a redis database shall be created for livekit
+livekit_jwt_service_container_enabled: # boolean value, for toggling the lk-jwt-service on / off
+livekit_jwt_service_homeserver_allowlist: # optional list of domains or wildcard domains allowed to generate JWT tokens for livekit
 ```
 
 A second domain record for the TURN server is needed, 

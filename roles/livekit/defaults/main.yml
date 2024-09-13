@@ -1,6 +1,8 @@
 ---
-livekit_version: "v1.7"
-livekit_jwt_service_version: "latest"
+livekit_version: "1.7"
+livekit_jwt_service_version: ""
+livekit_jwt_service_container_image_tag: "latest"
+livekit_jwt_service_container_enabled: false
 livekit_domain: "{{ famedly_instance_domain }}"
 livekit_turnserver_domain: ~
 livekit_log_level: "info"
@@ -15,7 +17,25 @@ livekit_turn_port: 3478
 livekit_redis_port: 6379
 livekit_jwt_service_external_port: 8888
 livekit_user: "livekit"
-livekit_container_image_reference: "livekit/livekit-server:{{ livekit_version }}"
+livekit_container_image_reference: >-
+  {{
+    livekit_container_image_repository
+    + ':'
+    + livekit_container_image_tag | default('v' + livekit_version)
+  }}
+livekit_container_image_repository: >-
+  {{
+    (
+      container_registries[livekit_container_image_registry]
+      | default(livekit_container_image_registry)
+    )
+    + '/'
+    + livekit_container_image_namespace | default('')
+    + livekit_container_image_name
+  }}
+livekit_container_image_registry: "docker.io"
+livekit_container_image_namespace: "livekit/"
+livekit_container_image_name: "livekit-server"
 livekit_config_path: "/opt/livekit"
 livekit_config_file: "livekit.yaml"
 livekit_container_config: "/etc/livekit.yaml"
@@ -75,11 +95,35 @@ livekit_container_combined_volumes: >-
   {{ livekit_container_preset_volumes + livekit_container_volumes }}
 livekit_container_network_mode: "host"
 livekit_jwt_service_container_name: "jwt-service"
-livekit_jwt_service_container_image_reference: "docker-oss.nexus.famedly.de/lk-jwt-service:{{ livekit_jwt_service_version }}"
-livekit_jwt_service_container_env:
+livekit_jwt_service_container_image_reference: >-
+  {{
+    livekit_jwt_service_container_image_repository
+    + ':'
+    + livekit_jwt_service_container_image_tag | default('v' + livekit_jwt_service_version)
+  }}
+livekit_jwt_service_container_image_repository: >-
+  {{
+    (
+      container_registries[livekit_jwt_service_container_image_registry]
+      | default(livekit_jwt_service_container_image_registry)
+    )
+    + '/'
+    + livekit_jwt_service_container_image_namespace | default('')
+    + livekit_jwt_service_container_image_name
+  }}
+livekit_jwt_service_container_image_registry: "docker-oss.nexus.famedly.de"
+livekit_jwt_service_container_image_name: "lk-jwt-service"
+livekit_jwt_service_container_env_base:
   LIVEKIT_KEY: "secret"
   LIVEKIT_SECRET: "{{ livekit_secret_key }}"
   LIVEKIT_URL: "wss://{{ livekit_domain }}"
-  HS_ALLOWLIST: "*.famedly.de, *.famedly.care"
+livekit_jwt_service_homeserver_allowlist: []
+livekit_jwt_service_container_hs_allowlist:
+  HS_ALLOWLIST: "{{ livekit_jwt_service_homeserver_allowlist | join(',') }}"
+livekit_jwt_service_container_env: >-
+  {{ livekit_jwt_service_container_env_base
+    | combine(livekit_jwt_service_container_hs_allowlist
+    if (livekit_jwt_service_homeserver_allowlist != []) else {}, recursive=True)
+  }}
 livekit_jwt_service_container_ports:
   - "127.0.0.1:{{ livekit_jwt_service_external_port }}:8080"

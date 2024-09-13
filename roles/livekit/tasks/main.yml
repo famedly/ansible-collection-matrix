@@ -19,6 +19,7 @@
     state: present
     source: pull
     force_source: true
+  when: livekit_jwt_service_container_enabled
 
 - name: Ensure livekit config directory exists
   file:
@@ -49,12 +50,13 @@
     restart_policy: unless-stopped
     image_name_mismatch: recreate
 
-- name: 'Ensure lk-jwt-service container is running: {{ livekit_jwt_service_container_name }}'
+- name: 'Set state of lk-jwt-service container: {{ livekit_jwt_service_container_name }}'
   community.docker.docker_container:
     name: "{{ livekit_jwt_service_container_name }}"
     image: "{{ livekit_jwt_service_container_image_reference }}"
-    env: "{{ livekit_jwt_service_container_env | default(omit, true) }}"
+    env: "{{ livekit_jwt_service_container_env }}"
     ports: "{{ livekit_jwt_service_container_ports | default(omit, true) }}"
     network_mode: "{{ livekit_jwt_service_container_network_mode | default(omit, true) }}"
     restart_policy: unless-stopped
+    state: "{{ livekit_jwt_service_container_enabled | ternary('started', 'absent') }}"
     image_name_mismatch: recreate
