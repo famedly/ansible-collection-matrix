@@ -98,6 +98,7 @@ livekit_turns_port: 5349
 livekit_turn_port: 3478
 livekit_redis_port: 6379
 livekit_jwt_service_external_port: 8888
+livekit_metrics_port: 6789
 ```
 
 The defaults are also used set the log level and manage log sampling (these can 

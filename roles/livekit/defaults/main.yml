@@ -7,6 +7,7 @@ livekit_domain: "{{ famedly_instance_domain }}"
 livekit_turnserver_domain: ~
 livekit_log_level: "info"
 livekit_log_sample: true
+livekit_metrics_port: 6789
 livekit_redis_enabled: false
 livekit_ws_port: 7880
 livekit_rtc_port: 7881
@@ -72,6 +73,8 @@ livekit_config_basic:
     external_tls: true
   keys:
     secret: "{{ livekit_secret_key }}"
+  prometheus:
+    port: "{{ livekit_metrics_port }}"
 livekit_config_redis:
   redis:
     address: "127.0.0.1:{{ livekit_redis_port }}"
