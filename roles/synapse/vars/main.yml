@@ -139,7 +139,7 @@ matrix_synapse_base_config:
   event_cache_size: "10K"
   media_store_path: "{{ matrix_synapse_base_path }}/media_store"
   uploads_path: "{{ matrix_synapse_base_path }}/uploads"
-  max_upload_size: "23M"
+  max_upload_size: "120M"
   max_image_pixels: "32M"
   dynamic_thumbnails: false
   thumbnail_sizes:
