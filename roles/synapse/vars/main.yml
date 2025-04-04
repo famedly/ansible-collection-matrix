@@ -206,6 +206,8 @@ matrix_synapse_base_config:
     - user_id: "*"
       alias: "*"
       action: allow
+  room_list_publication_rules:
+    - action: allow
 matrix_synapse_docker_labels_complete: "{{ matrix_synapse_docker_labels_base | combine(matrix_synapse_docker_labels) }}"
 matrix_synapse_docker_labels_base:
   version: "{{ matrix_synapse_container_image_tag | default(matrix_synapse_version) }}"
