@@ -63,14 +63,9 @@ element_docker_volumes: "{{ element_docker_main_volumes + element_docker_domain_
 element_docker_main_volumes:
   - "{{ element_webapp_dir }}/config.json:/app/config.json"
 
-# This looks a bit crude, but what happens here is quite simple:
-# First, we pull out the domain,
-# then we match the whole string and use it to construct the mount,
-# then we make a list again.
 element_docker_domain_volumes: >-
-  {{
-    element_domain_configs
-    | map(attribute='domain')
-    | map('regex_replace', '^(.*)$', element_webapp_dir + '/config.\\1.json:/app/config.\\1.json')
-    | list
-  }}
+  {%- set ns = namespace(volumes=[]) -%}
+  {%- for domain in (element_domain_configs | map(attribute='domain')) -%}
+    {%- set ns.volumes = ns.volumes + [element_webapp_dir ~ '/config.' ~ domain ~ '.json:/app/config.' ~ domain ~ '.json'] -%}
+  {%- endfor -%}
+  {{ ns.volumes }}
