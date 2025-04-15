@@ -3,6 +3,7 @@
   ansible.builtin.apt:
     name: python3-signedjson
   tags: ['prepare', 'prepare-synapse']
+  when: ansible_distribution == "Debian"
 
 - name: Create signing key
   matrix_signing_key:
