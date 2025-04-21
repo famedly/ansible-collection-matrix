@@ -84,13 +84,9 @@ try:
     )
     from nio import (
         RoomCreateResponse,
-        RoomCreateError,
-        JoinedRoomsResponse,
         JoinedRoomsError,
         JoinResponse,
-        JoinError,
         RoomResolveAliasResponse,
-        RoomResolveAliasError,
     )
 
     HAS_LIB = True
