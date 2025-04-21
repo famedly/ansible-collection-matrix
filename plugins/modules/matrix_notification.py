@@ -94,7 +94,7 @@ try:
     from ansible_collections.famedly.matrix.plugins.module_utils.matrix import (
         AnsibleNioModule,
     )
-    from nio import RoomSendResponse, RoomSendError
+    from nio import RoomSendError
 
     HAS_LIB = True
 except ImportError:

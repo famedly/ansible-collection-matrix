@@ -17,26 +17,8 @@ LIB_IMP_ERR = None
 try:
     from nio import (
         AsyncClient,
-        AsyncClientConfig,
-        Api,
         LoginResponse,
-        LoginError,
-        LogoutResponse,
         LogoutError,
-        RoomGetStateResponse,
-        RoomGetStateError,
-        RoomBanResponse,
-        RoomBanError,
-        RoomUnbanResponse,
-        RoomUnbanError,
-        RoomKickResponse,
-        RoomKickError,
-        RoomInviteResponse,
-        RoomInviteError,
-        RoomResolveAliasResponse,
-        RoomResolveAliasError,
-        JoinedRoomsResponse,
-        JoinedRoomsError,
     )
 
     HAS_LIB = True

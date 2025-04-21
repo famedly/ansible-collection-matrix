@@ -190,7 +190,7 @@ async def run_module():
         )
         if int(stage_status) == 401 and stage != (flow_to_attempt["stages"])[-1]:
             log.append(f"INFO: completed stage {stage}")
-            completed_stages = stage_result["completed"]
+            stage_result["completed"]
         elif int(stage_status) == 200 and stage == (flow_to_attempt["stages"])[-1]:
             log.append(f"INFO: final stage completed {stage}")
             result["token"] = stage_result["access_token"]

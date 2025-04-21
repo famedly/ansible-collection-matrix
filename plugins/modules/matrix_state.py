@@ -102,7 +102,6 @@ try:
         AnsibleNioModule,
     )
     from nio import (
-        JoinedRoomsResponse,
         JoinedRoomsError,
         RoomGetStateEventResponse,
         RoomPutStateResponse,
