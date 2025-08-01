@@ -121,7 +121,6 @@ async def run_module():
     if module.check_mode:
         return result
 
-    failed = False
 
     url = f"{module.params['hs_url']}/_synapse/admin/v1/register"
     response = requests.get(url)
