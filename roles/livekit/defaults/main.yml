@@ -114,7 +114,7 @@ livekit_jwt_service_container_image_repository: >-
     + livekit_jwt_service_container_image_namespace | default('')
     + livekit_jwt_service_container_image_name
   }}
-livekit_jwt_service_container_image_registry: "docker-oss.nexus.famedly.de"
+livekit_jwt_service_container_image_registry: "registry.famedly.net/docker-oss"
 livekit_jwt_service_container_image_name: "lk-jwt-service"
 livekit_jwt_service_container_env_base:
   LIVEKIT_KEY: "secret"

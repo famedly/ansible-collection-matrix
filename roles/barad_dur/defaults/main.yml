@@ -4,7 +4,7 @@ barad_dur_base_path: /opt/barad-dur
 barad_dur_container_base_path: "{{ barad_dur_base_path }}"
 barad_dur_config_file: "{{ barad_dur_base_path }}/config.yaml"
 
-barad_dur_container_image_registry: "docker-oss.nexus.famedly.de"
+barad_dur_container_image_registry: "registry.famedly.net/docker-oss"
 barad_dur_container_image_name: "barad-dur"
 barad_dur_version: "0.3.1"
 # barad_dur_container_image_tag: ~
