@@ -1,7 +1,7 @@
 ---
 
 cinny_user: "cinny"
-cinny_version: "3.2.0"
+cinny_version: "4.9.0"
 cinny_base_path: "/opt/cinny"
 cinny_config_file: "{{ cinny_base_path }}/config.json"
 cinny_sources_path: "{{ cinny_base_path }}/src"
