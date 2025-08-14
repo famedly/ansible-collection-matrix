@@ -24,7 +24,7 @@ hedwig_container_image_repository: >-
     + hedwig_container_image_namespace | default('')
     + hedwig_container_image_name
   }}
-hedwig_container_image_registry: "registry.famedly.net/docker"
+hedwig_container_image_registry: "docker.nexus.famedly.de"
 hedwig_container_image_namespace: ""
 hedwig_container_image_name: "hedwig"
 
