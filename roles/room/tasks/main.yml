@@ -3,7 +3,7 @@
   ansible.builtin.meta: noop
   vars: &matrix_auth
     hs_url: "{{ matrix_hs_url }}"
-    token: "{{ matrix_token }}"
+    token: "{{ matrix_admin_token }}"
 
 - name: Create room
   famedly.matrix.matrix_room:

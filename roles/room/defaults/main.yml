@@ -1,6 +1,6 @@
 ---
 matrix_hs_url: ~
-matrix_token: ~
+matrix_admin_token: ~
 
 matrix_room_alias: ~
 matrix_room_name: ~
