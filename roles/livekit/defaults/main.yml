@@ -1,5 +1,5 @@
 ---
-livekit_version: "1.9.1"
+livekit_version: "1.9.3"
 livekit_jwt_service_version: ""
 livekit_jwt_service_container_image_tag: "latest"
 livekit_jwt_service_container_enabled: false
