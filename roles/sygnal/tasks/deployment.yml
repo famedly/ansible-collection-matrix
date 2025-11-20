@@ -48,7 +48,7 @@
     labels: "{{ sygnal_docker_labels_complete }}"
     restart_policy: unless-stopped
     recreate: true
-    pull: true
+    pull: false
     user: "{{ sygnal_user.uid }}:{{ sygnal_user.group }}"
     env:
       SYGNAL_CONF: "{{ sygnal_base_path }}/sygnal.yml"

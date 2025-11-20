@@ -40,7 +40,7 @@
           }}
         restart_policy: unless-stopped
         state: started
-        pull: true
+        pull: false
         entrypoint: "python"
         command: "{{ item.container_command }}"
         env: "{{ matrix_synapse_docker_env }}"

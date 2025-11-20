@@ -50,7 +50,7 @@
     volumes: "{{ hedwig_container_volumes }}"
     working_dir: "{{ hedwig_base_path }}"
     restart_policy: "{{ hedwig_container_restart_policy }}"
-    pull: true
+    pull: false
     ## Commented out for now, because the new hedwig version doesn't have healthchecks
     # healthcheck:
     #   test: "curl http://[::1]:{{ hedwig_server_port }}/health || exit 1"

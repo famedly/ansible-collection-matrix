@@ -21,7 +21,7 @@
   community.docker.docker_container:
     name: panopticon
     image: registry.gitlab.com/famedly/containers/panopticon
-    pull: true
+    pull: false
     links:
       - panopticon-db:mariadb
     labels: "{{ panopticon_docker_labels_complete }}"
