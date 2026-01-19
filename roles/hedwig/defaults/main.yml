@@ -1,11 +1,11 @@
 ---
-
 hedwig_user: hedwig
 hedwig_base_path: /opt/hedwig
 hedwig_config_filename: "config.yaml"
 hedwig_config_file: "{{ hedwig_base_path }}/{{ hedwig_config_filename }}"
 hedwig_fcm_service_account_file: "{{ hedwig_base_path }}/fcm-auth.json"
-hedwig_version: "2.0.0"
+hedwig_apns_key_file_path: null
+hedwig_version: "2.3.0"
 
 hedwig_container_name: "hedwig"
 hedwig_container_image_reference: >-
@@ -38,10 +38,9 @@ hedwig_extra_config: {}
 hedwig_server_port: 7022
 hedwig_server_bind_address: "::"
 hedwig_log_level: INFO
-# hedwig_app_id: "org.matrix.awesome_client"
-hedwig_max_jitter_delay: 20.0
+hedwig_app_id: "com.famedly.app"
 hedwig_fcm_collapse_key: "org.matrix.default_notification"
-# hedwig_fcm_notification_click_action: "FLUTTER_NOTIFICATION_CLICK"
+hedwig_fcm_notification_click_action: "FLUTTER_NOTIFICATION_CLICK"
 hedwig_fcm_notification_title: "<count> unread rooms"
 hedwig_fcm_notification_body: "Open app to read the messages"
 hedwig_fcm_notification_sound: "default"

@@ -1,5 +1,4 @@
 ---
-
 hedwig_container_base_volumes:
   - "{{ hedwig_base_path }}:{{ hedwig_base_path }}:ro"
 
@@ -17,14 +16,70 @@ hedwig_base_config:
     port: "{{ hedwig_server_port }}"
   hedwig:
     app_id: "{{ hedwig_app_id }}"
-    max_jitter_delay: "{{ hedwig_max_jitter_delay }}"
-    fcm_push_max_retries: "{{ hedwig_fcm_push_max_retries }}"
-    fcm_service_account_token_path: "{{ hedwig_fcm_service_account_file }}"
-    fcm_notification_click_action: "{{ hedwig_fcm_notification_click_action }}"
-    fcm_notification_title: "{{ hedwig_fcm_notification_title }}"
-    fcm_notification_body: "{{ hedwig_fcm_notification_body }}"
-    fcm_notification_sound: "{{ hedwig_fcm_notification_sound }}"
-    fcm_notification_icon: "{{ hedwig_fcm_notification_icon }}"
-    fcm_notification_tag: "{{ hedwig_fcm_notification_tag }}"
-    fcm_notification_android_channel_id: "{{ hedwig_fcm_notification_android_channel_id }}"
+    # specifies how many attempts at pushing a notification to a device should be made before giving up and reporting the push key as dead
+    push_max_retries: "{{ hedwig_fcm_push_max_retries }}"
+    # common fields for notifications sent to FCM and APNS
+    # notification_title and notification_body support the <count> placeholder, which is replaced with the number of unread messages
+    notification_click_action: "{{ hedwig_fcm_notification_click_action }}"
+    notification_title: "{{ hedwig_fcm_notification_title }}"
+    notification_body: "{{ hedwig_fcm_notification_body }}"
+    notification_sound: "{{ hedwig_fcm_notification_sound }}"
+    # fields specific for notifications sent to android devices:
+    # https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidnotification
+    notification_android:
+      icon: "{{ hedwig_fcm_notification_icon }}"
+      tag: "{{ hedwig_fcm_notification_tag }}"
+      channel_id: "{{ hedwig_fcm_notification_android_channel_id }}"
+      color: null
+      body_loc_key: null
+      body_loc_args: null
+      title_loc_key: null
+      title_loc_args: null
+      ticker: null
+      sticky: false
+      event_time: null
+      local_only: false
+      default_sound: null
+      notification_priority: null
+      default_vibrate_timings: true
+      default_light_settings: true
+      vibrate_timings: null
+      visibility: null
+      light_settings: null
+      image: null
+
+    # headers specific for notifications sent to iOS devices:
+    # https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns#Send-a-POST-request-to-APNs
+    # those will be used both through FCM and direct APNS
+    apns_headers:
+      # https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns#Know-when-to-use-push-types
+      apns_push_type: "alert"
+      apns_topic: "com.famedly.app"
+      apns_id: null
+      apns_priority: null
+      apns_expiration: null
+      apns_collapse_id: null
+
+    # payload specific for notifications sent to iOS devices:
+    # https://developer.apple.com/documentation/usernotifications/generating-a-remote-notification#Payload-key-reference
+    # those will be used both through FCM and direct APNS
+    apns_payload:
+      category: null
+      mutable_content: 1
+      content_available: null
+
+    # leave blank if you don't want to use APNS directly
+    apns_key_file_path: "{{ hedwig_apns_key_file_path }}"
+    fcm_credentials_file_path: "{{ hedwig_fcm_service_account_file }}"
+    apns_team_id: "YOUR_TEAM_ID"
+    apns_key_id: "YOUR_KEY_ID"
+    apns_sandbox: true
+    notification_request_body_size_limit: 15000
+
+  telemetry:
+    service_name: "hedwig"
+    service_version: "2.3.0"
+    traces_endpoint: ""
+    metrics_endpoint: ""
+
 hedwig_config: "{{ hedwig_base_config | combine(hedwig_extra_config) }}"
