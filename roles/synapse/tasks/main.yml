@@ -17,14 +17,14 @@
   tags: ['prepare', 'prepare-synapse',
          'deploy', 'deploy-synapse']
 
+- name: Configure synapse
+  include_tasks: configure.yml
+  tags: ['always']
+
 - name: Configure workers
   import_tasks: configure_workers.yml
   tags: ['deploy', 'deploy-synapse']
   when: matrix_synapse_workers_enabled
-
-- name: Configure synapse
-  include_tasks: configure.yml
-  tags: ['always']
 
 - name: Deploy synapse
   include_tasks: deployment.yml
