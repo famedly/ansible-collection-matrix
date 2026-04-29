@@ -26,14 +26,14 @@
   include_tasks: configure.yml
   tags: ['always']
 
+- name: Deploy synapse
+  include_tasks: deployment.yml
+  tags: ['always']
+
 - name: Deploy workers
   import_tasks: deploy_workers.yml
   tags: ['deploy', 'deploy-synapse']
   when: matrix_synapse_workers_enabled
-
-- name: Deploy synapse
-  include_tasks: deployment.yml
-  tags: ['always']
 
 - name: Configure service
   import_tasks: systemd.yml
