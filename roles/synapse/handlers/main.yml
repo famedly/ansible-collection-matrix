@@ -21,11 +21,10 @@
   listen: restart-matrix-synapse
 
 - name: Wait for synapse main to become healthy (Docker)
-  ansible.builtin.uri:
-    url: "{{ matrix_synapse_healthcheck_url }}"
-    status_code: 200
+  community.docker.docker_container_info:
+    name: "{{ matrix_synapse_container_name }}"
   register: matrix_synapse_healthcheck
-  until: matrix_synapse_healthcheck is successful
+  until: matrix_synapse_healthcheck.container.State.Health.Status | default('') == 'healthy'
   retries: "{{ matrix_synapse_healthcheck_retries }}"
   delay: "{{ matrix_synapse_healthcheck_delay }}"
   when:

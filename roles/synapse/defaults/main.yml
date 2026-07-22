@@ -31,7 +31,6 @@ matrix_synapse_docker_command:
   - "{{ matrix_synapse_base_path }}/homeserver.yaml"
 matrix_synapse_container_name: "synapse"
 # Used so workers only start after main is up (INFRA-108 / FP-247)
-matrix_synapse_healthcheck_url: "http://127.0.0.1:8008/health"
 matrix_synapse_healthcheck_retries: 30
 matrix_synapse_healthcheck_delay: 2
 matrix_synapse_appservice_groups: []
