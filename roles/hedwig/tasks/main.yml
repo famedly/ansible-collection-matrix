@@ -39,6 +39,16 @@
     mode: "0640"
   notify: restart-hedwig
 
+- name: Write APNs auth key
+  when: hedwig_apns_auth_key is defined and hedwig_apns_auth_key
+  copy:
+    content: "{{ hedwig_apns_auth_key }}"
+    dest: "{{ hedwig_apns_auth_key_file }}"
+    owner: "{{ hedwig_user_res.uid }}"
+    group: "{{ hedwig_user_res.group }}"
+    mode: "0640"
+  notify: restart-hedwig
+
 - name: Start hedwig container
   community.docker.docker_container:
     name: "{{ hedwig_container_name }}"

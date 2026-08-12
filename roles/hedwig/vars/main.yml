@@ -8,6 +8,17 @@ hedwig_container_base_labels:
   version: "{{ hedwig_container_image_tag | default(hedwig_version) }}"
 hedwig_container_labels_complete: "{{ hedwig_container_base_labels | combine(hedwig_container_labels) }}"
 
+hedwig_apns_key_file_path_effective: >-
+  {{
+    hedwig_apns_key_file_path
+    if hedwig_apns_key_file_path
+    else (
+      hedwig_apns_auth_key_file
+      if (hedwig_apns_auth_key is defined and hedwig_apns_auth_key)
+      else none
+    )
+  }}
+
 hedwig_base_config:
   log:
     level: "{{ hedwig_log_level | upper }}"
@@ -16,6 +27,7 @@ hedwig_base_config:
     port: "{{ hedwig_server_port }}"
   hedwig:
     app_id: "{{ hedwig_app_id }}"
+    voip_app_id: "{{ hedwig_voip_app_id }}"
     # specifies how many attempts at pushing a notification to a device should be made before giving up and reporting the push key as dead
     push_max_retries: "{{ hedwig_fcm_push_max_retries }}"
     # common fields for notifications sent to FCM and APNS
@@ -54,7 +66,7 @@ hedwig_base_config:
     apns_headers:
       # https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns#Know-when-to-use-push-types
       apns_push_type: "alert"
-      apns_topic: "com.famedly.app"
+      apns_topic: "{{ hedwig_app_id }}"
       apns_id: null
       apns_priority: null
       apns_expiration: null
@@ -69,16 +81,16 @@ hedwig_base_config:
       content_available: null
 
     # leave blank if you don't want to use APNS directly
-    apns_key_file_path: "{{ hedwig_apns_key_file_path }}"
+    apns_key_file_path: "{{ hedwig_apns_key_file_path_effective }}"
     fcm_credentials_file_path: "{{ hedwig_fcm_service_account_file }}"
-    apns_team_id: "YOUR_TEAM_ID"
-    apns_key_id: "YOUR_KEY_ID"
-    apns_sandbox: true
-    notification_request_body_size_limit: 15000
+    apns_team_id: "{{ hedwig_apns_team_id }}"
+    apns_key_id: "{{ hedwig_apns_key_id }}"
+    apns_sandbox: "{{ hedwig_apns_sandbox }}"
+    notification_request_body_size_limit: "{{ hedwig_notification_request_body_size_limit }}"
 
   telemetry:
     service_name: "hedwig"
-    service_version: "2.3.0"
+    service_version: "{{ hedwig_version }}"
     traces_endpoint: ""
     metrics_endpoint: ""
 

@@ -4,8 +4,9 @@ hedwig_base_path: /opt/hedwig
 hedwig_config_filename: "config.yaml"
 hedwig_config_file: "{{ hedwig_base_path }}/{{ hedwig_config_filename }}"
 hedwig_fcm_service_account_file: "{{ hedwig_base_path }}/fcm-auth.json"
+hedwig_apns_auth_key_file: "{{ hedwig_base_path }}/apns-auth.p8"
 hedwig_apns_key_file_path: null
-hedwig_version: "2.3.0"
+hedwig_version: "2.4.0"
 
 hedwig_container_name: "hedwig"
 hedwig_container_image_reference: >-
@@ -39,6 +40,7 @@ hedwig_server_port: 7022
 hedwig_server_bind_address: "::"
 hedwig_log_level: INFO
 hedwig_app_id: "com.famedly.app"
+hedwig_voip_app_id: null
 hedwig_fcm_collapse_key: "org.matrix.default_notification"
 hedwig_fcm_notification_click_action: "FLUTTER_NOTIFICATION_CLICK"
 hedwig_fcm_notification_title: "<count> unread rooms"
@@ -48,3 +50,7 @@ hedwig_fcm_notification_icon: "notifications_icon"
 hedwig_fcm_notification_tag: "org.matrix.default_notification"
 hedwig_fcm_notification_android_channel_id: "org.matrix.app.message"
 hedwig_fcm_push_max_retries: 5
+hedwig_apns_team_id: null
+hedwig_apns_key_id: null
+hedwig_apns_sandbox: true
+hedwig_notification_request_body_size_limit: 15000
