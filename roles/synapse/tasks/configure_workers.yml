@@ -5,27 +5,27 @@
   set_fact:
     worker_client_info: "{{ worker_client_info | default([]) + [worker_config] }}"
   vars:
-    name: "worker_client_{{ item }}"
+    worker_name: "worker_client_{{ item }}"
     app: "synapse.app.generic_worker"
-    config_file: "{{ matrix_synapse_base_path }}/{{ name }}.yaml"
-    port: "{{ (matrix_synapse_worker_listener_base_port | int + item | int) | int }}"
+    config_file: "{{ matrix_synapse_base_path }}/{{ worker_name }}.yaml"
+    worker_port: "{{ (matrix_synapse_worker_listener_base_port | int + item | int) | int }}"
     worker_labels:
       labels: "{{ matrix_synapse_worker_labels_base }}"
     worker: |
-      name: "{{ name }}"
+      name: "{{ worker_name }}"
       app: "{{ app }}"
-      port: "{{ port }}"
+      port: "{{ worker_port }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
-      container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
+      service_name: "matrix-{{ worker_name }}.service"
+      container_name: "{{ matrix_synapse_container_name }}_{{ worker_name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
       ports:
-        - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ port }}:{{ port }}"
+        - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ worker_port }}:{{ worker_port }}"
       listeners:
         - type: http
-          port: {{ port }}
+          port: {{ worker_port }}
           resources:
             - names: [ client ]
     worker_config: "{{ worker | from_yaml | combine(worker_labels) }}"
@@ -36,27 +36,27 @@
   set_fact:
     worker_fed_in_info: "{{ worker_fed_in_info | default([]) + [worker_config] }}"
   vars:
-    name: "worker_fed_in_{{ item }}"
+    worker_name: "worker_fed_in_{{ item }}"
     app: "synapse.app.generic_worker"
-    config_file: "{{ matrix_synapse_base_path }}/{{ name }}.yaml"
-    port: "{{ matrix_synapse_worker_listener_base_port | int + 100 + item | int }}"
+    config_file: "{{ matrix_synapse_base_path }}/{{ worker_name }}.yaml"
+    worker_port: "{{ matrix_synapse_worker_listener_base_port | int + 100 + item | int }}"
     worker_labels:
       labels: "{{ matrix_synapse_worker_labels_base }}"
     worker: |
-      name: "{{ name }}"
+      name: "{{ worker_name }}"
       app: "{{ app }}"
-      port: "{{ port }}"
+      port: "{{ worker_port }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
-      container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
+      service_name: "matrix-{{ worker_name }}.service"
+      container_name: "{{ matrix_synapse_container_name }}_{{ worker_name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
       ports:
-        - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ port }}:{{ port }}"
+        - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ worker_port }}:{{ worker_port }}"
       listeners:
         - type: http
-          port: {{ port | int }}
+          port: {{ worker_port | int }}
           resources:
             - names: [ federation ]
     worker_config: "{{ worker | from_yaml | combine(worker_labels) }}"
@@ -67,17 +67,17 @@
   set_fact:
     worker_fed_out_info: "{{ worker_fed_out_info | default([]) + [worker_config] }}"
   vars:
-    name: "worker_fed_out_{{ item }}"
+    worker_name: "worker_fed_out_{{ item }}"
     app: "synapse.app.generic_worker"
-    config_file: "{{ matrix_synapse_base_path }}/{{ name }}.yaml"
+    config_file: "{{ matrix_synapse_base_path }}/{{ worker_name }}.yaml"
     worker_labels:
       labels: "{{ matrix_synapse_worker_labels_base }}"
     worker: |
-      name: "{{ name }}"
+      name: "{{ worker_name }}"
       app: "{{ app }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
-      container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
+      service_name: "matrix-{{ worker_name }}.service"
+      container_name: "{{ matrix_synapse_container_name }}_{{ worker_name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
@@ -91,27 +91,27 @@
   set_fact:
     worker_media_info: "{{ worker_media_info | default([]) + [worker_config] }}"
   vars:
-    name: "worker_media_{{ item }}"
+    worker_name: "worker_media_{{ item }}"
     app: "synapse.app.media_repository"
-    config_file: "{{ matrix_synapse_base_path }}/{{ name }}.yaml"
-    port: "{{ matrix_synapse_worker_listener_base_port | int + 200 + item | int }}"
+    config_file: "{{ matrix_synapse_base_path }}/{{ worker_name }}.yaml"
+    worker_port: "{{ matrix_synapse_worker_listener_base_port | int + 200 + item | int }}"
     worker_labels:
       labels: "{{ matrix_synapse_worker_labels_base }}"
     worker: |
-      name: "{{ name }}"
+      name: "{{ worker_name }}"
       app: "{{ app }}"
-      port: "{{ port }}"
+      port: "{{ worker_port }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
-      container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
+      service_name: "matrix-{{ worker_name }}.service"
+      container_name: "{{ matrix_synapse_container_name }}_{{ worker_name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
       ports:
-        - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ port }}:{{ port }}"
+        - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ worker_port }}:{{ worker_port }}"
       listeners:
         - type: http
-          port: {{ port | int }}
+          port: {{ worker_port | int }}
           resources:
             - names: [ media, client, federation ]
     worker_config: "{{ worker | from_yaml | combine(worker_labels) }}"
@@ -122,17 +122,17 @@
   set_fact:
     worker_pusher_info: "{{ [worker_config] }}"
   vars:
-    name: "worker_pusher"
+    worker_name: "worker_pusher"
     app: "synapse.app.generic_worker"
-    config_file: "{{ matrix_synapse_base_path }}/{{ name }}.yaml"
+    config_file: "{{ matrix_synapse_base_path }}/{{ worker_name }}.yaml"
     worker_labels:
       labels: "{{ matrix_synapse_worker_labels_base }}"
     worker: |
-      name: "{{ name }}"
+      name: "{{ worker_name }}"
       app: "{{ app }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
-      container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
+      service_name: "matrix-{{ worker_name }}.service"
+      container_name: "{{ matrix_synapse_container_name }}_{{ worker_name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
@@ -146,17 +146,17 @@
   set_fact:
     worker_appservice_info: "{{ [worker_config] }}"
   vars:
-    name: "worker_appservice"
+    worker_name: "worker_appservice"
     app: "synapse.app.generic_worker"
-    config_file: "{{ matrix_synapse_base_path }}/{{ name }}.yaml"
+    config_file: "{{ matrix_synapse_base_path }}/{{ worker_name }}.yaml"
     worker_labels:
       labels: "{{ matrix_synapse_worker_labels_base }}"
     worker: |
-      name: "{{ name }}"
+      name: "{{ worker_name }}"
       app: "{{ app }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
-      container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
+      service_name: "matrix-{{ worker_name }}.service"
+      container_name: "{{ matrix_synapse_container_name }}_{{ worker_name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
@@ -170,27 +170,27 @@
   set_fact:
     worker_user_dir_info: "{{ [worker_config] }}"
   vars:
-    name: "worker_user_dir"
+    worker_name: "worker_user_dir"
     app: "synapse.app.generic_worker"
-    config_file: "{{ matrix_synapse_base_path }}/{{ name }}.yaml"
-    port: "{{ matrix_synapse_worker_listener_base_port | int + 300 }}"
+    config_file: "{{ matrix_synapse_base_path }}/{{ worker_name }}.yaml"
+    worker_port: "{{ matrix_synapse_worker_listener_base_port | int + 300 }}"
     worker_labels:
       labels: "{{ matrix_synapse_worker_labels_base }}"
     worker: |
-      name: "{{ name }}"
+      name: "{{ worker_name }}"
       app: "{{ app }}"
-      port: "{{ port }}"
+      port: "{{ worker_port }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
-      container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
+      service_name: "matrix-{{ worker_name }}.service"
+      container_name: "{{ matrix_synapse_container_name }}_{{ worker_name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
         - "{{ config_file }}:{{ config_file }}:z"
       ports:
-        - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ port }}:{{ port }}"
+        - "{{ matrix_synapse_worker_listener_bind_base_ip }}:{{ worker_port }}:{{ worker_port }}"
       listeners:
         - type: http
-          port: {{ port }}
+          port: {{ worker_port }}
           resources:
             - names: [ client ]
     worker_config: "{{ worker | from_yaml | combine(worker_labels) }}"
