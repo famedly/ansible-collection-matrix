@@ -1,8 +1,0 @@
----
-# handlers file for timetracking-bot
-- name: Restart timetracking-bot
-  community.docker.docker_container:
-    name: "timetracking-bot"
-    state: started
-    restart: true
-  listen: restart-timetracking-bot

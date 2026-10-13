@@ -1,8 +1,6 @@
 ---
 matrix_synapse_extra_config: {}
 matrix_synapse_extra_log_config: {}
-matrix_synapse_deployment_method: pip
-matrix_synapse_supervision_method: systemd
 matrix_synapse_base_path: "/opt/synapse"
 matrix_synapse_secrets_path: "{{ matrix_synapse_base_path }}/secrets"
 matrix_synapse_dh_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.dh"
@@ -12,9 +10,6 @@ matrix_synapse_version: "{{ matrix_synapse_unstable | ternary(matrix_synapse_uns
 matrix_synapse_unstable: false
 matrix_synapse_stable_version: "1.147.1"
 matrix_synapse_unstable_version: "1.147.1"
-matrix_synapse_log_dir: "/var/log/matrix_synapse"
-matrix_synapse_log_days_keep: 14
-matrix_synapse_pid_file: "{{ matrix_synapse_base_path }}/synapse.pid"
 matrix_synapse_docker_networks: []
 matrix_synapse_docker_etc_hosts: {}
 matrix_synapse_docker_ports: ["8008:8008", "8448:8448"]

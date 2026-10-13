@@ -2,18 +2,11 @@
 
 Deploy [synapse](https://github.com/element-hq/synapse/), a matrix homeserver implementation in python, using ansible.
 
-The role supports deployment both as systemd-services or as a docker container.
+Synapse and its workers are deployed as docker containers.
 
 ## Requirements
 
-The following should be present on the target system when deploying synapse as a systemd service:
-* `pip`
-* `systemd`
-* `rsyslogd`
-* `logrotate`
-
-If deploying synapse in a docker container, check that you have `docker` and the corresponding python-bindings (usually
-`python3-docker`) installed.
+Check that you have `docker` and the corresponding python-bindings (usually `python3-docker`) installed.
 
 ## Role Variables
 
@@ -42,10 +35,6 @@ If deploying synapse in a docker container, check that you have `docker` and the
 | `matrix_synapse_signing_key_path`   | "{{ matrix_synapse_base_path }}/ssl/{{ matrix_server_name }}.signing.key" |                                                                                                                               |
 | `matrix_synapse_version`            | "v1.147.1"                                                                |                                                                                                                               |
 | `matrix_synapse_unstable`           | false                                                                     | when true, release candidate versions are deployed too                                                                        |
-| `matrix_synapse_log_days_keep`      | 14                                                                        |                                                                                                                               |
-| `matrix_synapse_deployment_method`  | pip                                                                       | Either pip or docker [¹](#footnote_1)                                                                                         |
-| `matrix_synapse_supervision_method` | systemd                                                                   | Either systemd, runit or docker [¹](#footnote_1)                                                                              |
-| `matrix_synapse_python_version`     | 3                                                                         | Default python version (2, 3) to be used                                                                                      |
 | `matrix_synapse_redis_enabled`      | false                                                                     | If synapse should connect to redis (needed for workers)                                                                       |
 | `matrix_synapse_redis_host`         | _None_                                                                    | host on which redis is running                                                                                                |
 | `matrix_synapse_redis_port`         | 6379                                                                      | port on which redis is running                                                                                                |
@@ -62,14 +51,12 @@ If deploying synapse in a docker container, check that you have `docker` and the
 | `matrix_synapse_workers_federation_in`   | `0`           | Amount of federation workers to deploy (inbound)         |
 | `matrix_synapse_workers_federation_out`  | `0`           | Amount of federation sender workers to deploy (outbound) |
 | `matrix_synapse_workers_media`           | `0`           | Amount of media-repo workers to deploy                   |
-| `matrix_synapse_worker_push`             | `false`       | Enables a worker for pushes to sygnal/emal               |
+| `matrix_synapse_worker_push`             | `false`       | Enables a worker for pushes to push gateways/email       |
 | `matrix_synapse_worker_appservice`       | `false`       | Enables a worker to handle synapse->appservice traffic   |
 | `matrix_synapse_worker_user_search`      | `false`       | Enable a worker to handle user_directory search          |
 | `matrix_synapse_worker_replication_port` | `9003`        | Synapse replication port to use                          |
 | `matrix_synapse_worker_metrics_enabled`  | `false`       | Enable metrics endpoint on each worker                   |
 | `matrix_synapse_worker_metrics_port`     | `9101`        | Port on which metrics on each container can be reached   |
-
-<a name="footnote_1">¹</a>: Docker must be used for both or neither deployment and supervision
 
 ## Dependencies
 

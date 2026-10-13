@@ -57,13 +57,6 @@ These are a few ansible modules for working with matrix rooms.
         state: "member"
         exclusive: False
       register: membership_changes
-    - matrix_notification:
-        hs_url: "{{ matrix.homeserver }}"
-        token: "{{ login_result.token }}"
-        room_id: "{{ room_result.room_id }}"
-        msg_plain: "Updated memberships: {{ membership_changes | to_json }}"
-        msg_html: "Updated memberships: {{ membership_changes | to_json }}"
-      when: membership_changes.changed
     - matrix_logout:
         hs_url: "{{ matrix.homeserver }}"
         token: "{{ login_result.token }}"

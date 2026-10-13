@@ -1,9 +1,0 @@
----
-- name: Deploy service file
-  template:
-    src: "sygnal.service.j2"
-    dest: "/etc/systemd/system/sygnal.service"
-    mode: "0644"
-  notify:
-    - reload-systemd
-    - restart-sygnal

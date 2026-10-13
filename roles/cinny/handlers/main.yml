@@ -1,8 +1,0 @@
----
-
-- name: Ensure container for cinny is restarted
-  community.docker.docker_container:
-    name: "{{ cinny_container_name }}"
-    state: started
-    restart: true
-  listen: "restart-cinny"

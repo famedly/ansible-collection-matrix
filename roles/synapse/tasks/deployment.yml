@@ -1,58 +1,4 @@
 ---
-- name: Install synapse with pip into virtualenv
-  when: matrix_synapse_deployment_method == "pip"
-  block:
-    - name: Install dependencies
-      apt:
-        name:
-          - git
-          - build-essential
-          - python3-dev
-          - python3-virtualenv
-          - python3-pip
-          - python3-setuptools
-          - sqlite3
-          - libffi-dev
-          - libssl-dev
-          - libjpeg-dev
-          - libxslt1-dev
-          - libpq-dev
-        state: present
-        cache_valid_time: 1800
-      register: matrix_synapse_dependencies_pulled
-      until: matrix_synapse_dependencies_pulled is success
-      retries: 10
-      delay: 5
-      tags: ['prepare', 'prepare-synapse']
-
-    - name: Create virtualenv
-      pip:
-        name: >-2
-          {{
-            ['pip', 'setuptools']
-            +
-            (['txredisapi>=1.4.7', 'hiredis'] if matrix_synapse_workers_enabled|bool else [])
-          }}
-        virtualenv: "{{ matrix_synapse_base_path }}/env"
-        virtualenv_python: python3
-        extra_args: --upgrade
-      tags: ['prepare', 'prepare-synapse']
-
-    - name: Remove old Synapse clone
-      file:
-        path: "{{ matrix_synapse_base_path }}/synapse"
-        state: absent
-      register: clone_removed
-
-    - name: Install Synapse
-      pip:
-        name: "matrix-synapse[all]"
-        virtualenv: "{{ matrix_synapse_base_path }}/env"
-        version: "{{ matrix_synapse_version }}"
-        state: "{{ 'forcereinstall' if clone_removed.changed else 'present' }}"
-      notify: restart-matrix-synapse
-      tags: ['deploy', 'deploy-synapse', 'skip_ansible_lint']
-
 - name: Ensure synapse container image is present
   community.docker.docker_image:
     name: "{{ matrix_synapse_container_image_reference }}"
@@ -63,7 +9,6 @@
   until: matrix_synapse_container_image_pulled is success
   retries: 10
   delay: 5
-  when: matrix_synapse_deployment_method == "docker"
   tags: ['prepare', 'prepare-synapse']
 
 - name: Ensure synapse container is running
@@ -85,7 +30,6 @@
     state: started
     ulimits: "{{ matrix_synapse_container_ulimits }}"
   register: matrix_synapse_container_started
-  when: matrix_synapse_deployment_method == "docker"
   tags: ['deploy', 'deploy-synapse']
 
 - name: Refresh container certificates if required
@@ -93,6 +37,6 @@
     container: "{{ matrix_synapse_container_name }}"
     command: "{{ matrix_synapse_container_certificate_refresh_command }}"
     user: "{{ matrix_synapse_container_certificate_refresh_user_id }}"
-  when: matrix_synapse_container_certificate_refresh and matrix_synapse_deployment_method == "docker" and matrix_synapse_container_started.changed
+  when: matrix_synapse_container_certificate_refresh and matrix_synapse_container_started.changed
   notify: restart-matrix-synapse
   tags: ['deploy', 'deploy-synapse']
