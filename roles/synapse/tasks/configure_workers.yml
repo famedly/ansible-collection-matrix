@@ -16,7 +16,6 @@
       app: "{{ app }}"
       port: "{{ port }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
       container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
@@ -47,7 +46,6 @@
       app: "{{ app }}"
       port: "{{ port }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
       container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
@@ -76,7 +74,6 @@
       name: "{{ name }}"
       app: "{{ app }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
       container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
@@ -102,7 +99,6 @@
       app: "{{ app }}"
       port: "{{ port }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
       container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
@@ -131,7 +127,6 @@
       name: "{{ name }}"
       app: "{{ app }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
       container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
@@ -155,7 +150,6 @@
       name: "{{ name }}"
       app: "{{ app }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
       container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:
@@ -181,7 +175,6 @@
       app: "{{ app }}"
       port: "{{ port }}"
       config_file: "{{ config_file }}"
-      service_name: "matrix-{{ name }}.service"
       container_name: "{{ matrix_synapse_container_name }}_{{ name }}"
       container_command: "-m {{ app }} -c {{ matrix_synapse_base_path }}/homeserver.yaml -c {{ config_file }}"
       extra_volumes:

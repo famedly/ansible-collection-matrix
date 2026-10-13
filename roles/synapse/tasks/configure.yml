@@ -75,9 +75,15 @@
   notify: "restart-matrix-synapse"
   tags: ['deploy', 'deploy-synapse']
 
-- name: Configure logging
-  include_tasks: logging.yml
-  tags: ['always']
+- name: Deploy log config
+  copy:
+    content: "{{ matrix_synapse_log_config | default({}) | to_nice_yaml }}"
+    dest: "{{ matrix_synapse_base_path }}/log.config"
+    owner: synapse
+    group: synapse
+    mode: "0644"
+  notify: restart-matrix-synapse
+  tags: ['deploy', 'deploy-synapse']
 
 - name: Create certificates
   include_tasks: crypto.yml

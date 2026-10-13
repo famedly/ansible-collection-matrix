@@ -1,11 +1,4 @@
 ---
-- name: Check that sypervision and deployment are compatible
-  fail:
-    msg: "Either both or neither of deployment and supervision method should be docker."
-  when: (matrix_synapse_supervision_method == "docker" and matrix_synapse_deployment_method != "docker") or
-        (matrix_synapse_deployment_method == "docker" and matrix_synapse_supervision_method != "docker")
-  tags: ['deploy', 'deploy-synapse']
-
 - name: Fail if workers are enabled but no redis is configured for synapse
   fail:
     msg: "Redis needs to be enabled on synapse in order for workers to be able to be run"
@@ -34,8 +27,3 @@
   import_tasks: deploy_workers.yml
   tags: ['deploy', 'deploy-synapse']
   when: matrix_synapse_workers_enabled
-
-- name: Configure service
-  import_tasks: systemd.yml
-  tags: ['deploy', 'deploy-synapse']
-  when: matrix_synapse_supervision_method == "systemd"
