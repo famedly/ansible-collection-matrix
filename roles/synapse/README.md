@@ -62,7 +62,7 @@ If deploying synapse in a docker container, check that you have `docker` and the
 | `matrix_synapse_workers_federation_in`   | `0`           | Amount of federation workers to deploy (inbound)         |
 | `matrix_synapse_workers_federation_out`  | `0`           | Amount of federation sender workers to deploy (outbound) |
 | `matrix_synapse_workers_media`           | `0`           | Amount of media-repo workers to deploy                   |
-| `matrix_synapse_worker_push`             | `false`       | Enables a worker for pushes to sygnal/emal               |
+| `matrix_synapse_worker_push`             | `false`       | Enables a worker for pushes to push gateways/email       |
 | `matrix_synapse_worker_appservice`       | `false`       | Enables a worker to handle synapse->appservice traffic   |
 | `matrix_synapse_worker_user_search`      | `false`       | Enable a worker to handle user_directory search          |
 | `matrix_synapse_worker_replication_port` | `9003`        | Synapse replication port to use                          |
