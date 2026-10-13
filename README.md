@@ -36,8 +36,6 @@ deploying commonly used matrix services:
 
 - [`synapse`](roles/synapse/README.md): synapse, a reference matrix homeserver
   implementation in python, maintained mostly by element.
-- [`element`](roles/element/README.md): element-web, a reference matrix client implementation,
-  able to run in the browser, maintained by element.
 - [`hedwig`](roles/hedwig/README.md): Hedwig, a push-gateway server alternative
   to `sygnal`, developed by Famedly.
 - [`barad_dur`](roles/barad_dur/README.md): Barad-dûr, a matrix phone-home stats collector alternative, developed by Famedly.
