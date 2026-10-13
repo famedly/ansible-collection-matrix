@@ -6,22 +6,15 @@
 
 This collection contains modules for managing matrix rooms
 and more via ansible. They can modify room membership,
-aliases, server signing keys and even send messages into
-rooms from within ansible.
+aliases and server signing keys from within ansible.
 
 - [`matrix_login` (source)](plugins/modules/matrix_login.py):
   Create an access token for a matrix account.
 - [`matrix_login` (source)](plugins/modules/matrix_login.py):
   Create an access token for a matrix account.
   Logs in with user and password to obtain a matrix access token
-- [`matrix_uia_login` (source)](plugins/modules/matrix_uia_login.py):
-  Logs in with user and password to obtain a matrix access token, while
-  implementing [user-interactive authentication](https://spec.matrix.org/unstable/client-server-api/#user-interactive-authentication-api)
-  on the `_matrix/client/r0/login` endpoint (see [MSC2835](https://github.com/Sorunome/matrix-doc/blob/soru/uia-on-login/proposals/2835-uia-on-login.md)).
 - [`matrix_logout` (source)](plugins/modules/matrix_logout.py):
   Invalidates an access token.
-- [`matrix_notification` (source)](plugins/modules/matrix_notification.py):
-  Sends a message to a matrix room.
 - [`matrix_room` (source)](plugins/modules/matrix_room.py):
   Idempotently joins/creates a room with a given alias.
 - [`matrix_state` (source)](plugins/modules/matrix_state.py):
@@ -32,8 +25,6 @@ rooms from within ansible.
   Creates a server signing key.
 - [`synapse_register` (source)](plugins/modules/synapse_register.py):
   Registers a user using synapse's admin API.
-- [`synapse_ratelimit` (source)](plugins/modules/synapse_ratelimit.py):
-  Gets / Sets / Deletes a (local) users ratelimits
 
 For more information on how to use the modules to manage matrix rooms
 via ansible, the [README in `./plugins/modules/`](plugins/modules/README.md)

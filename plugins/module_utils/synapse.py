@@ -35,7 +35,6 @@ class AdminApi:
         self.api_url = urllib.parse.urljoin(self.home_server, self.api_prefix)
 
         # init subclasses
-        self.ratelimit = self.__Ratelimit(self)
         self.join = self.__Join(self)
 
     # Make API request
@@ -91,33 +90,6 @@ class AdminApi:
     @staticmethod
     def url_encode(string: str) -> str:
         return urllib.parse.quote(string)
-
-    # TODO: extend for each API-Method
-    class __Ratelimit:
-        API_PATH = "v1/users/{user_id}/override_ratelimit"
-
-        def __init__(self, parent):
-            self.__parent = parent
-
-        def get(self, user_id: str) -> dict:
-            user_id = AdminApi.url_encode(user_id)
-            return self.__parent.get(self.API_PATH.format(user_id=user_id)).json()
-
-        def set(
-            self, user_id: str, messages_per_second: int = 0, burst_count: int = 0
-        ) -> dict:
-            user_id = AdminApi.url_encode(user_id)
-            return self.__parent.post(
-                self.API_PATH.format(user_id=user_id),
-                json={
-                    "messages_per_second": messages_per_second,
-                    "burst_count": burst_count,
-                },
-            ).json()
-
-        def delete(self, user_id: str) -> dict:
-            user_id = AdminApi.url_encode(user_id)
-            return self.__parent.delete(self.API_PATH.format(user_id=user_id)).json()
 
     class __Join:
         API_PATH = "v1/join/{room_id}"
