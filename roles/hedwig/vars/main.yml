@@ -80,7 +80,7 @@ hedwig_base_config:
       mutable_content: 1
       content_available: null
 
-    # null disables direct APNS. Hedwig 2.4.0 treats "" as a key path and refuses to start.
+    # leave blank if you don't want to use APNS directly
     apns_key_file_path: "{{ hedwig_apns_key_file_path_effective }}"
     fcm_credentials_file_path: "{{ hedwig_fcm_service_account_file }}"
     apns_team_id: "{{ hedwig_apns_team_id }}"
@@ -94,23 +94,5 @@ hedwig_base_config:
     traces_endpoint: ""
     metrics_endpoint: ""
 
-hedwig_apns_config:
-  hedwig:
-    # Hedwig 2.4.0 treats "" as a key path and refuses to start.
-    apns_key_file_path: >-
-      {{
-        hedwig_apns_key_file_path_effective
-        if hedwig_apns_key_file_path_effective
-        else none
-      }}
-    # These fields are required strings even when direct APNs is disabled.
-    apns_team_id: "{{ hedwig_apns_team_id | default('', true) }}"
-    apns_key_id: "{{ hedwig_apns_key_id | default('', true) }}"
-
-# Merge explicit extra config last so it can override every APNs setting.
-hedwig_config: >-
-  {{
-    hedwig_base_config
-    | combine(hedwig_apns_config, recursive=True)
-    | combine(hedwig_extra_config, recursive=True)
-  }}
+# recursive so one host can override a single APNs key. Empty extra config is unchanged.
+hedwig_config: "{{ hedwig_base_config | combine(hedwig_extra_config, recursive=True) }}"
