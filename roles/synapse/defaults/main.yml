@@ -97,10 +97,6 @@ matrix_synapse_worker_client_endpoints: >-
     + matrix_synapse_worker_client_encryption_endpoints
     + matrix_synapse_worker_client_login_endpoints
     + matrix_synapse_worker_client_send_endpoints
-    + matrix_synapse_worker_client_device_endpoints
-    + matrix_synapse_worker_client_account_data_endpoints
-    + matrix_synapse_worker_client_receipts_endpoints
-    + matrix_synapse_worker_client_presence_endpoints
   }}
 
 matrix_synapse_container_ulimits: []
