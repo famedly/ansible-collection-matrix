@@ -94,4 +94,5 @@ hedwig_base_config:
     traces_endpoint: ""
     metrics_endpoint: ""
 
-hedwig_config: "{{ hedwig_base_config | combine(hedwig_extra_config) }}"
+# recursive so one host can override a single APNs key. Empty extra config is unchanged.
+hedwig_config: "{{ hedwig_base_config | combine(hedwig_extra_config, recursive=True) }}"
