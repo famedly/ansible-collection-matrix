@@ -231,7 +231,6 @@ matrix_synapse_worker_client_api_endpoints:
   - "/_matrix/client/unstable/im.nheko.summary/rooms/.*/summary$"
   - "/_matrix/client/(api/v1|r0|v3|unstable)/account/3pid$"
   - "/_matrix/client/(r0|v3|unstable)/account/whoami$"
-  - "/_matrix/client/(api/v1|r0|v3|unstable)/devices$"
   - "/_matrix/client/versions$"
   - "/_matrix/client/(api/v1|r0|v3|unstable)/voip/turnServer$"
   - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/"
@@ -247,7 +246,6 @@ matrix_synapse_worker_client_encryption_endpoints:
   - "/_matrix/client/(r0|v3|unstable)/keys/changes$"
   - "/_matrix/client/(r0|v3|unstable)/keys/claim$"
   - "/_matrix/client/(r0|v3|unstable)/room_keys/"
-  - "/_matrix/client/(r0|v3|unstable)/keys/upload/"
 matrix_synapse_worker_client_login_endpoints:
   - "/_matrix/client/(api/v1|r0|v3|unstable)/login$"
   - "/_matrix/client/(r0|v3|unstable)/register$"
