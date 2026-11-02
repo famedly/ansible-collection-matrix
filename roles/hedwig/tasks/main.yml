@@ -40,7 +40,7 @@
   notify: restart-hedwig
 
 - name: Write APNs auth key
-  when: hedwig_apns_auth_key is defined and hedwig_apns_auth_key
+  when: hedwig_apns_auth_key | default('', true) | length > 0
   copy:
     content: "{{ hedwig_apns_auth_key }}"
     dest: "{{ hedwig_apns_auth_key_file }}"

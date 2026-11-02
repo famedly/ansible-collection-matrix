@@ -31,7 +31,7 @@
     name: "{{ cinny_container_image_reference }}"
     state: present
     source: pull
-    force_source: "{{ cinny_container_image_tag | default(false, true) | bool }}"
+    force_source: "{{ cinny_container_image_tag | default('', true) | length > 0 }}"
   when: not cinny_container_image_build_local
 
 - name: Ensure cinny container image is built
