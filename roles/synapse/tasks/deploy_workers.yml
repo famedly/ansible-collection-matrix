@@ -58,7 +58,7 @@
         volumes: "{{ matrix_synapse_docker_volumes + item.extra_volumes }}"
         ports: "{{ item.ports | default(omit) }}"
         healthcheck:
-          test: "{{ ('curl -fSs http://localhost:' + item.port + '/health || exit 1') if item.port is defined else '[\"NONE\"]' }}"
+          test: "{{ ('curl -fSs http://localhost:' + item.port + '/health || exit 1') if item.port is defined else ['NONE'] }}"
       loop: "{{ matrix_synapse_workers }}"
 
 
