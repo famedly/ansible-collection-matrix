@@ -63,6 +63,5 @@
     labels: "{{ cinny_container_combined_labels }}"
     volumes: "{{ cinny_container_combined_volumes }}"
     networks: "{{ cinny_container_networks | default(omit, true) }}"
-    purge_networks: "{{ cinny_container_purge_networks | default(omit, true) }}"
     etc_hosts: "{{ cinny_container_etc_hosts | default(omit, true) }}"
     restart_policy: unless-stopped
